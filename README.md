@@ -135,8 +135,14 @@ and current technical limitations.
   scoring, and current gameplay limitations.
 - [Architecture](docs/ARCHITECTURE.md) - module boundaries, state ownership, simulation order, timing,
   rendering, extension points, validation baseline, and known implementation issues.
+- [Prototype review](docs/GAME_REVIEW.md) - scored assessment of the concept, current execution, strengths,
+  weaknesses, audience, and overall potential.
+- [Improvement roadmap](docs/IMPROVEMENT_ROADMAP.md) - prioritized path from correctness through polish,
+  tactical depth, content, AI, and production readiness.
+- [Engagement and replayability](docs/ENGAGEMENT_AND_REPLAYABILITY.md) - an ethical design for mastery,
+  rematches, fair variability, team identity, comeback potential, and long-term replayability.
 
-The README and detailed guides contain 17 focused Mermaid diagrams for the core gameplay and code paths.
+The README and detailed guides use focused Mermaid diagrams for the core gameplay, code, and design paths.
 
 ## Repository layout
 
@@ -154,7 +160,10 @@ EntropyTag/
 |   `-- terrain.py          Tile grid and shrinking ring
 `-- docs/
     |-- ARCHITECTURE.md
-    `-- GAMEPLAY.md
+    |-- ENGAGEMENT_AND_REPLAYABILITY.md
+    |-- GAMEPLAY.md
+    |-- GAME_REVIEW.md
+    `-- IMPROVEMENT_ROADMAP.md
 ```
 
 ## Prototype status
