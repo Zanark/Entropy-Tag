@@ -1,0 +1,41 @@
+# Build and Release
+
+Status: NOT_STARTED
+Milestone: M2 and later
+Dependencies: `01_PROJECT_FOUNDATION.todo`, `12_TESTING_PERFORMANCE_TOOLING.todo`
+
+## Purpose
+
+Produce reproducible, identifiable, validated builds without committing generated artifacts.
+
+## Tasks
+
+- [ ] Define development and release build profiles.
+- [ ] Define versioning policy.
+- [ ] Embed commit and build metadata.
+- [ ] Validate required scenes.
+- [ ] Validate configuration and licenses.
+- [ ] Create clean build output directory outside tracked assets.
+- [ ] Create one-command development build.
+- [ ] Create one-command test-plus-build workflow.
+- [ ] Document supported PC environment.
+- [ ] Create artifact manifest.
+- [ ] Create release checklist.
+- [ ] Define rollback and patch process before public release.
+
+## Acceptance criteria
+
+- [ ] Clean checkout can produce a development build.
+- [ ] Build identifies version and source commit.
+- [ ] Generated artifacts remain untracked.
+- [ ] Failed validation stops the build.
+- [ ] Artifact manifest lists build, tests, known issues, and licenses.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

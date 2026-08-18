@@ -1,0 +1,57 @@
+# Product and Technical Decisions
+
+Status: IN_PROGRESS
+Milestone: M0 Planning foundation
+Dependencies: None
+
+## Purpose
+
+Resolve decisions that would otherwise cause expensive implementation churn.
+
+## Accepted
+
+- [x] Unity is the production engine.
+- [x] Gameplay uses true 3D geometry and collision.
+- [x] Presentation targets original low-poly/retro-modern styling.
+- [x] First vertical slice is offline.
+- [x] First territory implementation is floor-only.
+- [x] Prototype remains a separate historical mechanics reference.
+
+## Blocking decisions
+
+- [ ] Confirm Unity editor version for project creation.
+- [ ] Confirm URP or alternate render pipeline.
+- [ ] Confirm first-slice team count: proposed Ice versus Fire.
+- [ ] Confirm first pressure system.
+- [ ] Confirm territory authority experiment and decision gate.
+- [ ] Confirm target PC minimum for performance validation.
+- [ ] Confirm keyboard/mouse and gamepad as required devices.
+- [ ] Confirm elimination versus non-lethal disruption.
+- [ ] Confirm bank behavior for the slice.
+- [ ] Confirm initial match duration target.
+- [ ] Confirm working title remains EntropyTag.
+
+## Later decisions
+
+- [ ] Water implementation milestone.
+- [ ] Local split-screen priority.
+- [ ] Online multiplayer priority.
+- [ ] First public content scope.
+- [ ] Original world/character premise.
+- [ ] Cosmetic progression.
+
+## Acceptance criteria
+
+- [ ] Every foundation blocker is accepted, rejected, or explicitly deferred.
+- [ ] `docs/08_DECISIONS_AND_RISKS.md` is synchronized.
+- [ ] Affected TODO dependencies are unblocked.
+- [ ] Evidence and rationale are recorded.
+
+## Completion evidence
+
+Partially complete; accepted decisions are recorded in `docs/08_DECISIONS_AND_RISKS.md`.
+
+## Completion log
+
+- 2026-08-18 - Initial accepted and blocking decisions captured on `workDesk/develop`.
+

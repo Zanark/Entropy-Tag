@@ -1,0 +1,77 @@
+# EntropyTag TODO Index
+
+Status: IN_PROGRESS
+Purpose: Living index for every planned work area.
+
+## Status values
+
+- NOT_STARTED - No implementation work has begun.
+- IN_PROGRESS - Work is actively being executed.
+- BLOCKED - Progress cannot continue; blocker and owner must be recorded.
+- DONE - Every acceptance criterion is met and evidence is recorded.
+
+## Completion rule
+
+A task file may move to DONE only when:
+
+- Every required checkbox is checked.
+- Acceptance criteria are explicitly verified.
+- Tests/builds/playtest evidence is recorded where applicable.
+- Related documentation is updated.
+- `.agent-context` is synchronized.
+- The completion log records date, branch, commit or artifact, and validation.
+
+## Work areas
+
+- `01_PROJECT_FOUNDATION.todo` - Unity project, packages, assemblies, scenes, repository hygiene.
+- `02_DOMAIN_RULES.todo` - Pure C# territory, reactions, score, bank, and match rules.
+- `03_PLAYER_CAMERA_INPUT.todo` - Character motor, camera, aim, and devices.
+- `04_TERRITORY_PAINTING.todo` - Logical field, visual mask, stamping, sampling, performance.
+- `05_ELEMENT_REACTIONS.todo` - Ice, Fire, Mist, status, data, feedback.
+- `06_MATCH_FLOW_SCORING.todo` - Match phases, pressure, HUD data, winner, rematch.
+- `07_BOTS_AI.todo` - Seedable bot intent and first behavior profile.
+- `08_UI_UX_ACCESSIBILITY.todo` - Front end, HUD, results, settings, accessibility.
+- `09_ART_ANIMATION_VFX.todo` - Original visual identity and first-slice assets.
+- `10_AUDIO.todo` - Spray, reaction, movement, UI, match, and music direction.
+- `11_ARENA_LEVEL_DESIGN.todo` - Gray-box arena, paintability, pressure, navigation.
+- `12_TESTING_PERFORMANCE_TOOLING.todo` - Tests, profiling, diagnostics, validators.
+- `13_BUILD_RELEASE.todo` - Reproducible builds, versioning, artifact validation.
+- `14_MULTIPLAYER_FUTURE.todo` - Deferred networking research and readiness checks.
+- `15_PRODUCT_DECISIONS.todo` - Blocking product and technical decisions.
+- `16_DOCUMENTATION_FOUNDATION.todo` - Completed planning package for this branch.
+
+## Dependency summary
+
+```text
+15 Product decisions
+  -> 01 Project foundation
+      -> 02 Domain rules
+      -> 03 Player/camera/input
+          -> 04 Territory painting
+              -> 05 Element reactions
+              -> 06 Match flow/scoring
+              -> 07 Bots
+                  -> 08 UI/UX/accessibility
+                  -> 09 Art/animation/VFX
+                  -> 10 Audio
+                  -> 11 Arena design
+                      -> 12 Testing/performance/tooling
+                          -> 13 Build/release
+
+14 Multiplayer remains deferred until the vertical slice is approved.
+```
+
+## Acceptance criteria
+
+- [x] Every file inside `TODO/` ends in `.todo`.
+- [x] Every scoped work file declares status, tasks, acceptance criteria, evidence, and completion log.
+- [x] Dependencies and intentionally blocked work are visible.
+- [ ] Keep this index synchronized whenever TODO files are added, renamed, completed, or removed.
+
+## Completion evidence
+
+Living index; structural validation completed on 2026-08-18.
+
+## Completion log
+
+- 2026-08-18 - Index created on `workDesk/develop`. It remains IN_PROGRESS as the living backlog index.

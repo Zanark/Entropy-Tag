@@ -1,0 +1,42 @@
+# Player, Camera, and Input
+
+Status: NOT_STARTED
+Milestone: M1 Technical proofs
+Dependencies: `01_PROJECT_FOUNDATION.todo`
+
+## Purpose
+
+Prove responsive third-person movement and visually honest aiming before territory complexity is added.
+
+## Tasks
+
+- [ ] Implement camera-relative movement.
+- [ ] Implement acceleration, deceleration, gravity, and grounded state.
+- [ ] Implement independent camera look and aim.
+- [ ] Implement over-the-shoulder camera collision.
+- [ ] Implement keyboard/mouse actions.
+- [ ] Implement gamepad actions.
+- [ ] Implement sensitivity and inversion settings.
+- [ ] Implement world-space aim solution.
+- [ ] Implement debug ray/contact visualization.
+- [ ] Define external impulse and status-modifier hooks.
+- [ ] Add movement and camera PlayMode tests.
+- [ ] Profile allocations and frame cost.
+
+## Acceptance criteria
+
+- [ ] Controller feels responsive in the sandbox at 60 FPS.
+- [ ] Reticle, physics contact, and spray target derive from the same aim solution.
+- [ ] Camera does not remain inside arena geometry.
+- [ ] Keyboard/mouse and gamepad are both usable.
+- [ ] No recurring managed allocation after warm-up.
+- [ ] Settings persist locally.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

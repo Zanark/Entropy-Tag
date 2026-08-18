@@ -1,1 +1,157 @@
-# New Repository
+# EntropyTag
+
+> **An original third-person elemental territory shooter where the battlefield remembers every clash.**
+
+EntropyTag is a planned Unity game about movement, territory, and elemental counterplay. Players join Ice,
+Water, or Fire teams, transform a 3D arena with their element, exploit friendly terrain, trigger multi-step
+reactions, disrupt opposing players, and adapt as the playable space contracts toward a decisive finish.
+
+This repository is currently in its **planning and documentation phase**. It intentionally contains no Unity
+project yet. The goal of this branch is to establish a coherent product, architecture, asset strategy,
+vertical-slice scope, and executable work backlog before implementation begins.
+
+## The game we are building
+
+```mermaid
+flowchart LR
+    accTitle: EntropyTag core game loop
+    accDescr: Players move through a 3D arena, paint territory, create elemental reactions, gain tactical advantages, survive ring pressure, and use the result to adapt for the next match.
+
+    move[Move and aim]
+    paint[Transform territory]
+    react[Create elemental reactions]
+    advantage[Gain routes, bank, and openings]
+    pressure[Shrinking arena forces clashes]
+    result[Territory decides the winner]
+    adapt[Adapt and rematch]
+
+    move --> paint --> react --> advantage --> pressure --> result --> adapt --> move
+```
+
+### Product pillars
+
+1. **Territory is movement** - Friendly terrain creates routes and advantages, not only score.
+2. **Elements leave history** - Ice, Water, Fire, Frozen, Puddle, and Mist form readable multi-step reactions.
+3. **Short matches tell stories** - Expansion, contest, compression, and a final scramble fit into a compact
+   session.
+4. **Actions are visually honest** - Aim, spray contact, debuffs, ownership, and scoring must match what
+   players see.
+5. **Easy to start, worth mastering** - Simple objectives support deeper movement, aiming, reaction, timing,
+   and team decisions.
+6. **Original identity** - Genre inspiration is welcome; copied characters, maps, branding, art, audio, or
+   proprietary assets are not.
+
+## Target experience
+
+- True 3D gameplay in Unity.
+- Third-person over-the-shoulder movement and aiming.
+- Stylized low-poly environments with crisp, retro-inspired rendering.
+- Floor territory painting first; walls and arbitrary surfaces only after the core loop is proven.
+- Offline play with bots for the first vertical slice.
+- Approximately two-to-four-minute matches during early development.
+- PC as the initial development and validation platform.
+- Networking, progression, and broad content production deferred until the local core is fun.
+
+## Prototype heritage
+
+The original mechanics prototype lives separately at:
+
+```text
+C:\devdesk\gamedesk\EntropyTag_Prototype
+```
+
+That Python/Pygame build proved the basic loop: three elemental teams, territory conversion, terrain-based
+movement, reaction states, bots, score banking, and a shrinking arena. The Unity game will preserve the
+strongest ideas, but it is a new production architecture rather than a direct code port.
+
+See [Prototype inheritance](docs/10_PROTOTYPE_INHERITANCE.md) for the small set of rules worth carrying
+forward and the prototype limitations that must not be repeated.
+
+## Current repository status
+
+| Area | Status |
+|---|---|
+| Product vision | Documented |
+| Core game design | Documented for vertical-slice planning |
+| Technical architecture | Proposed; requires implementation validation |
+| Unity project | Not created |
+| Gameplay code | Not started |
+| First-party assets | Not started |
+| Vertical slice | Planned |
+| Online multiplayer | Deferred |
+
+## Documentation
+
+### Start here
+
+- [Vision and product pillars](docs/00_VISION.md)
+- [Game design](docs/01_GAME_DESIGN.md)
+- [Vertical-slice plan](docs/05_VERTICAL_SLICE_PLAN.md)
+- [Production roadmap](docs/06_PRODUCTION_ROADMAP.md)
+
+### Engineering and production
+
+- [Technical architecture](docs/02_TECHNICAL_ARCHITECTURE.md)
+- [Unity project structure](docs/03_UNITY_PROJECT_STRUCTURE.md)
+- [Asset pipeline](docs/04_ASSET_PIPELINE.md)
+- [Testing and quality strategy](docs/07_TESTING_AND_QUALITY.md)
+- [Decisions and risks](docs/08_DECISIONS_AND_RISKS.md)
+- [Glossary](docs/09_GLOSSARY.md)
+- [Prototype inheritance](docs/10_PROTOTYPE_INHERITANCE.md)
+- [Documentation catalogue](docs/DOCUMENTATION_CATALOGUE.json)
+
+## Work planning
+
+All implementation work is decomposed under [`TODO/`](TODO/00_INDEX.todo). Every file in that directory ends
+with `.todo`.
+
+A work area is complete only when:
+
+- Its checklist is fully checked.
+- Its acceptance criteria are satisfied.
+- Validation evidence is recorded.
+- The file status is changed to `DONE`.
+- Related documentation and context are synchronized.
+
+## Planned Unity repository shape
+
+```text
+EntropyTag/
+|-- Assets/
+|   `-- EntropyTag/
+|       |-- Art/
+|       |-- Audio/
+|       |-- Materials/
+|       |-- Prefabs/
+|       |-- Scenes/
+|       |-- Scripts/
+|       |-- Settings/
+|       |-- Shaders/
+|       |-- Tests/
+|       `-- UI/
+|-- Packages/
+|-- ProjectSettings/
+|-- UserSettings/              Local only; ignored
+|-- docs/
+|-- TODO/
+`-- README.md
+```
+
+The detailed layout and ownership rules are defined in
+[Unity project structure](docs/03_UNITY_PROJECT_STRUCTURE.md).
+
+## Development principles
+
+- Build the smallest playable proof before scaling scope.
+- Keep game rules testable without loading a Unity scene.
+- Prefer data-driven tuning over constants buried in MonoBehaviours.
+- Separate domain state, simulation, presentation, and platform integration.
+- Profile territory painting before committing to arbitrary-surface coverage.
+- Do not introduce networking before local movement, aiming, painting, scoring, and bots are stable.
+- Treat documentation and TODO completion evidence as part of the product.
+
+## Branch purpose
+
+`workDesk/develop` currently establishes the game-development foundation. No Unity project or gameplay
+implementation should be added until the planning package is reviewed and the foundation TODO is explicitly
+started.

@@ -1,0 +1,43 @@
+# Unity Project Foundation
+
+Status: NOT_STARTED
+Milestone: M1 Technical proofs
+Dependencies: `15_PRODUCT_DECISIONS.todo`
+
+## Purpose
+
+Create a reproducible Unity repository that opens, tests, and builds cleanly before gameplay systems expand.
+
+## Tasks
+
+- [ ] Confirm Unity editor version and record it.
+- [ ] Confirm URP or alternate rendering pipeline.
+- [ ] Create the Unity project at repository root.
+- [ ] Apply Unity `.gitignore` and verify generated folders remain untracked.
+- [ ] Create `Assets/EntropyTag/` folder structure from `docs/03_UNITY_PROJECT_STRUCTURE.md`.
+- [ ] Create Domain, Application, Unity, Presentation, Infrastructure, EditMode, and PlayMode assemblies.
+- [ ] Create Bootstrap and initial test scenes.
+- [ ] Install only approved packages.
+- [ ] Create Input System action asset.
+- [ ] Add project-wide coding and analyzer settings.
+- [ ] Add sample EditMode and PlayMode tests.
+- [ ] Add command-line test and development-build scripts.
+- [ ] Validate clean-clone setup.
+
+## Acceptance criteria
+
+- [ ] Project opens without missing-package or serialization errors.
+- [ ] Assembly dependency direction matches the architecture document.
+- [ ] EditMode and PlayMode sample tests pass.
+- [ ] Development build launches.
+- [ ] Clean Git status contains no Unity-generated cache.
+- [ ] Setup steps are documented.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

@@ -1,0 +1,51 @@
+# Documentation Foundation
+
+Status: DONE
+Milestone: M0 Planning foundation
+Dependencies: None
+
+## Purpose
+
+Create the complete planning package required before Unity implementation begins.
+
+## Tasks
+
+- [x] Replace placeholder README with future-facing game README.
+- [x] Document vision and product pillars.
+- [x] Document core game design.
+- [x] Document technical architecture.
+- [x] Document Unity project structure.
+- [x] Document asset pipeline.
+- [x] Document vertical-slice plan.
+- [x] Document production roadmap.
+- [x] Document testing and quality strategy.
+- [x] Document decisions and risks.
+- [x] Create 40-plus-term glossary.
+- [x] Document prototype inheritance.
+- [x] Create documentation catalogue.
+- [x] Create granular TODO system.
+- [x] Restore canonical context store.
+
+## Acceptance criteria
+
+- [x] Documentation is about the planned Unity game, not a detailed prototype README.
+- [x] Prototype coverage is brief and points to the separate historical folder.
+- [x] Planned files, folders, assets, architecture, milestones, quality, and risks are documented.
+- [x] Every file inside `TODO/` ends in `.todo`.
+- [x] TODO files include status, tasks, acceptance criteria, evidence, and completion log.
+- [x] README links the planning package.
+- [x] Context is synchronized in this repository.
+
+## Completion evidence
+
+- Branch: `workDesk/develop`
+- README: `README.md`
+- Documentation: `docs/`
+- Work system: `TODO/`
+- Context: `.agent-context/`
+
+## Completion log
+
+- 2026-08-18 - Planning and documentation foundation completed. Validation results are recorded in the
+  session and context journal.
+

@@ -1,0 +1,41 @@
+# Element Reactions
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: `02_DOMAIN_RULES.todo`, `04_TERRITORY_PAINTING.todo`
+
+## Purpose
+
+Make Ice, Fire, and Mist mechanically deterministic and immediately readable.
+
+## Tasks
+
+- [ ] Create Ice and Fire element configuration.
+- [ ] Create Mist reaction configuration.
+- [ ] Implement reaction ownership/state rules.
+- [ ] Implement contested-reaction bank award.
+- [ ] Implement reaction event.
+- [ ] Implement visual material state.
+- [ ] Implement reaction VFX placeholder.
+- [ ] Implement reaction audio placeholder.
+- [ ] Define first player status interaction.
+- [ ] Implement status telegraph and duration.
+- [ ] Add conversion and status tests.
+- [ ] Run comprehension playtest.
+
+## Acceptance criteria
+
+- [ ] Players can distinguish Ice, Fire, and Mist without relying on color alone.
+- [ ] Reaction result is deterministic.
+- [ ] Visible reaction occurs at the authoritative contact.
+- [ ] Status effects are telegraphed and configurable.
+- [ ] Playtesters predict the reaction after seeing it twice.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

@@ -1,0 +1,42 @@
+# Match Flow and Scoring
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: `02_DOMAIN_RULES.todo`, `04_TERRITORY_PAINTING.todo`, pressure decision in `15_PRODUCT_DECISIONS.todo`
+
+## Purpose
+
+Deliver a complete match from start through result and rematch with explainable scoring.
+
+## Tasks
+
+- [ ] Implement match bootstrap.
+- [ ] Implement countdown and active phase.
+- [ ] Implement timer.
+- [ ] Implement selected pressure mechanism.
+- [ ] Implement active-arena coverage calculation.
+- [ ] Implement bank display data.
+- [ ] Implement explicit tie behavior.
+- [ ] Implement result snapshot.
+- [ ] Implement reset and rematch.
+- [ ] Emit phase and result events.
+- [ ] Add ten-match automated smoke scenario.
+- [ ] Test zero ownership, ties, reset, and completion.
+
+## Acceptance criteria
+
+- [ ] Ten consecutive matches complete without manual repair.
+- [ ] Result matches authoritative territory state.
+- [ ] Tie and zero-owner behavior is explicit.
+- [ ] Pressure is telegraphed and symmetric.
+- [ ] Rematch returns to a clean state.
+- [ ] Result data explains decisive territory and reactions.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

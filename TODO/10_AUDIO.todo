@@ -1,0 +1,42 @@
+# Audio
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: `05_ELEMENT_REACTIONS.todo`, `06_MATCH_FLOW_SCORING.todo`
+
+## Purpose
+
+Use original audio to communicate element identity, contact, reactions, pressure, and match outcome.
+
+## Tasks
+
+- [ ] Define audio direction.
+- [ ] Create Ice and Fire spray loops.
+- [ ] Create territory impact sounds.
+- [ ] Create Mist reaction stinger.
+- [ ] Create movement-on-territory sounds.
+- [ ] Create status-effect sounds.
+- [ ] Create pressure warning.
+- [ ] Create UI confirmation/cancel sounds.
+- [ ] Create result stingers.
+- [ ] Implement mixer groups and volume settings.
+- [ ] Implement click-free spray loop transitions.
+- [ ] Validate simultaneous-effect limits.
+- [ ] Record source and licenses.
+
+## Acceptance criteria
+
+- [ ] Players can identify active element and reaction through audio support.
+- [ ] Spray audio starts and stops responsively.
+- [ ] Important warnings remain audible in a busy mix.
+- [ ] Master, music, SFX, and UI volume are configurable.
+- [ ] All audio is original or properly licensed.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

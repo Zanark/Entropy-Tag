@@ -1,0 +1,41 @@
+# Bots and AI
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: `03_PLAYER_CAMERA_INPUT.todo`, `04_TERRITORY_PAINTING.todo`, `06_MATCH_FLOW_SCORING.todo`
+
+## Purpose
+
+Provide a fair, seedable opponent that demonstrates the game loop without hidden stat advantages.
+
+## Tasks
+
+- [ ] Define bot intent interface shared with human input.
+- [ ] Implement valid movement target selection.
+- [ ] Implement route painting behavior.
+- [ ] Implement contested-territory selection.
+- [ ] Implement basic opponent awareness.
+- [ ] Implement spray resource awareness.
+- [ ] Implement active-arena awareness.
+- [ ] Implement stuck detection and recovery.
+- [ ] Inject deterministic random source.
+- [ ] Add debug state overlay.
+- [ ] Add full-match bot test.
+- [ ] Record first bot profile tuning.
+
+## Acceptance criteria
+
+- [ ] Bot uses the same movement, spray, and status rules as a human.
+- [ ] Fixed seed reproduces bot decisions.
+- [ ] Bot completes ten matches without leaving the arena or permanent stuck state.
+- [ ] Bot does not spray continuously when recovery is required.
+- [ ] Difficulty does not use hidden movement or paint multipliers.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

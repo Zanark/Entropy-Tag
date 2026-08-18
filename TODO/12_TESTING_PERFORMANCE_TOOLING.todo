@@ -1,0 +1,44 @@
+# Testing, Performance, and Tooling
+
+Status: NOT_STARTED
+Milestone: M1-M2
+Dependencies: `01_PROJECT_FOUNDATION.todo`; expands with every gameplay system
+
+## Purpose
+
+Make correctness, performance, configuration, and debugging visible and repeatable.
+
+## Tasks
+
+- [ ] Configure Unity Test Framework.
+- [ ] Add domain test conventions.
+- [ ] Add PlayMode smoke framework.
+- [ ] Add deterministic match seed support.
+- [ ] Add performance markers.
+- [ ] Add development diagnostics overlay.
+- [ ] Add territory visualization modes.
+- [ ] Add configuration validator.
+- [ ] Add missing-reference validator.
+- [ ] Add batch test command.
+- [ ] Add batch development-build command.
+- [ ] Add performance scenario runner.
+- [ ] Define defect severity and triage template.
+- [ ] Define playtest capture template.
+
+## Acceptance criteria
+
+- [ ] Tests run locally and in batch mode.
+- [ ] Core gameplay has no silent invalid-state fallback.
+- [ ] Territory costs are measured under sustained load.
+- [ ] Build validation catches missing scenes/configuration.
+- [ ] Seed and key metrics are visible in development builds.
+- [ ] Definition of done matches `docs/07_TESTING_AND_QUALITY.md`.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

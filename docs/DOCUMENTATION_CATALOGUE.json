@@ -1,0 +1,86 @@
+{
+  "items": [
+    {
+      "title": "onboarding",
+      "name": "EntropyTag Onboarding",
+      "prompt": "Introduce the original Unity game direction using README.md:1 and docs/00_VISION.md:1.",
+      "children": [
+        {
+          "title": "principal-guide",
+          "name": "Principal-Level EntropyTag Guide",
+          "prompt": "Explain the core architectural insight, layer boundaries, territory authority, tradeoffs, and strategic reading order using docs/02_TECHNICAL_ARCHITECTURE.md:1, docs/08_DECISIONS_AND_RISKS.md:1, and docs/10_PROTOTYPE_INHERITANCE.md:1.",
+          "children": []
+        },
+        {
+          "title": "zero-to-hero",
+          "name": "Zero-to-Hero Unity Learning Path",
+          "prompt": "Teach a newcomer the game, Unity structure, C sharp domain separation, asset pipeline, tests, and contribution workflow using docs/01_GAME_DESIGN.md:1, docs/03_UNITY_PROJECT_STRUCTURE.md:1, docs/04_ASSET_PIPELINE.md:1, and docs/07_TESTING_AND_QUALITY.md:1.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "getting-started",
+      "name": "Getting Started with EntropyTag",
+      "prompt": "Describe repository status, planning workflow, documentation order, and TODO completion rules using README.md:1 and TODO/00_INDEX.todo:1.",
+      "children": [
+        {
+          "title": "game-overview",
+          "name": "Game Overview",
+          "prompt": "Explain player promise, core loop, elements, territory, match phases, and accessibility using docs/00_VISION.md:1 and docs/01_GAME_DESIGN.md:1.",
+          "children": []
+        },
+        {
+          "title": "vertical-slice",
+          "name": "Vertical-Slice Entry Point",
+          "prompt": "Explain scope, work gates, acceptance criteria, and pivot conditions using docs/05_VERTICAL_SLICE_PLAN.md:1.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "deep-dive",
+      "name": "EntropyTag Deep Dive",
+      "prompt": "Navigate the complete planned game architecture and production system using docs/02_TECHNICAL_ARCHITECTURE.md:1 and docs/06_PRODUCTION_ROADMAP.md:1.",
+      "children": [
+        {
+          "title": "architecture",
+          "name": "Runtime Architecture",
+          "prompt": "Analyze domain, application, Unity adapters, presentation, infrastructure, territory representation, character, spray, scenes, performance, and networking boundaries using docs/02_TECHNICAL_ARCHITECTURE.md:1.",
+          "children": []
+        },
+        {
+          "title": "project-layout",
+          "name": "Unity Project Layout",
+          "prompt": "Document planned folders, assemblies, scene naming, prefab rules, generated content, and naming conventions using docs/03_UNITY_PROJECT_STRUCTURE.md:1.",
+          "children": []
+        },
+        {
+          "title": "assets",
+          "name": "Asset Production",
+          "prompt": "Document original art direction, asset lifecycle, character/environment needs, territory shaders, VFX, audio, imports, budgets, licensing, and placeholders using docs/04_ASSET_PIPELINE.md:1.",
+          "children": []
+        },
+        {
+          "title": "quality",
+          "name": "Testing and Quality",
+          "prompt": "Document unit, application, PlayMode, performance, visual, build, defect, and playtest standards using docs/07_TESTING_AND_QUALITY.md:1.",
+          "children": []
+        },
+        {
+          "title": "roadmap-risks",
+          "name": "Roadmap, Decisions, and Risks",
+          "prompt": "Explain milestones, scope ladder, accepted decisions, proposed decisions, risks, and change protocol using docs/06_PRODUCTION_ROADMAP.md:1 and docs/08_DECISIONS_AND_RISKS.md:1.",
+          "children": []
+        },
+        {
+          "title": "glossary",
+          "name": "EntropyTag Terminology",
+          "prompt": "Provide the canonical vocabulary from docs/09_GLOSSARY.md:1.",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
+
