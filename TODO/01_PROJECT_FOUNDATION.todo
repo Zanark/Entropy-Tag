@@ -1,6 +1,6 @@
 # Unity Project Foundation
 
-Status: NOT_STARTED
+Status: IN_PROGRESS
 Milestone: M1 Technical proofs
 Dependencies: `15_PRODUCT_DECISIONS.todo`
 
@@ -10,10 +10,10 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 
 ## Tasks
 
-- [ ] Confirm Unity editor version and record it.
-- [ ] Confirm URP or alternate rendering pipeline.
-- [ ] Create the Unity project at repository root.
-- [ ] Apply Unity `.gitignore` and verify generated folders remain untracked.
+- [x] Confirm Unity editor version and record it: `2022.3.47f1`.
+- [x] Confirm URP as the rendering pipeline. URP `14.0.11` is installed and active.
+- [x] Create the Unity project at `EntropyTag/`.
+- [x] Apply Unity `.gitignore` and verify Library, Temp, Logs, UserSettings, and generated solution are ignored.
 - [ ] Create `Assets/EntropyTag/` folder structure from `docs/03_UNITY_PROJECT_STRUCTURE.md`.
 - [ ] Create Domain, Application, Unity, Presentation, Infrastructure, EditMode, and PlayMode assemblies.
 - [ ] Create Bootstrap and initial test scenes.
@@ -35,9 +35,19 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 
 ## Completion evidence
 
-Not completed.
+- Unity project root: `EntropyTag/`
+- Editor: `2022.3.47f1`
+- Active render pipeline: URP `14.0.11`
+- Pipeline asset: `EntropyTag/Assets/Settings/Rendering/URP_EntropyTag.asset`
+- Renderer asset: `EntropyTag/Assets/Settings/Rendering/URP_EntropyTag_Renderer.asset`
+- Graphics and all Quality levels reference the same pipeline asset.
+- User validation: no pink materials observed.
+- Generated scene: `EntropyTag/Assets/Scenes/SampleScene.unity`
+- Package manifest: `EntropyTag/Packages/manifest.json`
+- Git ignore verification completed for Unity cache and generated solution paths.
 
 ## Completion log
 
-Not completed.
-
+- 2026-08-19 - Moved to IN_PROGRESS after Unity created the nested project. Recorded generated state; no
+  architecture folders, assemblies, input actions, tests, or build scripts exist yet.
+- 2026-08-19 - URP `14.0.11` activated and visually checked. Render-pipeline task completed.

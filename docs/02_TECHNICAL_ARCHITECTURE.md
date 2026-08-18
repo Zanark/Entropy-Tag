@@ -184,7 +184,7 @@ classDiagram
     TerritoryField --> ReactionResolver
 ```
 
-Names are proposals until the Unity project is created.
+Names are proposals until the corresponding assemblies and types are created.
 
 ## Territory representation
 
@@ -322,4 +322,3 @@ Do not build prediction, rollback, serialization, or transport in the first slic
 - Territory coordinate errors are asserted in development and safely rejected in release.
 - Save/settings corruption falls back to versioned defaults and reports the failure.
 - Build validation checks required scenes, input actions, and configuration assets.
-

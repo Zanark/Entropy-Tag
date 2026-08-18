@@ -53,10 +53,13 @@ Status values:
 
 ### D-006: Rendering pipeline
 
-- **Status:** PROPOSED
-- **Decision:** Use URP for the first project.
+- **Status:** ACCEPTED
+- **Decision:** Use URP `14.0.11`.
 - **Reason:** Broad platform support and sufficient shader/custom-rendering flexibility.
-- **Decision evidence needed:** Confirm Unity version, target platform, and required territory/VFX capabilities.
+- **Evidence:** Pipeline and renderer assets exist under `Assets/Settings/Rendering`; Graphics and every
+  Quality level reference `URP_EntropyTag`; the user observed no pink materials.
+- **Consequence:** Territory materials and rendering work may target URP. Pipeline changes now require a new
+  decision record.
 
 ### D-007: First playable team count
 
@@ -69,6 +72,15 @@ Status values:
 - **Status:** PROPOSED
 - **Options:** Shrinking safe boundary, closing lanes, rotating score zone.
 - **Decision evidence needed:** Gray-box map tests.
+
+### D-009: Nested Unity project root
+
+- **Status:** ACCEPTED
+- **Decision:** The Unity project root is `EntropyTag/` inside the Git repository root.
+- **Reason:** Unity created the nested folder when the repository was selected as the parent location; the user
+  explicitly chose to retain this path.
+- **Consequence:** Repository documentation and TODOs remain at root; Unity `Assets`, `Packages`, and
+  `ProjectSettings` live under `EntropyTag/`.
 
 ## Risk register
 
@@ -108,4 +120,3 @@ When accepting a decision:
 3. Update affected design/architecture documents.
 4. Update related TODOs.
 5. Update `.agent-context`.
-

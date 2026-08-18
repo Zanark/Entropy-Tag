@@ -2,60 +2,66 @@
 
 ## Purpose
 
-Define where every first-party file belongs before the Unity project is created. Consistent ownership prevents
-`Assets/` from becoming an unsearchable mixture of runtime code, imports, experiments, and generated files.
+Define where every first-party file belongs inside the generated Unity project at `EntropyTag/`. Consistent
+ownership prevents the Unity `Assets/` directory from becoming an unsearchable mixture of runtime code,
+imports, experiments, and generated files.
 
 ## Planned repository tree
 
+> **This is a target layout, not the current filesystem.** As of 2026-08-19, the existing Unity asset tree is
+> only `EntropyTag/Assets/Scenes/SampleScene.unity`. Create planned folders only through an approved foundation
+> task.
+
 ```text
 EntropyTag/
-|-- Assets/
-|   |-- EntropyTag/
-|   |   |-- Art/
-|   |   |   |-- Characters/
-|   |   |   |-- Environments/
-|   |   |   |-- Props/
-|   |   |   `-- Textures/
-|   |   |-- Audio/
-|   |   |   |-- Music/
-|   |   |   |-- SFX/
-|   |   |   `-- Voice/
-|   |   |-- Materials/
-|   |   |-- Prefabs/
-|   |   |   |-- Characters/
-|   |   |   |-- Gameplay/
+|-- EntropyTag/                 Unity project root
+|   |-- Assets/
+|   |   |-- EntropyTag/
+|   |   |   |-- Art/
+|   |   |   |   |-- Characters/
+|   |   |   |   |-- Environments/
+|   |   |   |   |-- Props/
+|   |   |   |   `-- Textures/
+|   |   |   |-- Audio/
+|   |   |   |   |-- Music/
+|   |   |   |   |-- SFX/
+|   |   |   |   `-- Voice/
+|   |   |   |-- Materials/
+|   |   |   |-- Prefabs/
+|   |   |   |   |-- Characters/
+|   |   |   |   |-- Gameplay/
+|   |   |   |   |-- UI/
+|   |   |   |   `-- VFX/
+|   |   |   |-- Scenes/
+|   |   |   |   |-- FrontEnd/
+|   |   |   |   |-- Gameplay/
+|   |   |   |   `-- Tests/
+|   |   |   |-- Scripts/
+|   |   |   |   |-- Application/
+|   |   |   |   |-- Domain/
+|   |   |   |   |-- Editor/
+|   |   |   |   |-- Infrastructure/
+|   |   |   |   |-- Presentation/
+|   |   |   |   `-- Unity/
+|   |   |   |-- Settings/
+|   |   |   |   |-- Elements/
+|   |   |   |   |-- Input/
+|   |   |   |   |-- Maps/
+|   |   |   |   `-- Tuning/
+|   |   |   |-- Shaders/
+|   |   |   |   |-- Includes/
+|   |   |   |   |-- Territory/
+|   |   |   |   `-- VFX/
+|   |   |   |-- Tests/
+|   |   |   |   |-- EditMode/
+|   |   |   |   `-- PlayMode/
 |   |   |   |-- UI/
 |   |   |   `-- VFX/
-|   |   |-- Scenes/
-|   |   |   |-- FrontEnd/
-|   |   |   |-- Gameplay/
-|   |   |   `-- Tests/
-|   |   |-- Scripts/
-|   |   |   |-- Application/
-|   |   |   |-- Domain/
-|   |   |   |-- Editor/
-|   |   |   |-- Infrastructure/
-|   |   |   |-- Presentation/
-|   |   |   `-- Unity/
-|   |   |-- Settings/
-|   |   |   |-- Elements/
-|   |   |   |-- Input/
-|   |   |   |-- Maps/
-|   |   |   `-- Tuning/
-|   |   |-- Shaders/
-|   |   |   |-- Includes/
-|   |   |   |-- Territory/
-|   |   |   `-- VFX/
-|   |   |-- Tests/
-|   |   |   |-- EditMode/
-|   |   |   `-- PlayMode/
-|   |   |-- UI/
-|   |   `-- VFX/
-|   |-- Plugins/
-|   `-- ThirdParty/
-|-- Packages/
-|-- ProjectSettings/
-|-- UserSettings/
+|   |   |-- Plugins/
+|   |   `-- ThirdParty/
+|   |-- Packages/
+|   |-- ProjectSettings/
+|   `-- UserSettings/
 |-- docs/
 |-- TODO/
 |-- .gitignore
@@ -64,28 +70,29 @@ EntropyTag/
 
 ## Ownership rules
 
-### `Assets/EntropyTag/`
+### `EntropyTag/Assets/EntropyTag/`
 
-All first-party source and authored assets. If the team creates it, it belongs here.
+**Planned; not currently created.** All first-party source and authored assets will live here after the
+project-foundation task creates and approves the hierarchy.
 
-### `Assets/ThirdParty/`
+### `EntropyTag/Assets/ThirdParty/`
 
 Imported asset-store or externally licensed content that must remain separated for attribution, upgrades, and
 removal. Each package requires a license record.
 
-### `Assets/Plugins/`
+### `EntropyTag/Assets/Plugins/`
 
 Native libraries or Unity packages that specifically require this location. Do not use it for ordinary C#.
 
-### `Packages/`
+### `EntropyTag/Packages/`
 
 Unity Package Manager manifest and lock file. Add dependencies intentionally; record why they are needed.
 
-### `ProjectSettings/`
+### `EntropyTag/ProjectSettings/`
 
 Version-controlled Unity project configuration. Changes require review because they affect every developer.
 
-### `UserSettings/`
+### `EntropyTag/UserSettings/`
 
 Local editor preferences. Never commit.
 
@@ -213,4 +220,3 @@ directories. Generated assets required at runtime must have a reproducible gener
 - Resources folder used as a universal locator.
 - Multiple unrelated systems in one assembly.
 - Committed local builds or Library cache.
-

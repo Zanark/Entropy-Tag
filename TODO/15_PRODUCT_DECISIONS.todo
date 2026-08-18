@@ -19,8 +19,8 @@ Resolve decisions that would otherwise cause expensive implementation churn.
 
 ## Blocking decisions
 
-- [ ] Confirm Unity editor version for project creation.
-- [ ] Confirm URP or alternate render pipeline.
+- [x] Confirm Unity editor version for project creation: `2022.3.47f1`.
+- [x] Confirm URP `14.0.11` as the rendering pipeline.
 - [ ] Confirm first-slice team count: proposed Ice versus Fire.
 - [ ] Confirm first pressure system.
 - [ ] Confirm territory authority experiment and decision gate.
@@ -54,4 +54,3 @@ Partially complete; accepted decisions are recorded in `docs/08_DECISIONS_AND_RI
 ## Completion log
 
 - 2026-08-18 - Initial accepted and blocking decisions captured on `workDesk/develop`.
-

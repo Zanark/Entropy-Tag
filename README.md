@@ -6,9 +6,9 @@ EntropyTag is a planned Unity game about movement, territory, and elemental coun
 Water, or Fire teams, transform a 3D arena with their element, exploit friendly terrain, trigger multi-step
 reactions, disrupt opposing players, and adapt as the playable space contracts toward a decisive finish.
 
-This repository is currently in its **planning and documentation phase**. It intentionally contains no Unity
-project yet. The goal of this branch is to establish a coherent product, architecture, asset strategy,
-vertical-slice scope, and executable work backlog before implementation begins.
+This repository has entered its **Unity foundation phase**. The generated Unity project lives under
+`EntropyTag/`, while product documentation and executable planning remain at the repository root. Gameplay
+implementation has not started yet.
 
 ## The game we are building
 
@@ -74,7 +74,8 @@ forward and the prototype limitations that must not be repeated.
 | Product vision | Documented |
 | Core game design | Documented for vertical-slice planning |
 | Technical architecture | Proposed; requires implementation validation |
-| Unity project | Not created |
+| Unity project | Created under `EntropyTag/` with Unity `2022.3.47f1` |
+| Render pipeline | URP `14.0.11`, active in Graphics and all Quality levels |
 | Gameplay code | Not started |
 | First-party assets | Not started |
 | Vertical slice | Planned |
@@ -115,23 +116,17 @@ A work area is complete only when:
 
 ## Planned Unity repository shape
 
+> **Planned, not current:** The first-party `Assets/EntropyTag/` hierarchy below has not been created. The
+> current `Assets/` directory contains only `Scenes/SampleScene.unity`.
+
 ```text
 EntropyTag/
-|-- Assets/
-|   `-- EntropyTag/
-|       |-- Art/
-|       |-- Audio/
-|       |-- Materials/
-|       |-- Prefabs/
-|       |-- Scenes/
-|       |-- Scripts/
-|       |-- Settings/
-|       |-- Shaders/
-|       |-- Tests/
-|       `-- UI/
-|-- Packages/
-|-- ProjectSettings/
-|-- UserSettings/              Local only; ignored
+|-- EntropyTag/                Unity project root
+|   |-- Assets/
+|   |   `-- EntropyTag/        Planned first-party asset root
+|   |-- Packages/
+|   |-- ProjectSettings/
+|   `-- UserSettings/          Local only; ignored
 |-- docs/
 |-- TODO/
 `-- README.md
@@ -152,6 +147,5 @@ The detailed layout and ownership rules are defined in
 
 ## Branch purpose
 
-`workDesk/develop` currently establishes the game-development foundation. No Unity project or gameplay
-implementation should be added until the planning package is reviewed and the foundation TODO is explicitly
-started.
+`workDesk/develop` now contains the generated Unity project and planning foundation. Project-foundation work
+is active; gameplay systems remain not started.

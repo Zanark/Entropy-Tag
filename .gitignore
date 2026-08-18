@@ -50,7 +50,7 @@ Desktop.ini
 
 # Local context and temporary files
 .agent-context/
+docs/ledger/
 *.log
 *.bak
 *.tmp
-
