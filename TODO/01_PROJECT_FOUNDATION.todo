@@ -1,6 +1,6 @@
 # Unity Project Foundation
 
-Status: IN_PROGRESS
+Status: DONE
 Milestone: M1 Technical proofs
 Dependencies: `15_PRODUCT_DECISIONS.todo`
 
@@ -24,11 +24,11 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - [x] Add project-wide `.editorconfig`; defer external analyzers until a measured need justifies another package.
 - [x] Add sample EditMode and PlayMode tests.
 - [x] Add command-line test and development-build scripts.
-- [ ] Validate clean-clone setup.
+- [x] Validate clean-clone setup.
 
 ## Acceptance criteria
 
-- [ ] Project opens without missing-package or serialization errors.
+- [x] Project opens without missing-package or serialization errors.
 - [x] Assembly dependency direction matches the architecture document.
 - [x] EditMode and PlayMode sample tests pass.
 - [x] Development build launches.
@@ -63,6 +63,8 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
   replacement executable was not launched.
 - Automation: `scripts/Invoke-UnityTests.ps1` and `scripts/Invoke-UnityBuild.ps1`, with matching `.txt` copies.
 - Git ignore verification completed for Unity cache and generated solution paths.
+- Clean-clone validation: fresh import succeeded in `C:\devdesk\gamedesk\EntropyTag_CleanTest\EntropyTag`;
+  EditMode passed 2/2, PlayMode passed 1/1, and the Windows development build completed successfully.
 
 ## Completion log
 
@@ -88,3 +90,8 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - 2026-08-19 - Final audit at 21:08-21:11 IST re-imported and compiled the final tree, reran all three tests,
   and verified packages, assembly direction, metadata, Bootstrap GUID/build settings, input schemes,
   documentation, TODOs, ignores, and build presence. Interactive Console and clean-clone gates remain open.
+- 2026-08-19 - At 22:24:02 IST, the developer reopened Unity and reported no Console issues. Interactive
+  project-open validation passed; only clean-clone validation remains.
+- 2026-08-19 - At 23:30:15 IST, validation completed in the developer-created clean clone. Unity performed a
+  fresh import, EditMode passed 2/2, PlayMode passed 1/1, and the Windows development build succeeded.
+  Project Foundation moved to DONE. Development remains in the original repository.
