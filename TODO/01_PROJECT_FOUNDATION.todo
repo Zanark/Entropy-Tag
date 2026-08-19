@@ -14,10 +14,12 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - [x] Confirm URP as the rendering pipeline. URP `14.0.11` is installed and active.
 - [x] Create the Unity project at `EntropyTag/`.
 - [x] Apply Unity `.gitignore` and verify Library, Temp, Logs, UserSettings, and generated solution are ignored.
+- [x] Install Input System `1.7.0` and activate **Input System Package (New)**.
+- [x] Set Company Name to `ZanarksDevDesk` and verify that Unity serializes it.
 - [ ] Create `Assets/EntropyTag/` folder structure from `docs/03_UNITY_PROJECT_STRUCTURE.md`.
 - [ ] Create Domain, Application, Unity, Presentation, Infrastructure, EditMode, and PlayMode assemblies.
 - [ ] Create Bootstrap and initial test scenes.
-- [ ] Install only approved packages.
+- [x] Install only approved packages and remove unused Unity Version Control and Visual Scripting packages.
 - [ ] Create Input System action asset.
 - [ ] Add project-wide coding and analyzer settings.
 - [ ] Add sample EditMode and PlayMode tests.
@@ -44,6 +46,11 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - User validation: no pink materials observed.
 - Generated scene: `EntropyTag/Assets/Scenes/SampleScene.unity`
 - Package manifest: `EntropyTag/Packages/manifest.json`
+- Input System package: `com.unity.inputsystem` version `1.7.0`.
+- Active input backend: `activeInputHandler: 1` in `EntropyTag/ProjectSettings/ProjectSettings.asset`.
+- Company Name: `ZanarksDevDesk`; Standalone identifier: `com.ZanarksDevDesk.EntropyTag`.
+- Package review complete: retained URP, Input System, TextMeshPro, Timeline, uGUI, and Development feature;
+  removed Unity Version Control and Visual Scripting.
 - Git ignore verification completed for Unity cache and generated solution paths.
 
 ## Completion log
@@ -51,3 +58,12 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - 2026-08-19 - Moved to IN_PROGRESS after Unity created the nested project. Recorded generated state; no
   architecture folders, assemblies, input actions, tests, or build scripts exist yet.
 - 2026-08-19 - URP `14.0.11` activated and visually checked. Render-pipeline task completed.
+- 2026-08-19 - Installed Input System `1.7.0`. The developer manually selected **Input System Package
+  (New)** after the first restart, causing the expected second restart. Manifest, package lock, and Player
+  setting were verified; no input action asset exists yet.
+- 2026-08-19 - Developer entered Company Name `ZanarksDevDesk`, meaning "Zanark's Dev Desk," and supplied
+  a screenshot. The image was preserved in the ledger. The initial check occurred before Unity flushed the
+  focused field; a later check verified the serialized value and generated Standalone identifier.
+- 2026-08-19 - Removed Unity Version Control and Visual Scripting through Package Manager. Verified both
+  disappeared from the manifest and package lock while rendering, input, UI, Timeline, and test tooling
+  remained intact.
