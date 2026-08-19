@@ -1,6 +1,6 @@
 # Build and Release
 
-Status: NOT_STARTED
+Status: IN_PROGRESS
 Milestone: M2 and later
 Dependencies: `01_PROJECT_FOUNDATION.todo`, `12_TESTING_PERFORMANCE_TOOLING.todo`
 
@@ -13,10 +13,10 @@ Produce reproducible, identifiable, validated builds without committing generate
 - [ ] Define development and release build profiles.
 - [ ] Define versioning policy.
 - [ ] Embed commit and build metadata.
-- [ ] Validate required scenes.
+- [x] Validate required scenes.
 - [ ] Validate configuration and licenses.
-- [ ] Create clean build output directory outside tracked assets.
-- [ ] Create one-command development build.
+- [x] Create clean build output directory outside tracked assets.
+- [x] Create one-command development build.
 - [ ] Create one-command test-plus-build workflow.
 - [ ] Document supported PC environment.
 - [ ] Create artifact manifest.
@@ -33,9 +33,14 @@ Produce reproducible, identifiable, validated builds without committing generate
 
 ## Completion evidence
 
-Not completed.
+Foundation evidence:
+
+- Bootstrap is the enabled build scene.
+- `EntropyTag.Editor.EntropyTagBuildCommand.BuildWindowsDevelopment` fails if no scene is enabled.
+- `scripts/Invoke-UnityBuild.ps1` creates an ignored Windows development build and verifies the executable.
+- The generated executable remained alive during an 8-second launch smoke test.
 
 ## Completion log
 
-Not completed.
-
+- 2026-08-19 - Added the first validated one-command Windows development build. Version metadata,
+  test-plus-build orchestration, artifact manifests, release profiles, and release policy remain outstanding.

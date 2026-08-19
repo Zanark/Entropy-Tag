@@ -73,11 +73,13 @@ forward and the prototype limitations that must not be repeated.
 |---|---|
 | Product vision | Documented |
 | Core game design | Documented for vertical-slice planning |
-| Technical architecture | Proposed; requires implementation validation |
+| Technical architecture | Foundation assemblies implemented and validated |
 | Unity project | Created under `EntropyTag/` with Unity `2022.3.47f1` |
 | Render pipeline | URP `14.0.11`, active in Graphics and all Quality levels |
-| Gameplay code | Not started |
-| First-party assets | Not started |
+| Input | Input System `1.7.0` with keyboard/mouse and gamepad action asset |
+| Gameplay code | Foundation only; gameplay systems not started |
+| First-party assets | Approved hierarchy created under `EntropyTag/Assets/EntropyTag/` |
+| Automated validation | EditMode and PlayMode smoke tests pass; Windows development build launches |
 | Vertical slice | Planned |
 | Online multiplayer | Deferred |
 

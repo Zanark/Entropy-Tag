@@ -91,17 +91,23 @@ Responsibilities:
 - Performance markers.
 - Dependency composition.
 
-## Proposed assemblies
+## Foundation assemblies
 
 | Assembly | Unity dependency | Purpose |
 |---|---|---|
-| `EntropyTag.Domain` | No | Rules, value objects, deterministic reactions |
-| `EntropyTag.Application` | No where practical | Match orchestration, commands, events |
+| `EntropyTag.Domain` | No | Rules, value objects, deterministic reactions; `noEngineReferences` is enabled |
+| `EntropyTag.Application` | No | Match orchestration, commands, events; currently depends only on Domain |
 | `EntropyTag.Unity` | Yes | Character, physics, input, territory adapters |
 | `EntropyTag.Presentation` | Yes | Camera, UI, VFX, audio, animation |
 | `EntropyTag.Infrastructure` | Yes | Settings, diagnostics, build integration |
+| `EntropyTag.Editor` | Editor only | Foundation setup, scene generation, validation, and build commands |
 | `EntropyTag.Tests.EditMode` | Test only | Domain and application tests |
 | `EntropyTag.Tests.PlayMode` | Test only | Scene, input, physics, rendering smoke tests |
+
+These assemblies now exist under `EntropyTag/Assets/EntropyTag/`. The initial compilation, EditMode tests,
+PlayMode test, and Windows development build pass. The architecture remains intentionally skeletal: the
+assembly boundaries are real, while most gameplay types shown later in this document remain proposals until
+their corresponding tasks begin.
 
 Dependencies flow inward. Domain must never reference presentation.
 

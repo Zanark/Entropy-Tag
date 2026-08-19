@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/EntropyTag/Scenes/Bootstrap.unity
+    guid: ce8be45a892ca8f4ab69277e04ac2c6f
   m_configObjects: {}

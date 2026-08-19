@@ -16,24 +16,24 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - [x] Apply Unity `.gitignore` and verify Library, Temp, Logs, UserSettings, and generated solution are ignored.
 - [x] Install Input System `1.7.0` and activate **Input System Package (New)**.
 - [x] Set Company Name to `ZanarksDevDesk` and verify that Unity serializes it.
-- [ ] Create `Assets/EntropyTag/` folder structure from `docs/03_UNITY_PROJECT_STRUCTURE.md`.
-- [ ] Create Domain, Application, Unity, Presentation, Infrastructure, EditMode, and PlayMode assemblies.
-- [ ] Create Bootstrap and initial test scenes.
+- [x] Create `Assets/EntropyTag/` folder structure from `docs/03_UNITY_PROJECT_STRUCTURE.md`.
+- [x] Create Domain, Application, Unity, Presentation, Infrastructure, Editor, EditMode, and PlayMode assemblies.
+- [x] Create Bootstrap and initial test scenes.
 - [x] Install only approved packages and remove unused Unity Version Control and Visual Scripting packages.
-- [ ] Create Input System action asset.
-- [ ] Add project-wide coding and analyzer settings.
-- [ ] Add sample EditMode and PlayMode tests.
-- [ ] Add command-line test and development-build scripts.
+- [x] Create Input System action asset.
+- [x] Add project-wide `.editorconfig`; defer external analyzers until a measured need justifies another package.
+- [x] Add sample EditMode and PlayMode tests.
+- [x] Add command-line test and development-build scripts.
 - [ ] Validate clean-clone setup.
 
 ## Acceptance criteria
 
 - [ ] Project opens without missing-package or serialization errors.
-- [ ] Assembly dependency direction matches the architecture document.
-- [ ] EditMode and PlayMode sample tests pass.
-- [ ] Development build launches.
-- [ ] Clean Git status contains no Unity-generated cache.
-- [ ] Setup steps are documented.
+- [x] Assembly dependency direction matches the architecture document.
+- [x] EditMode and PlayMode sample tests pass.
+- [x] Development build launches.
+- [x] Clean Git status contains no Unity-generated cache.
+- [x] Setup steps are documented.
 
 ## Completion evidence
 
@@ -51,6 +51,17 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - Company Name: `ZanarksDevDesk`; Standalone identifier: `com.ZanarksDevDesk.EntropyTag`.
 - Package review complete: retained URP, Input System, TextMeshPro, Timeline, uGUI, and Development feature;
   removed Unity Version Control and Visual Scripting.
+- First-party hierarchy: 40 Unity folders with complete folder metadata.
+- Clone persistence: 24 `.gitkeep` files retain empty content leaves.
+- Assemblies: Domain, Application, Unity, Presentation, Infrastructure, Editor, EditMode tests, PlayMode tests.
+- Input asset: `EntropyTag/Assets/EntropyTag/Settings/Input/EntropyTagInputActions.inputactions`.
+- Scenes: `Bootstrap.unity` and `Tests/Test_Foundation.unity`; Bootstrap is enabled in build settings.
+- EditMode: 2 passed, 0 failed.
+- PlayMode: 1 passed, 0 failed.
+- Windows development build: created and remained alive during an 8-second launch smoke test.
+- Build was regenerated successfully after removing unnecessary script-debugging connectivity; the
+  replacement executable was not launched.
+- Automation: `scripts/Invoke-UnityTests.ps1` and `scripts/Invoke-UnityBuild.ps1`, with matching `.txt` copies.
 - Git ignore verification completed for Unity cache and generated solution paths.
 
 ## Completion log
@@ -67,3 +78,13 @@ Create a reproducible Unity repository that opens, tests, and builds cleanly bef
 - 2026-08-19 - Removed Unity Version Control and Visual Scripting through Package Manager. Verified both
   disappeared from the manifest and package lock while rendering, input, UI, Timeline, and test tooling
   remained intact.
+- 2026-08-19 - With Unity closed, added the complete first-party hierarchy, eight assembly definitions,
+  foundation types, Input System actions, editor setup/build automation, and sample tests. Unity batch mode
+  generated scenes and metadata. Two namespace collisions were fixed during real compilation. Final results:
+  2/2 EditMode tests, 1/1 PlayMode test, successful Windows development build, and successful launch smoke
+  test. Interactive Console verification and clean-clone validation remain pending.
+- 2026-08-19 - Removed `BuildOptions.AllowDebugging` after the original smoke test triggered a Windows
+  Firewall prompt. Rebuilt successfully with `BuildOptions.Development` only and did not relaunch the player.
+- 2026-08-19 - Final audit at 21:08-21:11 IST re-imported and compiled the final tree, reran all three tests,
+  and verified packages, assembly direction, metadata, Bootstrap GUID/build settings, input schemes,
+  documentation, TODOs, ignores, and build presence. Interactive Console and clean-clone gates remain open.

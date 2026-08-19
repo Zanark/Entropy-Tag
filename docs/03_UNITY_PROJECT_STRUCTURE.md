@@ -6,11 +6,12 @@ Define where every first-party file belongs inside the generated Unity project a
 ownership prevents the Unity `Assets/` directory from becoming an unsearchable mixture of runtime code,
 imports, experiments, and generated files.
 
-## Planned repository tree
+## Repository tree
 
-> **This is a target layout, not the current filesystem.** As of 2026-08-19, the existing Unity asset tree is
-> only `EntropyTag/Assets/Scenes/SampleScene.unity`. Create planned folders only through an approved foundation
-> task.
+The approved first-party hierarchy was created on 2026-08-19 through
+`EntropyTag.Editor.ProjectFoundationSetup`. Unity generated and serialized all folder metadata. Empty
+content folders are intentional placeholders for later gameplay and art tasks. Each empty leaf contains a
+`.gitkeep` file so the hierarchy survives a clean Git checkout.
 
 ```text
 EntropyTag/
@@ -72,8 +73,9 @@ EntropyTag/
 
 ### `EntropyTag/Assets/EntropyTag/`
 
-**Planned; not currently created.** All first-party source and authored assets will live here after the
-project-foundation task creates and approves the hierarchy.
+**Existing.** All first-party source and authored assets live here. Foundation code currently occupies the
+layered `Scripts/` folders, input configuration lives under `Settings/Input/`, and automated tests live under
+`Tests/`.
 
 ### `EntropyTag/Assets/ThirdParty/`
 
@@ -139,6 +141,9 @@ Local editor preferences. Never commit.
 ## Assembly-definition layout
 
 Every major script layer receives an `.asmdef`. Tests reference only the assemblies they exercise.
+
+The foundation now contains Domain, Application, Unity, Presentation, Infrastructure, Editor, EditMode test,
+and PlayMode test assemblies. Domain and Application explicitly disable Unity engine references.
 
 ```mermaid
 flowchart LR

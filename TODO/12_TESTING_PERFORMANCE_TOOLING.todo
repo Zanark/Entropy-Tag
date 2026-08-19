@@ -1,6 +1,6 @@
 # Testing, Performance, and Tooling
 
-Status: NOT_STARTED
+Status: IN_PROGRESS
 Milestone: M1-M2
 Dependencies: `01_PROJECT_FOUNDATION.todo`; expands with every gameplay system
 
@@ -10,17 +10,17 @@ Make correctness, performance, configuration, and debugging visible and repeatab
 
 ## Tasks
 
-- [ ] Configure Unity Test Framework.
-- [ ] Add domain test conventions.
-- [ ] Add PlayMode smoke framework.
+- [x] Configure Unity Test Framework.
+- [x] Add domain test conventions.
+- [x] Add PlayMode smoke framework.
 - [ ] Add deterministic match seed support.
 - [ ] Add performance markers.
 - [ ] Add development diagnostics overlay.
 - [ ] Add territory visualization modes.
 - [ ] Add configuration validator.
 - [ ] Add missing-reference validator.
-- [ ] Add batch test command.
-- [ ] Add batch development-build command.
+- [x] Add batch test command.
+- [x] Add batch development-build command.
 - [ ] Add performance scenario runner.
 - [ ] Define defect severity and triage template.
 - [ ] Define playtest capture template.
@@ -36,9 +36,14 @@ Make correctness, performance, configuration, and debugging visible and repeatab
 
 ## Completion evidence
 
-Not completed.
+Foundation evidence:
+
+- `EntropyTag.Tests.EditMode`: 2 passed, 0 failed.
+- `EntropyTag.Tests.PlayMode`: 1 passed, 0 failed.
+- `scripts/Invoke-UnityTests.ps1` runs either suite and requires a fresh XML result.
+- `scripts/Invoke-UnityBuild.ps1` waits for Unity and requires the expected executable.
 
 ## Completion log
 
-Not completed.
-
+- 2026-08-19 - Foundation test assemblies, conventions, PlayMode scene smoke test, and batch test/build
+  commands added. Broader gameplay, performance, diagnostics, and validation tooling remain outstanding.
