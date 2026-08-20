@@ -3,6 +3,7 @@
   "rootNamespace": "EntropyTag.Tests.PlayMode",
   "references": [
     "EntropyTag.Application",
+    "EntropyTag.Infrastructure",
     "EntropyTag.Presentation",
     "EntropyTag.Unity"
   ],

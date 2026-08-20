@@ -6,9 +6,9 @@ EntropyTag is a planned Unity game about movement, territory, and elemental coun
 Water, or Fire teams, transform a 3D arena with their element, exploit friendly terrain, trigger multi-step
 reactions, disrupt opposing players, and adapt as the playable space contracts toward a decisive finish.
 
-This repository has entered its **Unity foundation phase**. The generated Unity project lives under
-`EntropyTag/`, while product documentation and executable planning remain at the repository root. Gameplay
-implementation has not started yet.
+The Unity foundation is complete, and the first gameplay technical proof is implemented. The generated Unity
+project lives under `EntropyTag/`, while product documentation and executable planning remain at the
+repository root.
 
 ## The game we are building
 
@@ -44,7 +44,7 @@ flowchart LR
 ## Target experience
 
 - True 3D gameplay in Unity.
-- Third-person over-the-shoulder movement and aiming.
+- Third-person movement with a centered reticle and direct mouse/right-stick camera control.
 - Stylized low-poly environments with crisp, retro-inspired rendering.
 - Floor territory painting first; walls and arbitrary surfaces only after the core loop is proven.
 - Offline play with bots for the first vertical slice.
@@ -76,10 +76,10 @@ forward and the prototype limitations that must not be repeated.
 | Technical architecture | Foundation assemblies implemented and validated |
 | Unity project | Created under `EntropyTag/` with Unity `2022.3.47f1` |
 | Render pipeline | URP `14.0.11`, active in Graphics and all Quality levels |
-| Input | Input System `1.7.0` with keyboard/mouse and gamepad action asset |
-| Gameplay code | Foundation only; gameplay systems not started |
+| Input | Input System `1.7.0`; keyboard/mouse and gamepad drive the player sandbox |
+| Gameplay code | Third-person motor plus eight camera/crosshair comparison scenes and pooled test shooting |
 | First-party assets | Approved hierarchy created under `EntropyTag/Assets/EntropyTag/` |
-| Automated validation | EditMode and PlayMode smoke tests pass; Windows development build launches |
+| Automated validation | 4 EditMode and 7 PlayMode tests pass; Windows development build succeeds |
 | Vertical slice | Planned |
 | Online multiplayer | Deferred |
 
@@ -101,6 +101,7 @@ forward and the prototype limitations that must not be repeated.
 - [Decisions and risks](docs/08_DECISIONS_AND_RISKS.md)
 - [Glossary](docs/09_GLOSSARY.md)
 - [Prototype inheritance](docs/10_PROTOTYPE_INHERITANCE.md)
+- [Player, camera, and input sandbox](docs/11_PLAYER_CAMERA_INPUT.md)
 - [Documentation catalogue](docs/DOCUMENTATION_CATALOGUE.json)
 
 ## Work planning
@@ -116,16 +117,13 @@ A work area is complete only when:
 - The file status is changed to `DONE`.
 - Related documentation and context are synchronized.
 
-## Planned Unity repository shape
-
-> **Planned, not current:** The first-party `Assets/EntropyTag/` hierarchy below has not been created. The
-> current `Assets/` directory contains only `Scenes/SampleScene.unity`.
+## Unity repository shape
 
 ```text
 EntropyTag/
 |-- EntropyTag/                Unity project root
 |   |-- Assets/
-|   |   `-- EntropyTag/        Planned first-party asset root
+|   |   `-- EntropyTag/        First-party assets, scripts, scenes, settings, and tests
 |   |-- Packages/
 |   |-- ProjectSettings/
 |   `-- UserSettings/          Local only; ignored
@@ -149,5 +147,5 @@ The detailed layout and ownership rules are defined in
 
 ## Branch purpose
 
-`workDesk/develop` now contains the generated Unity project and planning foundation. Project-foundation work
-is active; gameplay systems remain not started.
+`workDesk/agentic` is the active implementation branch. Project Foundation is complete; Player/Camera/Input
+is implemented and awaiting its interactive feel check before completion.

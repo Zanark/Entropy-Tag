@@ -1,6 +1,6 @@
 # Player, Camera, and Input
 
-Status: NOT_STARTED
+Status: IN_PROGRESS
 Milestone: M1 Technical proofs
 Dependencies: `01_PROJECT_FOUNDATION.todo`
 
@@ -10,33 +10,67 @@ Prove responsive third-person movement and visually honest aiming before territo
 
 ## Tasks
 
-- [ ] Implement camera-relative movement.
-- [ ] Implement acceleration, deceleration, gravity, and grounded state.
-- [ ] Implement independent camera look and aim.
-- [ ] Implement over-the-shoulder camera collision.
-- [ ] Implement keyboard/mouse actions.
-- [ ] Implement gamepad actions.
-- [ ] Implement sensitivity and inversion settings.
-- [ ] Implement world-space aim solution.
-- [ ] Implement debug ray/contact visualization.
-- [ ] Define external impulse and status-modifier hooks.
-- [ ] Add movement and camera PlayMode tests.
-- [ ] Profile allocations and frame cost.
+- [x] Implement camera-relative movement.
+- [x] Implement acceleration, deceleration, gravity, and grounded state.
+- [x] Implement independent camera look and aim.
+- [x] Implement third-person camera collision.
+- [x] Implement keyboard/mouse actions.
+- [x] Implement gamepad actions.
+- [x] Implement sensitivity and inversion settings.
+- [x] Implement world-space aim solution.
+- [x] Implement debug ray/contact visualization.
+- [x] Define external impulse and status-modifier hooks.
+- [x] Add movement and camera PlayMode tests.
+- [x] Profile allocations and frame cost.
 
 ## Acceptance criteria
 
 - [ ] Controller feels responsive in the sandbox at 60 FPS.
-- [ ] Reticle, physics contact, and spray target derive from the same aim solution.
-- [ ] Camera does not remain inside arena geometry.
-- [ ] Keyboard/mouse and gamepad are both usable.
-- [ ] No recurring managed allocation after warm-up.
-- [ ] Settings persist locally.
+- [x] Reticle, physics contact, and spray target derive from the same aim solution.
+- [x] Camera does not remain inside arena geometry.
+- [x] Keyboard/mouse and gamepad are both usable.
+- [x] No recurring managed allocation after warm-up.
+- [x] Settings persist locally.
 
 ## Completion evidence
 
-Not completed.
+- Scenes: eight variants under `EntropyTag/Assets/EntropyTag/Scenes/Tests/CameraVariants/`.
+- EditMode: 4 passed, 0 failed.
+- PlayMode: 7 passed, 0 failed.
+- Warm player loop: zero managed allocation across 300 iterations; isolated average below 1 ms.
+- Windows development build succeeded and excludes all eight comparison scenes.
+- Documentation: `docs/11_PLAYER_CAMERA_INPUT.md`.
+- Remaining gate: developer interactive feel check at 60 FPS.
 
 ## Completion log
 
-Not completed.
-
+- 2026-08-20 - Moved to IN_PROGRESS on `workDesk/agentic`. Added camera-relative CharacterController
+  movement, acceleration/deceleration/gravity, camera orbit and sphere-cast collision, shared physics aim
+  solution, keyboard/mouse and gamepad input consumption, persisted sensitivity/inversion settings, impulse
+  and speed-modifier hooks, profiler diagnostics, a generated player sandbox, and initial tests.
+- 2026-08-20 - Automated implementation validation passed at 00:56 IST: 3/3 EditMode, 5/5 PlayMode,
+  zero-allocation warm-loop measurement, camera/aim/settings coverage, and successful Windows development
+  build. Awaiting interactive movement/camera feel verification before DONE and commit.
+- 2026-08-20 - The first feel check accepted WASD movement but rejected the centered reticle and shoulder
+  camera shift. Replaced them with mouse/right-stick free aim, a central camera dead zone, edge-driven camera
+  turn, and reticle-derived physics aiming. Revised validation passed at 01:27 IST: 4/4 EditMode, 5/5
+  PlayMode, and Windows development build. Awaiting the second feel check.
+- 2026-08-20 - The second feel check found the reticle faster than the camera and requested basic firing.
+  Added smoothed reticle pursuit, damped faster camera edge turn, and a 24-object pooled sphere shooter using
+  the shared aim solution. Validation passed at 02:09 IST: 4/4 EditMode, 6/6 PlayMode, and Windows build.
+  Awaiting the third feel check.
+- 2026-08-20 - The third feel check still found camera/reticle synchronization unsuitable. Added an Inspector
+  `Camera Reticle Sync` multiplier with a live range of `0.25` to `4.0` so the developer can tune the relative
+  camera catch-up speed and supply an accepted value.
+- 2026-08-20 - Clarified the intended model: the crosshair remains fixed at screen center while mouse
+  movement/right stick rotates the camera center directly; no shoulder shift and no free reticle. Replaced
+  `FreeAimController` with `CenteredAimController`, exposing follow smoothing and speed. Validation passed at
+  02:55 IST: 3/3 EditMode, 6/6 PlayMode, and Windows development build.
+- 2026-08-20 - Paused at 03:06:29 IST without committing. Next step is an eight-scene comparative camera and
+  crosshair study, including centered direct-follow and free-aim variants, followed by developer selection.
+- 2026-08-21 - Resumed at 02:54:32 IST. Generated eight labeled comparison scenes using a shared experiment
+  controller. All scenes keep movement, geometry, shooting, and the preferred cuboid-torso/sphere-head player
+  placeholder constant while changing only camera/crosshair behavior.
+- 2026-08-21 - Regenerated all eight scenes after adopting the cuboid-torso/sphere-head placeholder. Final
+  automated validation passed 4/4 EditMode, 7/7 PlayMode, and the Windows development build. The only
+  remaining acceptance gate is the developer's comparative 60 FPS playtest and camera-model selection.

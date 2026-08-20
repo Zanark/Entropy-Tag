@@ -68,6 +68,12 @@
           "children": []
         },
         {
+          "title": "player-sandbox",
+          "name": "Player, Camera, and Input Sandbox",
+          "prompt": "Explain the implemented third-person motor, camera collision, shared aim solution, controls, settings persistence, sandbox workflow, and validation using docs/11_PLAYER_CAMERA_INPUT.md:1.",
+          "children": []
+        },
+        {
           "title": "roadmap-risks",
           "name": "Roadmap, Decisions, and Risks",
           "prompt": "Explain milestones, scope ladder, accepted decisions, proposed decisions, risks, and change protocol using docs/06_PRODUCTION_ROADMAP.md:1 and docs/08_DECISIONS_AND_RISKS.md:1.",
@@ -83,4 +89,3 @@
     }
   ]
 }
-

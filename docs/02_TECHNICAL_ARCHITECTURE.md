@@ -104,10 +104,10 @@ Responsibilities:
 | `EntropyTag.Tests.EditMode` | Test only | Domain and application tests |
 | `EntropyTag.Tests.PlayMode` | Test only | Scene, input, physics, rendering smoke tests |
 
-These assemblies now exist under `EntropyTag/Assets/EntropyTag/`. The initial compilation, EditMode tests,
-PlayMode test, and Windows development build pass. The architecture remains intentionally skeletal: the
-assembly boundaries are real, while most gameplay types shown later in this document remain proposals until
-their corresponding tasks begin.
+These assemblies now exist under `EntropyTag/Assets/EntropyTag/`. The third-person sandbox exercises Unity,
+Presentation, Infrastructure, Editor, and both test assemblies. Three EditMode tests, five PlayMode tests,
+and the Windows development build pass. Domain gameplay rules remain intentionally skeletal until their
+corresponding decisions are accepted.
 
 Dependencies flow inward. Domain must never reference presentation.
 
@@ -232,17 +232,49 @@ Choose based on frame time, memory, edge quality, complexity, and testability.
 
 ## Character system
 
-Start with a single motor abstraction:
+The first motor proof is implemented in `Sandbox_PlayerMotor.unity`:
 
 - Camera-relative movement input.
 - Separate aim vector.
 - Ground detection.
 - Acceleration and deceleration.
-- Friendly/hostile terrain modifiers.
 - External impulses for reactions.
 - Status-effect modifiers.
+- Fixed centered reticle with direct mouse-delta/right-stick camera control.
+- Configurable camera smoothing and follow speed with sphere-cast collision.
+- Shared center-view physics aim solution.
+- Pooled test projectiles fired through the shared aim result.
+- Reticle and contact marker consuming the shared solution.
+- Persisted mouse/gamepad sensitivity and vertical inversion.
 
 Do not place match scoring or elemental resolution inside the character controller.
+
+```mermaid
+sequenceDiagram
+    accTitle: Implemented player and aim frame
+    accDescr: Input updates movement and camera, camera collision resolves position, one physics ray determines the aim point, and presentation consumes that same result.
+
+    participant Device
+    participant Input as PlayerInputSource
+    participant Motor as ThirdPersonMotor
+    participant Camera as ThirdPersonCameraRig
+    participant CenteredAim as CenteredAimController
+    participant Aim as ThirdPersonAimSolver
+    participant View as AimReticlePresenter
+    participant Shot as TestProjectileShooter
+
+    Device->>Input: Move and camera-look input
+    Input->>Motor: Camera-relative move
+    Input->>CenteredAim: Mouse delta or right stick
+    CenteredAim->>Camera: Smoothed orbit delta
+    Camera->>Camera: Sphere-cast collision
+    CenteredAim->>Aim: Center viewport
+    Camera->>Aim: View ray
+    Aim-->>View: Shared AimSolution
+    Aim-->>Shot: Shared AimSolution
+```
+
+See [Player, Camera, and Input Sandbox](11_PLAYER_CAMERA_INPUT.md).
 
 ## Spray system
 

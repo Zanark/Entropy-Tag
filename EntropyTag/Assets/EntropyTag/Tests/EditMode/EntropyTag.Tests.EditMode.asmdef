@@ -3,7 +3,10 @@
   "rootNamespace": "EntropyTag.Tests.EditMode",
   "references": [
     "EntropyTag.Application",
-    "EntropyTag.Domain"
+    "EntropyTag.Domain",
+    "EntropyTag.Presentation",
+    "EntropyTag.Unity",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [
     "Editor"

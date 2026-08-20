@@ -3,7 +3,8 @@
   "rootNamespace": "EntropyTag.Presentation",
   "references": [
     "EntropyTag.Application",
-    "EntropyTag.Unity"
+    "EntropyTag.Unity",
+    "Unity.ugui"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

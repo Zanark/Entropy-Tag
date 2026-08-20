@@ -138,6 +138,14 @@ namespace EntropyTag.Editor
                 new EditorBuildSettingsScene(BootstrapScenePath, true)
             };
 
+            foreach (string scenePath in PlayerSandboxSetup.CameraVariantScenePaths)
+            {
+                if (AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath) != null)
+                {
+                    scenes.Add(new EditorBuildSettingsScene(scenePath, true));
+                }
+            }
+
             EditorBuildSettings.scenes = scenes.ToArray();
         }
     }
