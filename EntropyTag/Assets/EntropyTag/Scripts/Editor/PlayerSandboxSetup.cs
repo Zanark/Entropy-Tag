@@ -14,6 +14,8 @@ namespace EntropyTag.Editor
     public static class PlayerSandboxSetup
     {
         public const string CameraVariantFolder = "Assets/EntropyTag/Scenes/Tests/CameraVariants";
+        public const string SelectedSandboxScenePath =
+            "Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMovement.unity";
         public const string LegacySandboxScenePath = "Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMotor.unity";
 
         public static readonly string[] CameraVariantScenePaths =
@@ -45,6 +47,8 @@ namespace EntropyTag.Editor
                 CreateVariant((CameraAimExperimentMode)modes.GetValue(index), CameraVariantScenePaths[index]);
             }
 
+            CreateVariant(CameraAimExperimentMode.FreeAimContinuousFollow, SelectedSandboxScenePath);
+
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(LegacySandboxScenePath) != null)
             {
                 AssetDatabase.DeleteAsset(LegacySandboxScenePath);
@@ -60,6 +64,11 @@ namespace EntropyTag.Editor
         {
             return !string.IsNullOrWhiteSpace(path) &&
                    path.StartsWith(CameraVariantFolder, StringComparison.Ordinal);
+        }
+
+        public static bool IsSandboxScene(string path)
+        {
+            return path == SelectedSandboxScenePath || IsCameraVariantScene(path);
         }
 
         private static void CreateVariant(CameraAimExperimentMode mode, string scenePath)
@@ -84,7 +93,9 @@ namespace EntropyTag.Editor
             var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
 
             scenes.RemoveAll(scene =>
-                scene.path == LegacySandboxScenePath || IsCameraVariantScene(scene.path));
+                scene.path == LegacySandboxScenePath || IsSandboxScene(scene.path));
+
+            scenes.Add(new EditorBuildSettingsScene(SelectedSandboxScenePath, true));
 
             foreach (string scenePath in CameraVariantScenePaths)
             {
@@ -101,7 +112,7 @@ namespace EntropyTag.Editor
             GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
             floor.name = "Sandbox Floor";
             floor.transform.SetPositionAndRotation(new Vector3(0f, -0.25f, 0f), Quaternion.identity);
-            floor.transform.localScale = new Vector3(20f, 0.5f, 20f);
+            floor.transform.localScale = new Vector3(40f, 0.5f, 40f);
 
             GameObject rearWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
             rearWall.name = "Camera Collision Wall";
@@ -112,6 +123,8 @@ namespace EntropyTag.Editor
             aimTarget.name = "Aim Target";
             aimTarget.transform.SetPositionAndRotation(new Vector3(0f, 1f, 8f), Quaternion.identity);
             aimTarget.transform.localScale = new Vector3(2f, 2f, 0.5f);
+
+            CreateMovementGym();
 
             GameObject lightObject = new GameObject("Directional Light");
             Light light = lightObject.AddComponent<Light>();
@@ -133,14 +146,17 @@ namespace EntropyTag.Editor
 
             GameObject torso = GameObject.CreatePrimitive(PrimitiveType.Cube);
             torso.name = "Player Torso";
-            torso.transform.SetParent(player.transform, false);
+            GameObject visual = new GameObject("Player Visual");
+            visual.transform.SetParent(player.transform, false);
+
+            torso.transform.SetParent(visual.transform, false);
             torso.transform.localPosition = new Vector3(0f, 1f, 0f);
             torso.transform.localScale = new Vector3(0.65f, 1.4f, 0.4f);
             UnityEngine.Object.DestroyImmediate(torso.GetComponent<Collider>());
 
             GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             head.name = "Player Head";
-            head.transform.SetParent(player.transform, false);
+            head.transform.SetParent(visual.transform, false);
             head.transform.localPosition = new Vector3(0f, 1.9f, 0f);
             head.transform.localScale = Vector3.one * 0.55f;
             UnityEngine.Object.DestroyImmediate(head.GetComponent<Collider>());
@@ -166,7 +182,7 @@ namespace EntropyTag.Editor
             shooter.Configure(input, aimSolver, muzzleObject.transform);
 
             ThirdPersonMotor motor = player.AddComponent<ThirdPersonMotor>();
-            motor.Configure(input, playerCamera.transform);
+            motor.Configure(input, playerCamera.transform, visual.transform);
             player.AddComponent<PlayerSandboxDiagnostics>();
 
             cameraRig.Simulate(Vector2.zero, false);
@@ -246,6 +262,44 @@ namespace EntropyTag.Editor
             image.color = Color.yellow;
             image.raycastTarget = false;
             return image;
+        }
+
+        private static void CreateMovementGym()
+        {
+            CreateBox("Climb Wall", new Vector3(8f, 2.5f, 2f), new Vector3(0.5f, 5f, 7f));
+            CreateBox("Raised Platform", new Vector3(11f, 2.5f, 2f), new Vector3(5.5f, 0.5f, 7f));
+            CreateBox(
+                "Ramp",
+                new Vector3(-7f, 0.75f, 7f),
+                new Vector3(4f, 0.5f, 8f),
+                Quaternion.Euler(-14f, 0f, 0f));
+            CreateBox("Narrow Beam", new Vector3(-1f, 1.25f, -8f), new Vector3(1f, 0.5f, 10f));
+
+            for (int index = 0; index < 4; index++)
+            {
+                float height = 0.4f + index * 0.4f;
+                CreateBox(
+                    $"Step {index + 1}",
+                    new Vector3(3f + index * 1.2f, height * 0.5f, 9f),
+                    new Vector3(1.2f, height, 3f));
+            }
+
+            CreateBox("Slide Tunnel Roof", new Vector3(-7f, 1.35f, -3f), new Vector3(6f, 0.3f, 4f));
+            CreateBox("Slide Tunnel Left", new Vector3(-10.15f, 0.75f, -3f), new Vector3(0.3f, 1.5f, 4f));
+            CreateBox("Slide Tunnel Right", new Vector3(-3.85f, 0.75f, -3f), new Vector3(0.3f, 1.5f, 4f));
+        }
+
+        private static GameObject CreateBox(
+            string name,
+            Vector3 position,
+            Vector3 scale,
+            Quaternion? rotation = null)
+        {
+            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            box.name = name;
+            box.transform.SetPositionAndRotation(position, rotation ?? Quaternion.identity);
+            box.transform.localScale = scale;
+            return box;
         }
 
         private static void EnsureFolder(string path)

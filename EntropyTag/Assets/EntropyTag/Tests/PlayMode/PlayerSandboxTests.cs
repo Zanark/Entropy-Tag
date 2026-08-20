@@ -13,7 +13,7 @@ namespace EntropyTag.Tests.PlayMode
     public sealed class PlayerSandboxTests
     {
         private const string SandboxScenePath =
-            "Assets/EntropyTag/Scenes/Tests/CameraVariants/Sandbox_Camera_01_CenteredImmediate.unity";
+            "Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMovement.unity";
 
         private static readonly string[] CameraVariantScenePaths =
         {
@@ -45,7 +45,7 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(aimSolver, Is.Not.Null);
             Assert.That(aimPresenter, Is.Not.Null);
             Assert.That(experiment, Is.Not.Null);
-            Assert.That(experiment.Mode, Is.EqualTo(CameraAimExperimentMode.CenteredImmediate));
+            Assert.That(experiment.Mode, Is.EqualTo(CameraAimExperimentMode.FreeAimContinuousFollow));
             Assert.That(shooter, Is.Not.Null);
             Assert.That(diagnostics, Is.Not.Null);
 
@@ -60,6 +60,49 @@ namespace EntropyTag.Tests.PlayMode
 
             yield return null;
             Assert.That(diagnostics.IsRecording, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerCanJumpAndSlide()
+        {
+            yield return LoadSandbox();
+            yield return null;
+
+            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
+            CharacterController controller = motor.GetComponent<CharacterController>();
+
+            motor.Simulate(Vector2.up, cameraRig.ControlledCamera.transform, 1f / 60f, false, true);
+            Assert.That(motor.IsSliding, Is.True);
+            Assert.That(controller.height, Is.LessThan(2f));
+
+            yield return LoadSandbox();
+            yield return null;
+
+            motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
+            float startHeight = motor.transform.position.y;
+            motor.Simulate(Vector2.zero, cameraRig.ControlledCamera.transform, 0.1f, true, false);
+
+            Assert.That(motor.transform.position.y, Is.GreaterThan(startHeight));
+            Assert.That(motor.Velocity.y, Is.GreaterThan(0f));
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerClimbsWhenPushingIntoVerticalWall()
+        {
+            yield return LoadSandbox();
+
+            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
+            motor.transform.position = new Vector3(7.3f, 0f, 2f);
+            Physics.SyncTransforms();
+            float startHeight = motor.transform.position.y;
+
+            motor.Simulate(Vector2.right, cameraRig.ControlledCamera.transform, 0.1f, false, false);
+
+            Assert.That(motor.IsWallClimbing, Is.True);
+            Assert.That(motor.transform.position.y, Is.GreaterThan(startHeight));
         }
 
         [UnityTest]
@@ -92,6 +135,37 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(shooter.FireOnce(), Is.True);
             Assert.That(shooter.ActiveProjectileCount, Is.EqualTo(1));
             Assert.That(shooter.LastFiredVelocity.magnitude, Is.GreaterThan(0f));
+        }
+
+        [UnityTest]
+        public IEnumerator ProjectileCreatesPersistentSplatWithoutCollapsingCamera()
+        {
+            yield return LoadSandbox();
+
+            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            ThirdPersonAimSolver aimSolver = Object.FindObjectOfType<ThirdPersonAimSolver>();
+            ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
+            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            aimSolver.SetViewportPoint(new Vector2(0.5f, 0.5f));
+            yield return null;
+
+            Assert.That(shooter.FireOnce(), Is.True);
+            float minimumCameraDistance = float.MaxValue;
+            float timeout = Time.time + 1f;
+
+            while (shooter.SplatCount == 0 && Time.time < timeout)
+            {
+                Vector3 pivot = motor.transform.position + Vector3.up * 1.5f;
+                minimumCameraDistance = Mathf.Min(
+                    minimumCameraDistance,
+                    Vector3.Distance(cameraRig.ControlledCamera.transform.position, pivot));
+                yield return null;
+            }
+
+            Assert.That(shooter.SplatCount, Is.EqualTo(1));
+            Assert.That(shooter.ActiveProjectileCount, Is.EqualTo(0));
+            Assert.That(minimumCameraDistance, Is.GreaterThan(1f));
+            Assert.That(GameObject.Find("Test Paint Splat 01").activeSelf, Is.True);
         }
 
         [UnityTest]

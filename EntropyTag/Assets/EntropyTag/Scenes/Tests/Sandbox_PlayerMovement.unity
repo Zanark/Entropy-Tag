@@ -274,7 +274,7 @@ GameObject:
   m_Component:
   - component: {fileID: 375118508}
   m_Layer: 0
-  m_Name: 08 - Centered Cinematic Spring
+  m_Name: 05 - Free Aim Continuous Follow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -954,7 +954,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 08 - Centered Cinematic Spring
+  m_Text: 05 - Free Aim Continuous Follow
 --- !u!222 &661014775
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1646,15 +1646,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b951dc7a3e5742d6b908f121256ceec8, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  mode: 8
+  mode: 5
   input: {fileID: 2052057731}
   cameraRig: {fileID: 1392776478}
   aimSolver: {fileID: 1392776476}
   reticle: {fileID: 358180903}
-  cameraSpeed: 0.85
-  cameraSmoothTime: 0.11
+  cameraSpeed: 0.55
+  cameraSmoothTime: 0.035
   reticleSpeed: 850
-  reticleSmoothTime: 0.05
+  reticleSmoothTime: 0.055
   softZoneHalfExtent: 0.25
   tetherRadius: 220
   tetherCameraStrength: 8

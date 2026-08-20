@@ -22,6 +22,11 @@ Prove responsive third-person movement and visually honest aiming before territo
 - [x] Define external impulse and status-modifier hooks.
 - [x] Add movement and camera PlayMode tests.
 - [x] Profile allocations and frame cost.
+- [x] Add jump and wall-jump movement.
+- [x] Add wall climbing.
+- [x] Add a reduced-height character slide.
+- [x] Add persistent pooled projectile impact splats.
+- [x] Expand the sandbox with varied movement-test geometry.
 
 ## Acceptance criteria
 
@@ -34,9 +39,10 @@ Prove responsive third-person movement and visually honest aiming before territo
 
 ## Completion evidence
 
-- Scenes: eight variants under `EntropyTag/Assets/EntropyTag/Scenes/Tests/CameraVariants/`.
+- Selected scene: `EntropyTag/Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMovement.unity`.
+- Comparison scenes: eight variants under `EntropyTag/Assets/EntropyTag/Scenes/Tests/CameraVariants/`.
 - EditMode: 4 passed, 0 failed.
-- PlayMode: 7 passed, 0 failed.
+- PlayMode: 10 passed, 0 failed.
 - Warm player loop: zero managed allocation across 300 iterations; isolated average below 1 ms.
 - Windows development build succeeded and excludes all eight comparison scenes.
 - Documentation: `docs/11_PLAYER_CAMERA_INPUT.md`.
@@ -74,3 +80,10 @@ Prove responsive third-person movement and visually honest aiming before territo
 - 2026-08-21 - Regenerated all eight scenes after adopting the cuboid-torso/sphere-head placeholder. Final
   automated validation passed 4/4 EditMode, 7/7 PlayMode, and the Windows development build. The only
   remaining acceptance gate is the developer's comparative 60 FPS playtest and camera-model selection.
+- 2026-08-21 - Comparative feedback selected Variant 05, Free Aim Continuous Follow. Variants 01, 02, 03,
+  and 08 showed firing-related camera collapse or flicker; 06 felt range-limited; 07's recentering overrode
+  player intent; 04 was liked but 05 was preferred.
+- 2026-08-21 - Promoted Variant 05 into `Sandbox_PlayerMovement`, excluded transient projectiles and splats
+  from camera collision, and added jump, wall climb, wall jump, reduced-height slide, persistent pooled impact
+  splats, a larger floor, climb wall, platform, ramp, beam, steps, and slide tunnel. Validation passed 4/4
+  EditMode, 10/10 PlayMode, and the Windows development build. Final combined feel check remains open.

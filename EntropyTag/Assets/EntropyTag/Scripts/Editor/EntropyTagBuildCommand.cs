@@ -14,7 +14,7 @@ namespace EntropyTag.Editor
             ProjectFoundationSetup.Apply();
 
             string[] scenes = EditorBuildSettings.scenes
-                .Where(scene => scene.enabled && !PlayerSandboxSetup.IsCameraVariantScene(scene.path))
+                .Where(scene => scene.enabled && !PlayerSandboxSetup.IsSandboxScene(scene.path))
                 .Select(scene => scene.path)
                 .ToArray();
 

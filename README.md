@@ -44,7 +44,7 @@ flowchart LR
 ## Target experience
 
 - True 3D gameplay in Unity.
-- Third-person movement with a centered reticle and direct mouse/right-stick camera control.
+- Third-person movement with a free reticle and continuously following mouse/right-stick camera.
 - Stylized low-poly environments with crisp, retro-inspired rendering.
 - Floor territory painting first; walls and arbitrary surfaces only after the core loop is proven.
 - Offline play with bots for the first vertical slice.
@@ -77,9 +77,9 @@ forward and the prototype limitations that must not be repeated.
 | Unity project | Created under `EntropyTag/` with Unity `2022.3.47f1` |
 | Render pipeline | URP `14.0.11`, active in Graphics and all Quality levels |
 | Input | Input System `1.7.0`; keyboard/mouse and gamepad drive the player sandbox |
-| Gameplay code | Third-person motor plus eight camera/crosshair comparison scenes and pooled test shooting |
+| Gameplay code | Selected free-aim sandbox with jump, wall climb, slide, impact splats, and movement gym |
 | First-party assets | Approved hierarchy created under `EntropyTag/Assets/EntropyTag/` |
-| Automated validation | 4 EditMode and 7 PlayMode tests pass; Windows development build succeeds |
+| Automated validation | 4 EditMode and 10 PlayMode tests pass; Windows development build succeeds |
 | Vertical slice | Planned |
 | Online multiplayer | Deferred |
 

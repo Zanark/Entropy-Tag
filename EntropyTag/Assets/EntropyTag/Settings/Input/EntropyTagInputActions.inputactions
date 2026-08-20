@@ -42,6 +42,24 @@
           "initialStateCheck": false
         },
         {
+          "name": "Jump",
+          "type": "Button",
+          "id": "7be3b5b4-8a7c-47f6-9947-5aa1098b3fc2",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "",
+          "initialStateCheck": false
+        },
+        {
+          "name": "Slide",
+          "type": "Button",
+          "id": "aec5b9d7-bebd-40ef-bd33-e6e1e7a5ff93",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "",
+          "initialStateCheck": false
+        },
+        {
           "name": "Pause",
           "type": "Button",
           "id": "19eefd7a-743b-4eec-b222-8f1da0304e22",
@@ -181,6 +199,50 @@
           "processors": "",
           "groups": "Gamepad",
           "action": "Fire",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "2d2a8f0b-3b1e-4e13-9e75-754da0a06d73",
+          "path": "<Keyboard>/space",
+          "interactions": "",
+          "processors": "",
+          "groups": "KeyboardMouse",
+          "action": "Jump",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "3b1530ef-e8b1-49d3-a76e-e0ab20334cf4",
+          "path": "<Gamepad>/buttonSouth",
+          "interactions": "",
+          "processors": "",
+          "groups": "Gamepad",
+          "action": "Jump",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "e4434bd8-6db3-49e6-b4c1-f7710a11cb90",
+          "path": "<Keyboard>/leftCtrl",
+          "interactions": "",
+          "processors": "",
+          "groups": "KeyboardMouse",
+          "action": "Slide",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "1d5365e9-cfd7-44e8-868d-c5f09f96a103",
+          "path": "<Gamepad>/buttonEast",
+          "interactions": "",
+          "processors": "",
+          "groups": "Gamepad",
+          "action": "Slide",
           "isComposite": false,
           "isPartOfComposite": false
         },

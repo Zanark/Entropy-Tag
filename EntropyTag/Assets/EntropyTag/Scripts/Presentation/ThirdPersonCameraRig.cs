@@ -33,7 +33,7 @@ namespace EntropyTag.Presentation
         private float collisionPadding = 0.05f;
 
         [SerializeField]
-        private LayerMask collisionMask = ~0;
+        private LayerMask collisionMask = Physics.DefaultRaycastLayers;
 
         [SerializeField]
         private float minimumPitch = -35f;

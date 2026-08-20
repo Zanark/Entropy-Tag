@@ -25,6 +25,20 @@ namespace EntropyTag.Tests.EditMode
             Assert.That(asset.FindAction("Gameplay/Look", true), Is.Not.Null);
             Assert.That(asset.FindAction("Gameplay/Aim", true), Is.Not.Null);
             Assert.That(asset.FindAction("Gameplay/Fire", true), Is.Not.Null);
+            Assert.That(asset.FindAction("Gameplay/Jump", true), Is.Not.Null);
+            Assert.That(asset.FindAction("Gameplay/Slide", true), Is.Not.Null);
+            Assert.That(
+                asset.FindAction("Gameplay/Jump", true).bindings.Any(binding => binding.path == "<Keyboard>/space"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/Jump", true).bindings.Any(binding => binding.path == "<Gamepad>/buttonSouth"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/Slide", true).bindings.Any(binding => binding.path == "<Keyboard>/leftCtrl"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/Slide", true).bindings.Any(binding => binding.path == "<Gamepad>/buttonEast"),
+                Is.True);
         }
 
         [Test]

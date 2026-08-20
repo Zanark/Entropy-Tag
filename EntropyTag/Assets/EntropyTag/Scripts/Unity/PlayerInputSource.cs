@@ -16,6 +16,8 @@ namespace EntropyTag.UnityAdapters
         private InputAction lookAction;
         private InputAction aimAction;
         private InputAction fireAction;
+        private InputAction jumpAction;
+        private InputAction slideAction;
         private PlayerInputSettings settings = PlayerInputSettings.CreateDefault();
 
         public Vector2 Move => moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
@@ -23,6 +25,10 @@ namespace EntropyTag.UnityAdapters
         public bool IsAiming => aimAction?.IsPressed() ?? false;
 
         public bool IsFiring => fireAction?.IsPressed() ?? false;
+
+        public bool WasJumpPressedThisFrame => jumpAction?.WasPressedThisFrame() ?? false;
+
+        public bool WasSlidePressedThisFrame => slideAction?.WasPressedThisFrame() ?? false;
 
         public bool LookUsesMouse => lookAction?.activeControl?.device is Mouse;
 
@@ -124,6 +130,8 @@ namespace EntropyTag.UnityAdapters
             lookAction = gameplayMap.FindAction("Look", true);
             aimAction = gameplayMap.FindAction("Aim", true);
             fireAction = gameplayMap.FindAction("Fire", true);
+            jumpAction = gameplayMap.FindAction("Jump", true);
+            slideAction = gameplayMap.FindAction("Slide", true);
         }
     }
 }
