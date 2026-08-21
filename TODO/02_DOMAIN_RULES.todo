@@ -1,6 +1,6 @@
 # Domain Rules
 
-Status: NOT_STARTED
+Status: DONE
 Milestone: M1 Technical proofs
 Dependencies: `01_PROJECT_FOUNDATION.todo`, accepted territory decisions in `15_PRODUCT_DECISIONS.todo`
 
@@ -10,31 +10,40 @@ Implement deterministic game rules without Unity scene or rendering dependencies
 
 ## Tasks
 
-- [ ] Define element, owner, territory state, player ID, team ID, and match phase value types.
-- [ ] Define logical territory cell and field interfaces.
-- [ ] Define data-driven reaction rule model.
-- [ ] Implement Ice, Fire, and Mist conversions for the slice.
-- [ ] Define score and coverage calculation.
-- [ ] Define bank award policy.
-- [ ] Define match timer and phase transitions.
-- [ ] Define explicit tie and zero-ownership behavior.
-- [ ] Define seedable randomness abstraction.
-- [ ] Validate configuration at construction/bootstrap.
-- [ ] Add comprehensive domain unit tests.
+- [x] Define element, owner, territory state, player ID, team ID, and match phase value types.
+- [x] Define logical territory cell and field interfaces.
+- [x] Define data-driven reaction rule model.
+- [x] Implement Ice, Fire, and Mist conversions for the slice.
+- [x] Define score and coverage calculation.
+- [x] Define bank award policy.
+- [x] Define match timer and phase transitions.
+- [x] Define explicit tie and zero-ownership behavior.
+- [x] Define seedable randomness abstraction.
+- [x] Validate configuration at construction/bootstrap.
+- [x] Add comprehensive domain unit tests.
 
 ## Acceptance criteria
 
-- [ ] Domain assembly has no `UnityEngine` reference.
-- [ ] Every in-scope conversion has positive and negative tests.
-- [ ] Fixed stamp sequence produces deterministic coverage and bank.
-- [ ] Invalid configurations fail with actionable errors.
-- [ ] Domain tests run without opening a Unity scene.
+- [x] Domain assembly has no `UnityEngine` reference.
+- [x] Every in-scope conversion has positive and negative tests.
+- [x] Fixed stamp sequence produces deterministic coverage and bank.
+- [x] Invalid configurations fail with actionable errors.
+- [x] Domain tests run without opening a Unity scene.
 
 ## Completion evidence
 
-Not completed.
+- Pure-C# implementation under `EntropyTag/Assets/EntropyTag/Scripts/Domain/`.
+- Domain assembly retains `noEngineReferences: true` and source contains no Unity API references.
+- EditMode: 24 passed, 0 failed.
+- PlayMode regression: 10 passed, 0 failed.
+- Windows development build succeeded.
+- Fixed 2x2 stamp sequence deterministically produces Ice 1, Fire 2, Neutral 1, Mist 0, and Fire bank 3.
+- Documentation: `docs/12_DOMAIN_RULES.md`.
+- Developer review approved.
 
 ## Completion log
 
-Not completed.
-
+- 2026-08-21 - Implemented validated IDs, territory cells/field interfaces, first-slice reaction configuration,
+  CPU-authoritative stamping, coverage and winner resolution, bank awards, two-minute match phases, seeded
+  randomness, and comprehensive domain tests. Automated validation passed and the developer approved the
+  rule package.

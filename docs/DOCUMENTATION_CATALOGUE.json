@@ -74,6 +74,12 @@
           "children": []
         },
         {
+          "title": "domain-rules",
+          "name": "Deterministic Domain Rules",
+          "prompt": "Explain the implemented pure C sharp identifiers, territory states, reaction table, logical field, scoring, bank, match phases, randomness, validation, and tests using docs/12_DOMAIN_RULES.md:1.",
+          "children": []
+        },
+        {
           "title": "roadmap-risks",
           "name": "Roadmap, Decisions, and Risks",
           "prompt": "Explain milestones, scope ladder, accepted decisions, proposed decisions, risks, and change protocol using docs/06_PRODUCTION_ROADMAP.md:1 and docs/08_DECISIONS_AND_RISKS.md:1.",

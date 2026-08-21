@@ -158,7 +158,7 @@ First-slice model:
 - Stealing enemy territory and completing reactions earns team bank.
 - Bank is displayed but cannot be spent during the first slice.
 - Passive ownership alone does not create runaway resource gain.
-- A losing team gains slightly more bank for stealing leader-owned territory.
+- Comeback-weighted bank remains a later tuning experiment; the first rules use fixed deterministic awards.
 
 Later milestones may use bank to power one telegraphed elemental ability, so accumulation rules must preserve
 that future option.

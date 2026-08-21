@@ -145,8 +145,8 @@ classDiagram
 
     class MatchState {
         +MatchPhase phase
-        +float remainingTime
-        +Tick()
+        +double remainingTime
+        +Advance()
     }
 
     class TeamState {
@@ -163,18 +163,19 @@ classDiagram
 
     class TerritoryField {
         +TerritoryCell[] cells
-        +Apply()
+        +ApplyStamp()
+        +Reset()
         +CalculateCoverage()
     }
 
     class TerritoryCell {
-        +ElementId owner
-        +TerrainState state
-        +float strength
+        +TerritoryOwner owner
+        +TerritoryOwner previousOwner
+        +TerritoryState state
     }
 
     class ReactionResolver {
-        +Resolve(application)
+        +Resolve(cell, element, team)
     }
 
     class MatchPressure {
