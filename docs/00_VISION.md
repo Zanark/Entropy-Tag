@@ -71,6 +71,8 @@ Characters, world, terminology, silhouettes, UI, maps, effects, audio, and narra
 ### Secondary
 
 - Solo players using bots to learn systems.
+- Solo players who may later enjoy an original comedic precision-platformer expansion built around bounce,
+  momentum, timing, and fast recovery from slapstick failure.
 - Competitive players interested in readable tactical depth.
 - Players attracted to stylized low-poly and retro-modern visuals.
 
@@ -87,6 +89,14 @@ Characters, world, terminology, silhouettes, UI, maps, effects, audio, and narra
 - One bot archetype.
 - Territory scoring and match timer.
 - Minimal HUD, start, result, and rematch flow.
+
+### Deferred expansion direction
+
+- An original single-player precision-platformer mode may be explored after the main vertical slice.
+- Its intended feel is comedic and deliberately demanding, using bounce/momentum traversal and readable
+  hostile-environment slapstick.
+- Genre inspirations must not become copied levels, characters, art, audio, names, narrative, or proprietary
+  mechanical expression.
 
 ### Explicitly excluded
 
@@ -125,4 +135,3 @@ quadrantChart
     quadrant-4 Systems-heavy realism
     EntropyTag: [0.72, 0.78]
 ```
-

@@ -28,15 +28,15 @@ A player can:
 
 - Unity project foundation.
 - One low-poly gray-box arena.
-- One shared player rig or capsule presentation.
+- One shared thin-cuboid-and-sphere placeholder player rig.
 - Ice and Fire teams.
 - One spray tool.
 - Floor-only painting.
 - Logical territory field plus visual mask.
 - Friendly/hostile movement modifier.
-- One bot behavior profile.
+- At least one opposing-team bot behavior profile for solo interaction testing.
 - Territory percentage.
-- Match timer and one pressure mechanism.
+- Two-minute match timer and shrinking safe boundary.
 - Minimal front end, HUD, result, and rematch.
 - EditMode and PlayMode tests.
 - Development diagnostics.
@@ -87,15 +87,16 @@ Exit criteria:
 
 - Clean checkout opens without missing dependencies.
 - EditMode and PlayMode sample tests pass.
-- Development build runs on the target PC.
+- Development build targets 1080p at approximately 60 FPS on GTX 1060/RX 580-class graphics, a four-core
+  CPU, and 8 GB RAM.
 
 ## Gate 2: Movement and aim
 
 Deliver:
 
 - Camera-relative player motor.
-- Over-the-shoulder camera.
-- Independent aim.
+- Free reticle with continuously following third-person camera.
+- Independent world-space aim.
 - Camera collision.
 - Keyboard/mouse and gamepad actions.
 - Debug reticle and contact visualization.
@@ -150,7 +151,7 @@ Deliver:
 
 - Match start.
 - Timer.
-- Pressure mechanism.
+- Shrinking safe boundary.
 - Territory HUD.
 - Match completion.
 - Winner calculation.
@@ -159,7 +160,7 @@ Deliver:
 
 Exit criteria:
 
-- Ten consecutive automated or supervised matches complete.
+- Ten consecutive automated or supervised two-minute matches complete.
 - No manual scene reset is required.
 - Ties and zero-ownership cases behave explicitly.
 - Results match authoritative territory state.
@@ -226,4 +227,3 @@ At slice completion, produce:
 - Playtest findings.
 - Updated architecture.
 - Go/revise/stop recommendation for production.
-

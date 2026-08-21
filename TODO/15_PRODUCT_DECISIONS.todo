@@ -1,6 +1,6 @@
 # Product and Technical Decisions
 
-Status: IN_PROGRESS
+Status: DONE
 Milestone: M0 Planning foundation
 Dependencies: None
 
@@ -16,41 +16,66 @@ Resolve decisions that would otherwise cause expensive implementation churn.
 - [x] First vertical slice is offline.
 - [x] First territory implementation is floor-only.
 - [x] Prototype remains a separate historical mechanics reference.
+- [x] First vertical-slice matchup is Ice versus Fire, with bots required for interaction testing.
+- [x] First pressure system is a shrinking safe boundary; closing lanes and rotating score zones are deferred
+  experiments.
+- [x] Territory authority uses a CPU logical grid for rules/scoring and a GPU mask for visuals, subject to the
+  Territory Painting alignment and performance gate.
+- [x] First-slice minimum target is 1080p at approximately 60 FPS on GTX 1060/RX 580-class graphics, a
+  four-core CPU, and 8 GB RAM.
+- [x] Keyboard/mouse and generic Xbox-/PlayStation-style gamepads are required.
+- [x] First-slice player disruption is non-lethal: slow, knockback, and temporary disable only.
+- [x] Team bank accumulates from contested actions and is displayed, but cannot be spent in the first slice.
+- [x] Initial match duration target is two minutes, including shrinking-boundary compression and resolution.
+- [x] Working title remains EntropyTag.
+- [x] Future expansion includes an original comedic precision-platformer single-player mode built around
+  bounce/momentum traversal and hostile-environment slapstick.
 
-## Blocking decisions
+## Tasks
+
+### Blocking decisions
 
 - [x] Confirm Unity editor version for project creation: `2022.3.47f1`.
 - [x] Confirm URP `14.0.11` as the rendering pipeline.
-- [ ] Confirm first-slice team count: proposed Ice versus Fire.
-- [ ] Confirm first pressure system.
-- [ ] Confirm territory authority experiment and decision gate.
-- [ ] Confirm target PC minimum for performance validation.
-- [ ] Confirm keyboard/mouse and gamepad as required devices.
-- [ ] Confirm elimination versus non-lethal disruption.
-- [ ] Confirm bank behavior for the slice.
-- [ ] Confirm initial match duration target.
-- [ ] Confirm working title remains EntropyTag.
+- [x] Confirm first-slice team count: Ice versus Fire.
+- [x] Confirm first pressure system: shrinking safe boundary.
+- [x] Confirm territory authority experiment and decision gate.
+- [x] Confirm target PC minimum for performance validation.
+- [x] Confirm keyboard/mouse and gamepad as required devices.
+- [x] Confirm elimination versus non-lethal disruption.
+- [x] Confirm bank behavior for the slice.
+- [x] Confirm initial match duration target.
+- [x] Confirm working title remains EntropyTag.
 
 ## Later decisions
 
+- [ ] Prototype closing-lane pressure after the first slice.
+- [ ] Prototype rotating-score-zone pressure after the first slice.
 - [ ] Water implementation milestone.
 - [ ] Local split-screen priority.
 - [ ] Online multiplayer priority.
 - [ ] First public content scope.
 - [ ] Original world/character premise.
 - [ ] Cosmetic progression.
+- [x] Future single-player platformer direction recorded; detailed design remains deferred.
 
 ## Acceptance criteria
 
-- [ ] Every foundation blocker is accepted, rejected, or explicitly deferred.
-- [ ] `docs/08_DECISIONS_AND_RISKS.md` is synchronized.
-- [ ] Affected TODO dependencies are unblocked.
-- [ ] Evidence and rationale are recorded.
+- [x] Every foundation blocker is accepted, rejected, or explicitly deferred.
+- [x] `docs/08_DECISIONS_AND_RISKS.md` is synchronized.
+- [x] Affected TODO dependencies are unblocked.
+- [x] Evidence and rationale are recorded.
 
 ## Completion evidence
 
-Partially complete; accepted decisions are recorded in `docs/08_DECISIONS_AND_RISKS.md`.
+- All first-slice blockers are resolved and recorded in `docs/08_DECISIONS_AND_RISKS.md`.
+- `docs/01_GAME_DESIGN.md` and `docs/05_VERTICAL_SLICE_PLAN.md` reflect the accepted scope.
+- `02_DOMAIN_RULES.todo` is unblocked.
+- Remaining later decisions are explicitly deferred and do not block Domain Rules.
 
 ## Completion log
 
 - 2026-08-18 - Initial accepted and blocking decisions captured on `workDesk/develop`.
+- 2026-08-21 - Resolved the first-slice team, bot requirement, pressure, territory authority, minimum PC,
+  required devices, non-lethal disruption, bank, duration, and working-title blockers. The developer added a
+  future original comedic precision-platformer mode and approved the complete decision package.

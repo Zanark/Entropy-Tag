@@ -166,6 +166,7 @@ Focus:
 
 ### Expansion candidates
 
+- Original comedic precision-platformer single-player mode using bounce/momentum traversal.
 - Best-of-three sets.
 - Additional tools.
 - Additional maps and modifiers.
@@ -192,4 +193,3 @@ At every milestone:
 4. Reconcile TODO status.
 5. Update context.
 6. Decide continue, revise, defer, or stop.
-

@@ -40,6 +40,8 @@ A task file may move to DONE only when:
 - `15_PRODUCT_DECISIONS.todo` - Blocking product and technical decisions.
 - `16_DOCUMENTATION_FOUNDATION.todo` - Completed planning package for this branch.
 - `17_DEVELOPMENT_LEDGER.todo` - Living book-ready record of instructions, actions, evidence, and screenshots.
+- `18_SINGLE_PLAYER_PLATFORMER_FUTURE.todo` - Deferred original comedic precision-platformer single-player
+  mode.
 
 ## Dependency summary
 
@@ -60,6 +62,7 @@ A task file may move to DONE only when:
                           -> 13 Build/release
 
 14 Multiplayer remains deferred until the vertical slice is approved.
+18 Single-player platformer remains deferred until the core vertical slice is approved.
 17 Development ledger remains active throughout every milestone.
 ```
 

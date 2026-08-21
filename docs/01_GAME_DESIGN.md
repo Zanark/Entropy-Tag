@@ -9,6 +9,9 @@ when the match ends.
 The first vertical slice uses two teams to reduce implementation and balance variables. The three-team
 structure remains the intended product direction.
 
+The first vertical-slice match target is two minutes, including shrinking-boundary compression and
+resolution.
+
 ## Core loop
 
 ```mermaid
@@ -143,22 +146,22 @@ The vertical slice is not a conventional lethal shooter.
 
 - Primary interaction is territory transformation.
 - Opponent hits create displacement, debuffs, resource denial, or brief vulnerability.
-- Eliminations, if introduced, should be short interruptions rather than the dominant score source.
+- The first slice has no elimination; direct hits cause brief slow, knockback, or temporary disable.
+- Any later elimination experiment must remain a short interruption rather than the dominant score source.
 - Spawn camping must be structurally prevented.
 - Visible spray contact must match gameplay effects.
 
 ## Bank and abilities
 
-Recommended model:
+First-slice model:
 
 - Stealing enemy territory and completing reactions earns team bank.
-- Bank powers one telegraphed elemental ability.
-- Teams choose when to spend it.
+- Bank is displayed but cannot be spent during the first slice.
 - Passive ownership alone does not create runaway resource gain.
 - A losing team gains slightly more bank for stealing leader-owned territory.
 
-The first vertical slice may display bank without an active ability, but its accumulation rules must be
-implemented with the future decision in mind.
+Later milestones may use bank to power one telegraphed elemental ability, so accumulation rules must preserve
+that future option.
 
 ## Bots
 
@@ -182,16 +185,16 @@ Later bot personalities: Painter, Hunter, Guardian, and Opportunist.
 
 ## Match pressure
 
-The shrinking ring from the prototype is retained as a candidate, not a locked implementation.
+The first slice uses a predictable, visibly telegraphed shrinking safe boundary.
 
-Alternatives:
+Later experiment candidates:
 
-- Contracting safe boundary.
 - Rotating high-value zone.
 - Closing outer lanes.
 - Final objective that activates after normal scoring.
 
-The chosen system must be predictable, visually telegraphed, and compatible with authored 3D maps.
+The selected boundary must remain compatible with authored 3D maps and complete its compression within the
+two-minute match target.
 
 ## Accessibility
 
@@ -209,4 +212,3 @@ The chosen system must be predictable, visually telegraphed, and compatible with
 - Do not reward continuous spraying without resource decisions.
 - Do not hide comeback mechanics.
 - Do not add online multiplayer to compensate for weak local gameplay.
-

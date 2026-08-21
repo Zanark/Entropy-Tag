@@ -29,7 +29,7 @@ not the foundation of the Unity architecture.
 | Friendly speed | Character motor samples territory |
 | Spray rectangle | Directional 3D spray contacts and stamps |
 | Bank score | Contested-action resource and tie information |
-| Ring shrink | Candidate 3D match-pressure system |
+| Ring shrink | Selected first-slice shrinking safe boundary |
 | Simple bots | Seedable utility-based bot foundation |
 | Renderer separation | Domain/application/presentation layering |
 
@@ -63,4 +63,3 @@ For each inherited mechanic:
 
 The prototype is successful because it reduced uncertainty cheaply. It should remain stable enough to answer
 "what did the original rule do?" while Unity development answers "what should the production rule become?"
-
