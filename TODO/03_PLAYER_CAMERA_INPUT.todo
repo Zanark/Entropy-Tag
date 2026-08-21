@@ -1,6 +1,6 @@
 # Player, Camera, and Input
 
-Status: IN_PROGRESS
+Status: DONE
 Milestone: M1 Technical proofs
 Dependencies: `01_PROJECT_FOUNDATION.todo`
 
@@ -30,7 +30,7 @@ Prove responsive third-person movement and visually honest aiming before territo
 
 ## Acceptance criteria
 
-- [ ] Controller feels responsive in the sandbox at 60 FPS.
+- [x] Controller feels responsive in the sandbox at 60 FPS.
 - [x] Reticle, physics contact, and spray target derive from the same aim solution.
 - [x] Camera does not remain inside arena geometry.
 - [x] Keyboard/mouse and gamepad are both usable.
@@ -46,7 +46,7 @@ Prove responsive third-person movement and visually honest aiming before territo
 - Warm player loop: zero managed allocation across 300 iterations; isolated average below 1 ms.
 - Windows development build succeeded and excludes all eight comparison scenes.
 - Documentation: `docs/11_PLAYER_CAMERA_INPUT.md`.
-- Remaining gate: developer interactive feel check at 60 FPS.
+- Interactive evidence: developer accepted the combined Variant 05 movement and splat sandbox.
 
 ## Completion log
 
@@ -87,3 +87,5 @@ Prove responsive third-person movement and visually honest aiming before territo
   from camera collision, and added jump, wall climb, wall jump, reduced-height slide, persistent pooled impact
   splats, a larger floor, climb wall, platform, ramp, beam, steps, and slide tunnel. Validation passed 4/4
   EditMode, 10/10 PlayMode, and the Windows development build. Final combined feel check remains open.
+- 2026-08-21 - The developer completed the combined interactive test and reported that it looked good.
+  Player/Camera/Input is accepted and DONE.

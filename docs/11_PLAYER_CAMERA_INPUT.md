@@ -115,8 +115,8 @@ Automated validation covers:
 - A 300-iteration warm player loop allocates zero managed bytes and averages below 1 ms per isolated update.
 - Windows development build succeeds and explicitly excludes all eight comparison scenes.
 
-Variant 05 is selected. The final acceptance gate is one combined roughly-60-FPS playtest of its camera,
-movement gym, jump, wall climb, slide, and paint-splat behavior.
+Variant 05 is selected. The combined interactive playtest of its camera, movement gym, jump, wall climb,
+slide, and paint-splat behavior was accepted on 2026-08-21.
 
 Generic Input System `<Gamepad>` bindings cover both Xbox-style and PlayStation-style controllers; any
 platform-specific glyphs or naming belong to the later UI/accessibility TODO.
