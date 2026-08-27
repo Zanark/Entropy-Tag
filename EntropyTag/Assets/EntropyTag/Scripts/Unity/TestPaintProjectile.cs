@@ -21,7 +21,7 @@ namespace EntropyTag.UnityAdapters
             }
 
             ContactPoint contact = collision.GetContact(0);
-            owner.HandleProjectileImpact(projectileIndex, contact.point, contact.normal);
+            owner.HandleProjectileImpact(projectileIndex, collision.collider, contact.point, contact.normal);
         }
     }
 }

@@ -27,6 +27,8 @@ namespace EntropyTag.Tests.EditMode
             Assert.That(asset.FindAction("Gameplay/Fire", true), Is.Not.Null);
             Assert.That(asset.FindAction("Gameplay/Jump", true), Is.Not.Null);
             Assert.That(asset.FindAction("Gameplay/Slide", true), Is.Not.Null);
+            Assert.That(asset.FindAction("Gameplay/SwitchElement", true), Is.Not.Null);
+            Assert.That(asset.FindAction("Gameplay/ResetTerritory", true), Is.Not.Null);
             Assert.That(
                 asset.FindAction("Gameplay/Jump", true).bindings.Any(binding => binding.path == "<Keyboard>/space"),
                 Is.True);
@@ -38,6 +40,18 @@ namespace EntropyTag.Tests.EditMode
                 Is.True);
             Assert.That(
                 asset.FindAction("Gameplay/Slide", true).bindings.Any(binding => binding.path == "<Gamepad>/buttonEast"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/SwitchElement", true).bindings.Any(binding => binding.path == "<Keyboard>/tab"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/SwitchElement", true).bindings.Any(binding => binding.path == "<Gamepad>/buttonNorth"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/ResetTerritory", true).bindings.Any(binding => binding.path == "<Keyboard>/r"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/ResetTerritory", true).bindings.Any(binding => binding.path == "<Gamepad>/select"),
                 Is.True);
         }
 

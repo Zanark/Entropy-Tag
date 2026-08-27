@@ -18,6 +18,8 @@ namespace EntropyTag.UnityAdapters
         private InputAction fireAction;
         private InputAction jumpAction;
         private InputAction slideAction;
+        private InputAction switchElementAction;
+        private InputAction resetTerritoryAction;
         private PlayerInputSettings settings = PlayerInputSettings.CreateDefault();
 
         public Vector2 Move => moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
@@ -29,6 +31,12 @@ namespace EntropyTag.UnityAdapters
         public bool WasJumpPressedThisFrame => jumpAction?.WasPressedThisFrame() ?? false;
 
         public bool WasSlidePressedThisFrame => slideAction?.WasPressedThisFrame() ?? false;
+
+        public bool WasSwitchElementPressedThisFrame =>
+            switchElementAction?.WasPressedThisFrame() ?? false;
+
+        public bool WasResetTerritoryPressedThisFrame =>
+            resetTerritoryAction?.WasPressedThisFrame() ?? false;
 
         public bool LookUsesMouse => lookAction?.activeControl?.device is Mouse;
 
@@ -132,6 +140,8 @@ namespace EntropyTag.UnityAdapters
             fireAction = gameplayMap.FindAction("Fire", true);
             jumpAction = gameplayMap.FindAction("Jump", true);
             slideAction = gameplayMap.FindAction("Slide", true);
+            switchElementAction = gameplayMap.FindAction("SwitchElement", true);
+            resetTerritoryAction = gameplayMap.FindAction("ResetTerritory", true);
         }
     }
 }

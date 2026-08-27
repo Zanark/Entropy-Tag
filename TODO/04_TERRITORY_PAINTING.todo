@@ -1,6 +1,6 @@
 # Territory Painting
 
-Status: NOT_STARTED
+Status: DONE
 Milestone: M1 Technical proofs
 Dependencies: `02_DOMAIN_RULES.todo`, `03_PLAYER_CAMERA_INPUT.todo`
 
@@ -10,34 +10,67 @@ Prove deterministic, performant floor territory whose logical ownership matches 
 
 ## Tasks
 
-- [ ] Implement paintable-surface registration.
-- [ ] Implement world-to-territory coordinate mapping.
-- [ ] Implement logical field storage.
-- [ ] Implement spray stamp commands.
-- [ ] Implement reset.
-- [ ] Implement coverage queries.
-- [ ] Implement territory sampling beneath a player.
-- [ ] Implement visual mask stamping.
-- [ ] Implement ownership debug overlay.
-- [ ] Implement sustained-spray benchmark.
-- [ ] Compare candidate CPU/GPU split approaches.
-- [ ] Record territory authority decision.
-- [ ] Add deterministic sequence tests.
+- [x] Implement paintable-surface registration.
+- [x] Implement world-to-territory coordinate mapping.
+- [x] Implement logical field storage.
+- [x] Implement spray stamp commands.
+- [x] Implement reset.
+- [x] Implement coverage queries.
+- [x] Implement territory sampling beneath a player.
+- [x] Implement visual mask stamping.
+- [x] Implement ownership debug overlay.
+- [x] Implement sustained-spray benchmark.
+- [x] Compare candidate CPU/GPU split approaches.
+- [x] Record territory authority decision.
+- [x] Add deterministic sequence tests.
 
 ## Acceptance criteria
 
-- [ ] Visual and logical ownership align for all test stamps.
-- [ ] Score is deterministic.
-- [ ] Full reset leaves no stale logical or visual paint.
-- [ ] Sustained spray meets provisional CPU/GPU budgets.
-- [ ] Memory usage is bounded and documented.
-- [ ] Territory can be sampled without GPU readback.
+- [x] Visual and logical ownership align for all test stamps.
+- [x] Score is deterministic.
+- [x] Full reset leaves no stale logical or visual paint.
+- [x] Sustained spray meets provisional CPU/GPU budgets.
+- [x] Memory usage is bounded and documented.
+- [x] Territory can be sampled without GPU readback.
 
 ## Completion evidence
 
-Not completed.
+- Selected sandbox: `EntropyTag/Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMovement.unity`.
+- Largest logical face: 64x64 cells (4,096 authoritative floor cells); smaller faces use adaptive grids.
+- Largest visual projection: 256x256 RGBA32, uploaded at most once per frame.
+- Estimated persistent memory per face: at most 768 KiB CPU and 256 KiB GPU texture storage.
+- Sustained benchmark: 600 stamps average below 1 ms CPU each, at most 1 KiB managed allocation after warm-up,
+  and texture upload submission below 3 ms in PlayMode automation.
+- EditMode: 24 passed, 0 failed.
+- PlayMode: 18 passed, 0 failed.
+- Off-center visual/logical alignment is covered by an explicit planar projection test.
+- Vertical wall impact resolution and authoritative visual stamping are covered by PlayMode automation.
+- Windows development build succeeded and excludes sandbox scenes.
+- Documentation: `docs/13_TERRITORY_PAINTING.md`.
+- Developer interactive review approved on 2026-08-28 after floor/wall alignment, manga readability, FPS,
+  spawn recovery, and state-colored HUD checks.
 
 ## Completion log
 
-Not completed.
-
+- 2026-08-21 - Implemented registered floor territory, world/grid mapping, CPU-authoritative stamps,
+  Ice/Fire/Mist visual projection, reset, coverage and bank HUD, player sampling, element switching, projectile
+  integration, bounded-memory reporting, and sustained-spray tests. Automated validation passed; awaiting
+  developer playtest.
+- 2026-08-27 - Developer review exposed that cube UVs displayed logical paint at unrelated floor locations
+  and that walls needed authoritative paint rather than decorative circles alone. Replaced cube texture
+  projection with explicit planar face surfaces for floors, walls, ramps, platforms, beams, steps, and tunnel
+  geometry. Validation passed 24 EditMode, 16 PlayMode, and the Windows build.
+- 2026-08-28 - Developer review found that opaque neutral face overlays erased structure readability. Neutral
+  pixels now discard to reveal lit gray geometry, every structure uses shared manga-style base and bold
+  inverted-hull outline materials, and the HUD shows smoothed FPS above element state. Validation passed
+  24 EditMode, 17 PlayMode, and the Windows build.
+- 2026-08-28 - Developer approved the manga outline/readability direction and requested `#FCFCFA` structure
+  bases plus fall recovery. Updated the shared base material, added a labeled outlined spawn pad, and added
+  deterministic player respawn below the arena. Validation passed 24 EditMode, 18 PlayMode, and the Windows
+  build; awaiting final spawn/base-color review.
+- 2026-08-28 - Spawn review found the world-space label oversized and back-facing, while white HUD text lost
+  contrast against `#FCFCFA`. Flipped and reduced the spawn label, changed the territory/FPS HUD to dark
+  green with a black outline, and revalidated 24 EditMode, 18 PlayMode, and the Windows build.
+- 2026-08-28 - Colored Ice and Fire percentage labels by element and made the complete `Standing on` line
+  follow Neutral, Ice, Fire, or Mist. The developer reported that the result looked really good and authorized
+  the Territory Painting commit. Final validation passed 24 EditMode, 18 PlayMode, and the Windows build.

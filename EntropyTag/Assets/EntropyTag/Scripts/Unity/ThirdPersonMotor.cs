@@ -93,6 +93,27 @@ namespace EntropyTag.UnityAdapters
             speedMultiplier = multiplier;
         }
 
+        public void Respawn(Vector3 position, Quaternion rotation)
+        {
+            EnsureController();
+            controller.enabled = false;
+            transform.SetPositionAndRotation(position, rotation);
+            controller.enabled = true;
+            horizontalVelocity = Vector3.zero;
+            externalVelocity = Vector3.zero;
+            verticalVelocity = 0f;
+            slideTimeRemaining = 0f;
+            IsWallClimbing = false;
+            controller.height = standingHeight;
+            controller.center = standingCenter;
+
+            if (visualRoot != null)
+            {
+                visualRoot.localPosition = Vector3.zero;
+                visualRoot.localRotation = Quaternion.identity;
+            }
+        }
+
         public void Simulate(Vector2 moveInput, Transform movementCamera, float deltaTime)
         {
             Simulate(moveInput, movementCamera, deltaTime, false, false);

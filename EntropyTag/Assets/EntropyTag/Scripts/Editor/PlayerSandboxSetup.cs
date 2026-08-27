@@ -83,8 +83,8 @@ namespace EntropyTag.Editor
                     $"Required Input Action Asset was not imported: {ProjectFoundationSetup.InputActionsPath}");
             }
 
-            CreateEnvironment(mode);
-            CreatePlayerRig(inputActions, mode);
+            TerritorySurface territorySurface = CreateEnvironment(mode, out Transform spawnPoint);
+            CreatePlayerRig(inputActions, mode, territorySurface, spawnPoint);
             EditorSceneManager.SaveScene(scene, scenePath);
         }
 
@@ -105,35 +105,45 @@ namespace EntropyTag.Editor
             EditorBuildSettings.scenes = scenes.ToArray();
         }
 
-        private static void CreateEnvironment(CameraAimExperimentMode mode)
+        private static TerritorySurface CreateEnvironment(
+            CameraAimExperimentMode mode,
+            out Transform spawnPoint)
         {
             new GameObject(CameraAimExperimentController.GetDisplayName(mode));
 
-            GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            floor.name = "Sandbox Floor";
-            floor.transform.SetPositionAndRotation(new Vector3(0f, -0.25f, 0f), Quaternion.identity);
-            floor.transform.localScale = new Vector3(40f, 0.5f, 40f);
+            TerritorySurface territorySurface = CreatePaintableBox(
+                "Sandbox Floor",
+                new Vector3(0f, -0.25f, 0f),
+                new Vector3(40f, 0.5f, 40f),
+                Quaternion.identity,
+                false);
 
-            GameObject rearWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            rearWall.name = "Camera Collision Wall";
-            rearWall.transform.SetPositionAndRotation(new Vector3(0f, 1.5f, -2.5f), Quaternion.identity);
-            rearWall.transform.localScale = new Vector3(8f, 3f, 0.5f);
+            CreatePaintableBox(
+                "Camera Collision Wall",
+                new Vector3(0f, 1.5f, -2.5f),
+                new Vector3(8f, 3f, 0.5f));
 
-            GameObject aimTarget = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            aimTarget.name = "Aim Target";
-            aimTarget.transform.SetPositionAndRotation(new Vector3(0f, 1f, 8f), Quaternion.identity);
-            aimTarget.transform.localScale = new Vector3(2f, 2f, 0.5f);
+            CreatePaintableBox(
+                "Aim Target",
+                new Vector3(0f, 1f, 8f),
+                new Vector3(2f, 2f, 0.5f));
 
             CreateMovementGym();
+            spawnPoint = CreateSpawnPoint();
 
             GameObject lightObject = new GameObject("Directional Light");
             Light light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
             light.intensity = 1.2f;
             lightObject.transform.rotation = Quaternion.Euler(45f, -30f, 0f);
+            return territorySurface;
         }
 
-        private static void CreatePlayerRig(InputActionAsset inputActions, CameraAimExperimentMode mode)
+        private static void CreatePlayerRig(
+            InputActionAsset inputActions,
+            CameraAimExperimentMode mode,
+            TerritorySurface territorySurface,
+            Transform spawnPoint)
         {
             GameObject player = new GameObject("Player");
             player.SetActive(false);
@@ -173,23 +183,30 @@ namespace EntropyTag.Editor
 
             ThirdPersonAimSolver aimSolver = cameraObject.AddComponent<ThirdPersonAimSolver>();
             aimSolver.Configure(playerCamera, Physics.DefaultRaycastLayers);
-            CreateAimPresentation(input, cameraRig, aimSolver, mode);
+            Canvas aimCanvas = CreateAimPresentation(input, cameraRig, aimSolver, mode);
 
             GameObject muzzleObject = new GameObject("Test Projectile Muzzle");
             muzzleObject.transform.SetParent(player.transform, false);
             muzzleObject.transform.localPosition = new Vector3(0f, 1.2f, 0.6f);
             TestProjectileShooter shooter = player.AddComponent<TestProjectileShooter>();
-            shooter.Configure(input, aimSolver, muzzleObject.transform);
+            shooter.Configure(input, aimSolver, muzzleObject.transform, territorySurface);
+            CreateTerritoryDebugPresentation(
+                aimCanvas.transform,
+                territorySurface,
+                shooter,
+                player.transform);
 
             ThirdPersonMotor motor = player.AddComponent<ThirdPersonMotor>();
             motor.Configure(input, playerCamera.transform, visual.transform);
+            PlayerRespawnController respawn = player.AddComponent<PlayerRespawnController>();
+            respawn.Configure(spawnPoint);
             player.AddComponent<PlayerSandboxDiagnostics>();
 
             cameraRig.Simulate(Vector2.zero, false);
             player.SetActive(true);
         }
 
-        private static void CreateAimPresentation(
+        private static Canvas CreateAimPresentation(
             PlayerInputSource input,
             ThirdPersonCameraRig cameraRig,
             ThirdPersonAimSolver aimSolver,
@@ -225,6 +242,41 @@ namespace EntropyTag.Editor
             CameraAimExperimentController experiment = canvasObject.AddComponent<CameraAimExperimentController>();
             experiment.Configure(mode, input, cameraRig, aimSolver, reticle);
             CreateVariantLabel(canvasObject.transform, mode);
+            return canvas;
+        }
+
+        private static void CreateTerritoryDebugPresentation(
+            Transform parent,
+            TerritorySurface territorySurface,
+            TestProjectileShooter shooter,
+            Transform player)
+        {
+            GameObject labelObject = new GameObject(
+                "Territory Debug Label",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Text));
+            labelObject.transform.SetParent(parent, false);
+
+            RectTransform rect = (RectTransform)labelObject.transform;
+            rect.anchorMin = new Vector2(1f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-20f, -20f);
+            rect.sizeDelta = new Vector2(430f, 220f);
+
+            Text label = labelObject.GetComponent<Text>();
+            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            label.fontSize = 20;
+            label.color = new Color32(0, 180, 70, 255);
+            label.alignment = TextAnchor.UpperRight;
+            label.raycastTarget = false;
+            Outline outline = labelObject.AddComponent<Outline>();
+            outline.effectColor = Color.black;
+            outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+            TerritoryDebugPresenter presenter = labelObject.AddComponent<TerritoryDebugPresenter>();
+            presenter.Configure(territorySurface, shooter, player, label);
         }
 
         private static void CreateVariantLabel(Transform parent, CameraAimExperimentMode mode)
@@ -266,40 +318,157 @@ namespace EntropyTag.Editor
 
         private static void CreateMovementGym()
         {
-            CreateBox("Climb Wall", new Vector3(8f, 2.5f, 2f), new Vector3(0.5f, 5f, 7f));
-            CreateBox("Raised Platform", new Vector3(11f, 2.5f, 2f), new Vector3(5.5f, 0.5f, 7f));
-            CreateBox(
+            CreatePaintableBox("Climb Wall", new Vector3(8f, 2.5f, 2f), new Vector3(0.5f, 5f, 7f));
+            CreatePaintableBox("Raised Platform", new Vector3(11f, 2.5f, 2f), new Vector3(5.5f, 0.5f, 7f));
+            CreatePaintableBox(
                 "Ramp",
                 new Vector3(-7f, 0.75f, 7f),
                 new Vector3(4f, 0.5f, 8f),
                 Quaternion.Euler(-14f, 0f, 0f));
-            CreateBox("Narrow Beam", new Vector3(-1f, 1.25f, -8f), new Vector3(1f, 0.5f, 10f));
+            CreatePaintableBox("Narrow Beam", new Vector3(-1f, 1.25f, -8f), new Vector3(1f, 0.5f, 10f));
 
             for (int index = 0; index < 4; index++)
             {
                 float height = 0.4f + index * 0.4f;
-                CreateBox(
+                CreatePaintableBox(
                     $"Step {index + 1}",
                     new Vector3(3f + index * 1.2f, height * 0.5f, 9f),
                     new Vector3(1.2f, height, 3f));
             }
 
-            CreateBox("Slide Tunnel Roof", new Vector3(-7f, 1.35f, -3f), new Vector3(6f, 0.3f, 4f));
-            CreateBox("Slide Tunnel Left", new Vector3(-10.15f, 0.75f, -3f), new Vector3(0.3f, 1.5f, 4f));
-            CreateBox("Slide Tunnel Right", new Vector3(-3.85f, 0.75f, -3f), new Vector3(0.3f, 1.5f, 4f));
+            CreatePaintableBox("Slide Tunnel Roof", new Vector3(-7f, 1.35f, -3f), new Vector3(6f, 0.3f, 4f));
+            CreatePaintableBox("Slide Tunnel Left", new Vector3(-10.15f, 0.75f, -3f), new Vector3(0.3f, 1.5f, 4f));
+            CreatePaintableBox("Slide Tunnel Right", new Vector3(-3.85f, 0.75f, -3f), new Vector3(0.3f, 1.5f, 4f));
         }
 
-        private static GameObject CreateBox(
+        private static Transform CreateSpawnPoint()
+        {
+            GameObject marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            marker.name = "Spawn Area";
+            marker.layer = LayerMask.NameToLayer("Ignore Raycast");
+            marker.transform.SetPositionAndRotation(new Vector3(0f, 0.015f, 0f), Quaternion.identity);
+            marker.transform.localScale = new Vector3(1.6f, 0.015f, 1.6f);
+            UnityEngine.Object.DestroyImmediate(marker.GetComponent<Collider>());
+            marker.AddComponent<MangaStructureStyle>();
+
+            GameObject labelObject = new GameObject("Spawn Area Label");
+            labelObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            labelObject.transform.SetPositionAndRotation(
+                new Vector3(0f, 0.045f, 0f),
+                Quaternion.Euler(90f, 0f, 0f));
+            TextMesh label = labelObject.AddComponent<TextMesh>();
+            label.text = "SPAWN";
+            label.anchor = TextAnchor.MiddleCenter;
+            label.alignment = TextAlignment.Center;
+            label.fontSize = 48;
+            label.characterSize = 0.04f;
+            label.color = Color.black;
+
+            GameObject point = new GameObject("Player Spawn Point");
+            point.transform.SetPositionAndRotation(new Vector3(0f, 0.05f, 0f), Quaternion.identity);
+            return point.transform;
+        }
+
+        private static TerritorySurface CreatePaintableBox(
             string name,
             Vector3 position,
             Vector3 scale,
-            Quaternion? rotation = null)
+            Quaternion? rotation = null,
+            bool includeVerticalFaces = true)
         {
             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
             box.name = name;
             box.transform.SetPositionAndRotation(position, rotation ?? Quaternion.identity);
             box.transform.localScale = scale;
-            return box;
+            box.AddComponent<MangaStructureStyle>();
+            Collider sourceCollider = box.GetComponent<Collider>();
+
+            TerritorySurface top = CreatePaintableFace(
+                box,
+                sourceCollider,
+                "Top",
+                new Vector3(0f, 0.5f, 0f),
+                Vector3.up,
+                Vector3.right,
+                scale.x,
+                scale.z);
+
+            if (includeVerticalFaces)
+            {
+                CreatePaintableFace(
+                    box,
+                    sourceCollider,
+                    "Front",
+                    new Vector3(0f, 0f, 0.5f),
+                    Vector3.forward,
+                    Vector3.right,
+                    scale.x,
+                    scale.y);
+                CreatePaintableFace(
+                    box,
+                    sourceCollider,
+                    "Back",
+                    new Vector3(0f, 0f, -0.5f),
+                    Vector3.back,
+                    Vector3.left,
+                    scale.x,
+                    scale.y);
+                CreatePaintableFace(
+                    box,
+                    sourceCollider,
+                    "Right",
+                    new Vector3(0.5f, 0f, 0f),
+                    Vector3.right,
+                    Vector3.back,
+                    scale.z,
+                    scale.y);
+                CreatePaintableFace(
+                    box,
+                    sourceCollider,
+                    "Left",
+                    new Vector3(-0.5f, 0f, 0f),
+                    Vector3.left,
+                    Vector3.forward,
+                    scale.z,
+                    scale.y);
+            }
+
+            return top;
+        }
+
+        private static TerritorySurface CreatePaintableFace(
+            GameObject source,
+            Collider sourceCollider,
+            string faceName,
+            Vector3 localCenter,
+            Vector3 localNormal,
+            Vector3 localRight,
+            float worldWidth,
+            float worldHeight)
+        {
+            Vector3 worldNormal = source.transform.TransformDirection(localNormal).normalized;
+            Vector3 worldRight = source.transform.TransformDirection(localRight).normalized;
+            Vector3 worldUp = Vector3.Cross(worldNormal, worldRight).normalized;
+            var face = new GameObject($"{source.name} {faceName} Territory");
+            face.transform.SetPositionAndRotation(
+                source.transform.TransformPoint(localCenter) + worldNormal * 0.003f,
+                Quaternion.LookRotation(worldNormal, worldUp));
+            face.transform.localScale = new Vector3(worldWidth, worldHeight, 1f);
+
+            TerritorySurface surface = face.AddComponent<TerritorySurface>();
+            int logicalWidth = Mathf.Clamp(Mathf.CeilToInt(worldWidth * 2f), 4, 64);
+            int logicalHeight = Mathf.Clamp(Mathf.CeilToInt(worldHeight * 2f), 4, 64);
+            int visualResolution =
+                Mathf.Max(worldWidth, worldHeight) >= 20f ? 256 :
+                Mathf.Max(worldWidth, worldHeight) >= 6f ? 128 :
+                64;
+            surface.Configure(
+                sourceCollider,
+                face.GetComponent<Renderer>(),
+                logicalWidth,
+                logicalHeight,
+                visualResolution);
+            return surface;
         }
 
         private static void EnsureFolder(string path)

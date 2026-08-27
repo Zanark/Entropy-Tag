@@ -191,28 +191,32 @@ classDiagram
     TerritoryField --> ReactionResolver
 ```
 
-Names are proposals until the corresponding assemblies and types are created.
+The core territory and reaction types shown above now exist in the Domain assembly.
 
 ## Territory representation
 
 ### Logical ownership
 
-Use a deterministic logical field as the authority:
+The sandbox now uses a deterministic logical field as the authority:
 
-- Grid or sparse tiled grid aligned to designated paintable surfaces.
-- Cell stores owner, reaction state, strength, and optional timestamps.
+- Registered planar face grids aligned to designated floors, walls, ramps, and platforms; the main floor is
+  64x64 and smaller faces use adaptive dimensions.
+- Cell stores state, current owner, and previous-owner provenance for Mist.
 - Scoring reads logical cells.
 - Movement samples logical cells.
 - Tests can construct fields without a GPU.
 
 ### Visual mask
 
-Render a higher-resolution mask:
+The proof renders a higher-resolution visual projection:
 
-- RenderTexture, splat map, or texture array.
-- Updated from logical mutations.
-- Blended in a custom shader.
-- May smooth edges without changing authoritative ownership.
+- 256x256 RGBA32 `Texture2D` for the main floor, with 64- or 128-pixel textures for smaller faces.
+- CPU pixel buffer updated from the same logical stamp command.
+- Texture upload submitted at most once per frame.
+- Point filtering keeps cell boundaries obvious during debugging.
+- Runtime four-vertex face meshes use identity UVs, keeping world/logical coordinates aligned with rendering.
+- Neutral overlay pixels are alpha-clipped, revealing a shared `#FCFCFA` lit structure material.
+- Structures use a shared inverted-hull black material for low-cost manga-style silhouette outlines.
 
 ### Why not make pixels authoritative
 
@@ -222,22 +226,26 @@ Render a higher-resolution mask:
 - Networking becomes substantially harder.
 - Visual resolution becomes coupled to game rules.
 
-### Prototype decision gate
+### Prototype decision
 
-Compare two vertical-slice implementations:
+The compared approaches were:
 
 1. CPU logical grid plus GPU visual stamping.
 2. GPU mask with CPU logical coverage written from the same stamp commands.
 
-Choose based on frame time, memory, edge quality, complexity, and testability.
+The selected proof keeps the CPU grid authoritative and projects its mutations into a GPU-resident texture.
+This avoids readback, produces deterministic score/bot sampling, and keeps visual smoothing replaceable.
+A later shader or RenderTexture path may improve edge quality without changing authority.
 
 ## Character system
 
-The first motor proof is implemented in `Sandbox_PlayerMotor.unity`:
+The accepted motor proof is implemented in `Sandbox_PlayerMovement.unity`:
 
 - Camera-relative movement input.
 - Separate aim vector.
 - Ground detection.
+- Jump, wall climb/wall jump, and reduced-height slide.
+- Marked spawn point with below-arena position recovery and motor-state reset.
 - Acceleration and deceleration.
 - External impulses for reactions.
 - Status-effect modifiers.

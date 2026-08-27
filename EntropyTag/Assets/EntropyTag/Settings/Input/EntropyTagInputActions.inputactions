@@ -60,6 +60,24 @@
           "initialStateCheck": false
         },
         {
+          "name": "SwitchElement",
+          "type": "Button",
+          "id": "fbd2b53a-5531-4a49-b745-67d2c90c2353",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "",
+          "initialStateCheck": false
+        },
+        {
+          "name": "ResetTerritory",
+          "type": "Button",
+          "id": "dc53768c-ff7b-4d88-a3cc-78324dc8f80e",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "",
+          "initialStateCheck": false
+        },
+        {
           "name": "Pause",
           "type": "Button",
           "id": "19eefd7a-743b-4eec-b222-8f1da0304e22",
@@ -243,6 +261,50 @@
           "processors": "",
           "groups": "Gamepad",
           "action": "Slide",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "bb388d43-e626-4ac1-a5a6-37616487676b",
+          "path": "<Keyboard>/tab",
+          "interactions": "",
+          "processors": "",
+          "groups": "KeyboardMouse",
+          "action": "SwitchElement",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "f671e0ae-94c6-4083-81b9-faa6bd003726",
+          "path": "<Gamepad>/buttonNorth",
+          "interactions": "",
+          "processors": "",
+          "groups": "Gamepad",
+          "action": "SwitchElement",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "80a1ca8a-743d-45ca-9dab-f4cfd55327fd",
+          "path": "<Keyboard>/r",
+          "interactions": "",
+          "processors": "",
+          "groups": "KeyboardMouse",
+          "action": "ResetTerritory",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "fac54523-2cf7-4d0c-bf0b-670792afba3c",
+          "path": "<Gamepad>/select",
+          "interactions": "",
+          "processors": "",
+          "groups": "Gamepad",
+          "action": "ResetTerritory",
           "isComposite": false,
           "isPartOfComposite": false
         },

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics;
+using EntropyTag.Domain;
 using EntropyTag.Infrastructure;
 using EntropyTag.Presentation;
 using EntropyTag.UnityAdapters;
@@ -7,6 +8,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace EntropyTag.Tests.PlayMode
 {
@@ -38,6 +40,8 @@ namespace EntropyTag.Tests.PlayMode
             AimReticlePresenter aimPresenter = Object.FindObjectOfType<AimReticlePresenter>();
             CameraAimExperimentController experiment = Object.FindObjectOfType<CameraAimExperimentController>();
             TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TerritorySurface territorySurface = GetFloorSurface();
+            TerritoryDebugPresenter territoryPresenter = Object.FindObjectOfType<TerritoryDebugPresenter>();
             PlayerSandboxDiagnostics diagnostics = Object.FindObjectOfType<PlayerSandboxDiagnostics>();
 
             Assert.That(motor, Is.Not.Null);
@@ -47,6 +51,8 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(experiment, Is.Not.Null);
             Assert.That(experiment.Mode, Is.EqualTo(CameraAimExperimentMode.FreeAimContinuousFollow));
             Assert.That(shooter, Is.Not.Null);
+            Assert.That(territorySurface, Is.Not.Null);
+            Assert.That(territoryPresenter, Is.Not.Null);
             Assert.That(diagnostics, Is.Not.Null);
 
             Vector3 start = motor.transform.position;
@@ -60,6 +66,272 @@ namespace EntropyTag.Tests.PlayMode
 
             yield return null;
             Assert.That(diagnostics.IsRecording, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator TerritorySurfaceAlignsLogicalVisualCoverageAndBank()
+        {
+            yield return LoadSandbox();
+
+            TerritorySurface surface = GetFloorSurface();
+            Vector3 worldCenter = surface.transform.position;
+            Assert.That(surface.TryWorldToCoordinate(worldCenter, out TerritoryCoordinate coordinate), Is.True);
+
+            Color32 neutralColor = surface.GetVisualColor(coordinate);
+            StampResult ice = surface.ApplyLogicalStamp(
+                new[] { coordinate },
+                ElementId.Ice,
+                new TeamId(1));
+            Color32 iceColor = surface.GetVisualColor(coordinate);
+
+            Assert.That(ice.ChangedCells, Is.EqualTo(1));
+            Assert.That(surface.GetCell(coordinate).State, Is.EqualTo(TerritoryState.Ice));
+            Assert.That(iceColor, Is.Not.EqualTo(neutralColor));
+
+            StampResult mist = surface.ApplyLogicalStamp(
+                new[] { coordinate },
+                ElementId.Fire,
+                new TeamId(2));
+            Color32 mistColor = surface.GetVisualColor(coordinate);
+
+            Assert.That(surface.GetCell(coordinate).State, Is.EqualTo(TerritoryState.Mist));
+            Assert.That(mist.BankAward, Is.EqualTo(2));
+            Assert.That(surface.FireBank, Is.EqualTo(2));
+            Assert.That(mistColor, Is.Not.EqualTo(iceColor));
+
+            StampResult fire = surface.ApplyLogicalStamp(
+                new[] { coordinate },
+                ElementId.Fire,
+                new TeamId(2));
+            CoverageSnapshot coverage = surface.GetCoverage();
+
+            Assert.That(fire.BankAward, Is.EqualTo(1));
+            Assert.That(surface.GetCell(coordinate).State, Is.EqualTo(TerritoryState.Fire));
+            Assert.That(surface.FireBank, Is.EqualTo(3));
+            Assert.That(coverage.GetTeam(new TeamId(2)).OwnedCells, Is.EqualTo(1));
+            Assert.That(coverage.GetTeam(new TeamId(1)).OwnedCells, Is.Zero);
+        }
+
+        [UnityTest]
+        public IEnumerator SandboxStructuresUseSharedMangaShadingAndHudShowsFps()
+        {
+            yield return LoadSandbox();
+            yield return null;
+
+            MangaStructureStyle[] styles = Object.FindObjectsOfType<MangaStructureStyle>();
+            Assert.That(styles.Length, Is.GreaterThan(10));
+            Material baseMaterial = styles[0].GetComponent<MeshRenderer>().sharedMaterial;
+            Material outlineMaterial =
+                styles[0].OutlineObject.GetComponent<MeshRenderer>().sharedMaterial;
+
+            for (int index = 0; index < styles.Length; index++)
+            {
+                Assert.That(styles[index].OutlineObject, Is.Not.Null);
+                Assert.That(
+                    styles[index].GetComponent<MeshRenderer>().sharedMaterial,
+                    Is.SameAs(baseMaterial));
+                Assert.That(
+                    styles[index].OutlineObject.GetComponent<MeshRenderer>().sharedMaterial,
+                    Is.SameAs(outlineMaterial));
+            }
+
+            Text territoryLabel = GameObject.Find("Territory Debug Label").GetComponent<Text>();
+            Assert.That(territoryLabel.text, Does.StartWith("FPS: "));
+            Assert.That(territoryLabel.text, Does.Contain("<color=#1ED2FF>Ice:"));
+            Assert.That(territoryLabel.text, Does.Contain("<color=#FF5514>Fire:"));
+            Assert.That(territoryLabel.text, Does.Contain("<color=#00B446>Standing on: Neutral</color>"));
+            Assert.That((Color32)territoryLabel.color, Is.EqualTo(new Color32(0, 180, 70, 255)));
+            Assert.That(territoryLabel.GetComponent<Outline>(), Is.Not.Null);
+            Color32 baseColor = baseMaterial.GetColor("_BaseColor");
+            Assert.That(baseColor, Is.EqualTo(new Color32(252, 252, 250, 255)));
+            Assert.That(GameObject.Find("Spawn Area"), Is.Not.Null);
+            TextMesh spawnLabel = GameObject.Find("Spawn Area Label").GetComponent<TextMesh>();
+            Assert.That(spawnLabel, Is.Not.Null);
+            Assert.That(spawnLabel.characterSize, Is.EqualTo(0.04f).Within(0.0001f));
+            Assert.That(Vector3.Dot(spawnLabel.transform.forward, Vector3.down), Is.GreaterThan(0.99f));
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerRespawnsAtMarkedSpawnAfterFalling()
+        {
+            yield return LoadSandbox();
+
+            PlayerRespawnController respawn = Object.FindObjectOfType<PlayerRespawnController>();
+            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            Assert.That(respawn, Is.Not.Null);
+            Assert.That(respawn.SpawnPoint, Is.Not.Null);
+
+            motor.Respawn(new Vector3(15f, -10f, 15f), Quaternion.Euler(0f, 90f, 0f));
+            yield return null;
+
+            Assert.That(respawn.RespawnCount, Is.EqualTo(1));
+            Assert.That(
+                Vector3.Distance(motor.transform.position, respawn.SpawnPoint.position),
+                Is.LessThan(0.01f));
+            Assert.That(motor.Velocity.magnitude, Is.LessThan(0.1f));
+        }
+
+        [UnityTest]
+        public IEnumerator TerritoryResetAndPlayerSamplingUseLogicalFieldWithoutReadback()
+        {
+            yield return LoadSandbox();
+
+            TerritorySurface surface = GetFloorSurface();
+            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            Vector3 worldCenter = surface.transform.position;
+            surface.TryWorldToCoordinate(worldCenter, out TerritoryCoordinate coordinate);
+            surface.ApplyLogicalStamp(new[] { coordinate }, ElementId.Ice, new TeamId(1));
+            surface.FlushVisuals();
+
+            Assert.That(
+                TerritorySurfaceRegistry.TrySampleBelow(
+                    motor.transform.position + Vector3.up * 0.25f,
+                    2f,
+                    out TerritorySurface sampledSurface,
+                    out TerritoryCell sampledCell),
+                Is.True);
+            Assert.That(sampledSurface, Is.SameAs(surface));
+            Assert.That(sampledCell.State, Is.EqualTo(TerritoryState.Ice));
+
+            surface.ResetTerritory();
+
+            Assert.That(surface.GetCell(coordinate), Is.EqualTo(TerritoryCell.Neutral));
+            Assert.That(surface.GetCoverage().NeutralCells, Is.EqualTo(surface.LogicalWidth * surface.LogicalHeight));
+            Assert.That(surface.IceBank, Is.Zero);
+            Assert.That(surface.FireBank, Is.Zero);
+            Assert.That(surface.GetVisualColor(coordinate), Is.EqualTo(new Color32(75, 75, 80, 0)));
+        }
+
+        [UnityTest]
+        public IEnumerator ProjectileImpactStampsAuthoritativeTerritory()
+        {
+            yield return LoadSandbox();
+            yield return null;
+
+            TerritorySurface surface = GetFloorSurface();
+            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            Collider floorCollider = surface.SourceCollider;
+            Vector3 point = surface.transform.position;
+            surface.TryWorldToCoordinate(point, out TerritoryCoordinate coordinate);
+
+            Assert.That(shooter.FireOnce(), Is.True);
+            shooter.HandleProjectileImpact(0, floorCollider, point, Vector3.up);
+
+            Assert.That(surface.GetCell(coordinate).State, Is.EqualTo(TerritoryState.Ice));
+            Assert.That(shooter.ActiveProjectileCount, Is.Zero);
+            Assert.That(shooter.SplatCount, Is.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator RenderedFloorUvMatchesLogicalWorldCoordinates()
+        {
+            yield return LoadSandbox();
+
+            TerritorySurface surface = GetFloorSurface();
+            Vector3[] samplePoints =
+            {
+                new Vector3(-0.3f, -0.2f, 0f),
+                new Vector3(0.25f, -0.3f, 0f),
+                new Vector3(-0.2f, 0.3f, 0f),
+                new Vector3(0.3f, 0.2f, 0f)
+            };
+
+            for (int index = 0; index < samplePoints.Length; index++)
+            {
+                Vector3 localPoint = samplePoints[index];
+                Vector3 worldPoint = surface.transform.TransformPoint(localPoint);
+                Assert.That(surface.TryWorldToCoordinate(worldPoint, out TerritoryCoordinate coordinate), Is.True);
+                surface.ApplyLogicalStamp(new[] { coordinate }, ElementId.Fire, new TeamId(2));
+                surface.FlushVisuals();
+
+                Assert.That(
+                    surface.GetRenderedColorAtWorldPoint(worldPoint),
+                    Is.EqualTo(new Color32(255, 85, 20, 255)),
+                    $"Rendered floor must show the logical cell at local point {localPoint}.");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ProjectileImpactPaintsVerticalWallAtImpactLocation()
+        {
+            yield return LoadSandbox();
+            yield return null;
+
+            TerritorySurface wall =
+                GameObject.Find("Camera Collision Wall Front Territory").GetComponent<TerritorySurface>();
+            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            Vector3 point = wall.transform.position;
+
+            Assert.That(
+                TerritorySurfaceRegistry.TryGet(
+                    wall.SourceCollider,
+                    point,
+                    wall.transform.forward,
+                    out TerritorySurface resolved),
+                Is.True);
+            Assert.That(resolved, Is.SameAs(wall));
+            Assert.That(wall.TryWorldToCoordinate(point, out TerritoryCoordinate coordinate), Is.True);
+            Assert.That(shooter.FireOnce(), Is.True);
+
+            shooter.HandleProjectileImpact(
+                0,
+                wall.SourceCollider,
+                point,
+                wall.transform.forward);
+            wall.FlushVisuals();
+
+            Assert.That(wall.GetCell(coordinate).State, Is.EqualTo(TerritoryState.Ice));
+            Assert.That(
+                wall.GetRenderedColorAtWorldPoint(point),
+                Is.EqualTo(new Color32(30, 210, 255, 255)));
+        }
+
+        [UnityTest]
+        public IEnumerator SustainedTerritoryStampingFitsProvisionalBudget()
+        {
+            yield return LoadSandbox();
+
+            TerritorySurface surface = GetFloorSurface();
+            Vector3 center = surface.transform.position;
+
+            for (int index = 0; index < 32; index++)
+            {
+                surface.ApplyWorldStamp(center, 0.75f, ElementId.Ice, new TeamId(1));
+                surface.ApplyWorldStamp(center, 0.75f, ElementId.Fire, new TeamId(2));
+            }
+
+            long allocatedBefore = System.GC.GetAllocatedBytesForCurrentThread();
+            var stopwatch = Stopwatch.StartNew();
+            const int StampCount = 600;
+
+            for (int index = 0; index < StampCount; index++)
+            {
+                float localX = ((index * 17) % 61 - 30) / 64f;
+                float localY = ((index * 29) % 61 - 30) / 64f;
+                Vector3 point = surface.transform.TransformPoint(new Vector3(localX, localY, 0f));
+                bool ice = (index & 1) == 0;
+                surface.ApplyWorldStamp(
+                    point,
+                    0.75f,
+                    ice ? ElementId.Ice : ElementId.Fire,
+                    ice ? new TeamId(1) : new TeamId(2));
+            }
+
+            stopwatch.Stop();
+            long allocated = System.GC.GetAllocatedBytesForCurrentThread() - allocatedBefore;
+            double averageMilliseconds = stopwatch.Elapsed.TotalMilliseconds / StampCount;
+
+            var uploadStopwatch = Stopwatch.StartNew();
+            surface.FlushVisuals();
+            uploadStopwatch.Stop();
+
+            Assert.That(allocated, Is.LessThanOrEqualTo(1024L));
+            Assert.That(averageMilliseconds, Is.LessThan(1d));
+            Assert.That(uploadStopwatch.Elapsed.TotalMilliseconds, Is.LessThan(3d));
+            Assert.That(surface.VisualTexture.width, Is.EqualTo(256));
+            Assert.That(surface.LogicalWidth * surface.LogicalHeight, Is.EqualTo(4096));
+            Assert.That(surface.EstimatedCpuBytes, Is.LessThanOrEqualTo(768 * 1024));
+            Assert.That(surface.EstimatedGpuBytes, Is.EqualTo(256 * 256 * 4));
         }
 
         [UnityTest]
@@ -269,6 +541,13 @@ namespace EntropyTag.Tests.PlayMode
             }
 
             Physics.SyncTransforms();
+        }
+
+        private static TerritorySurface GetFloorSurface()
+        {
+            GameObject floor = GameObject.Find("Sandbox Floor Top Territory");
+            Assert.That(floor, Is.Not.Null);
+            return floor.GetComponent<TerritorySurface>();
         }
     }
 }

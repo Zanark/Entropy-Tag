@@ -80,6 +80,12 @@
           "children": []
         },
         {
+          "title": "territory-painting",
+          "name": "Territory Painting Proof",
+          "prompt": "Explain registered paintable floors, world-to-grid mapping, CPU authority, visual texture projection, projectile stamps, coverage HUD, reset, sampling, memory, performance, and testing using docs/13_TERRITORY_PAINTING.md:1.",
+          "children": []
+        },
+        {
           "title": "roadmap-risks",
           "name": "Roadmap, Decisions, and Risks",
           "prompt": "Explain milestones, scope ladder, accepted decisions, proposed decisions, risks, and change protocol using docs/06_PRODUCTION_ROADMAP.md:1 and docs/08_DECISIONS_AND_RISKS.md:1.",

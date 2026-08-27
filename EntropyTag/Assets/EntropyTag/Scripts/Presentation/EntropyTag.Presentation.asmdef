@@ -3,6 +3,7 @@
   "rootNamespace": "EntropyTag.Presentation",
   "references": [
     "EntropyTag.Application",
+    "EntropyTag.Domain",
     "EntropyTag.Unity",
     "Unity.ugui"
   ],

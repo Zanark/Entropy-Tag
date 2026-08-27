@@ -77,9 +77,9 @@ forward and the prototype limitations that must not be repeated.
 | Unity project | Created under `EntropyTag/` with Unity `2022.3.47f1` |
 | Render pipeline | URP `14.0.11`, active in Graphics and all Quality levels |
 | Input | Input System `1.7.0`; keyboard/mouse and gamepad drive the player sandbox |
-| Gameplay code | Accepted player sandbox plus deterministic Ice/Fire/Mist territory domain rules |
+| Gameplay code | Player sandbox plus CPU-authoritative Ice/Fire/Mist floor territory and visual mask |
 | First-party assets | Approved hierarchy created under `EntropyTag/Assets/EntropyTag/` |
-| Automated validation | 24 EditMode and 10 PlayMode tests pass; Windows development build succeeds |
+| Automated validation | 24 EditMode and 18 PlayMode tests pass; Windows development build succeeds |
 | Vertical slice | Planned |
 | Online multiplayer | Deferred |
 
@@ -103,6 +103,7 @@ forward and the prototype limitations that must not be repeated.
 - [Prototype inheritance](docs/10_PROTOTYPE_INHERITANCE.md)
 - [Player, camera, and input sandbox](docs/11_PLAYER_CAMERA_INPUT.md)
 - [Domain Rules](docs/12_DOMAIN_RULES.md)
+- [Territory Painting](docs/13_TERRITORY_PAINTING.md)
 - [Documentation catalogue](docs/DOCUMENTATION_CATALOGUE.json)
 
 ## Work planning

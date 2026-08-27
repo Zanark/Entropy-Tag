@@ -1,3 +1,4 @@
+using EntropyTag.Domain;
 using UnityEngine;
 
 namespace EntropyTag.UnityAdapters
@@ -13,6 +14,9 @@ namespace EntropyTag.UnityAdapters
 
         [SerializeField]
         private Transform muzzle;
+
+        [SerializeField]
+        private TerritorySurface territorySurface;
 
         [SerializeField]
         private int poolSize = 24;
@@ -34,8 +38,11 @@ namespace EntropyTag.UnityAdapters
 
         private GameObject[] projectiles;
         private Rigidbody[] bodies;
+        private Renderer[] projectileRenderers;
+        private ElementId[] projectileElements;
         private float[] expiryTimes;
         private GameObject[] splats;
+        private Renderer[] splatRenderers;
         private float nextShotTime;
         private int nextProjectileIndex;
         private int nextSplatIndex;
@@ -46,11 +53,21 @@ namespace EntropyTag.UnityAdapters
 
         public int SplatCount { get; private set; }
 
-        public void Configure(PlayerInputSource inputSource, ThirdPersonAimSolver solver, Transform muzzleTransform)
+        public ElementId CurrentElement { get; private set; } = ElementId.Ice;
+
+        public TeamId CurrentTeamId =>
+            CurrentElement == ElementId.Ice ? new TeamId(1) : new TeamId(2);
+
+        public void Configure(
+            PlayerInputSource inputSource,
+            ThirdPersonAimSolver solver,
+            Transform muzzleTransform,
+            TerritorySurface paintSurface = null)
         {
             input = inputSource;
             aimSolver = solver;
             muzzle = muzzleTransform;
+            territorySurface = paintSurface;
         }
 
         public bool FireOnce()
@@ -79,6 +96,8 @@ namespace EntropyTag.UnityAdapters
             GameObject projectile = projectiles[projectileIndex];
             Rigidbody body = bodies[projectileIndex];
             projectile.transform.SetPositionAndRotation(muzzle.position, Quaternion.LookRotation(direction));
+            projectileElements[projectileIndex] = CurrentElement;
+            projectileRenderers[projectileIndex].material.color = GetElementColor(CurrentElement);
             projectile.SetActive(true);
             body.velocity = direction * projectileSpeed;
             expiryTimes[projectileIndex] = Time.unscaledTime + projectileLifetime;
@@ -88,7 +107,11 @@ namespace EntropyTag.UnityAdapters
             return true;
         }
 
-        public void HandleProjectileImpact(int projectileIndex, Vector3 point, Vector3 normal)
+        public void HandleProjectileImpact(
+            int projectileIndex,
+            Collider impactCollider,
+            Vector3 point,
+            Vector3 normal)
         {
             if (projectiles == null ||
                 projectileIndex < 0 ||
@@ -98,8 +121,47 @@ namespace EntropyTag.UnityAdapters
                 return;
             }
 
-            PlaceSplat(point, normal);
+            ElementId element = projectileElements[projectileIndex];
+
+            if (TerritorySurfaceRegistry.TryGet(
+                    impactCollider,
+                    point,
+                    normal,
+                    out TerritorySurface impactSurface))
+            {
+                impactSurface.ApplyWorldStamp(point, splatSize, element, GetTeamId(element));
+            }
+            else if (territorySurface != null &&
+                     territorySurface.TryWorldToCoordinate(point, out _))
+            {
+                territorySurface.ApplyWorldStamp(point, splatSize, element, GetTeamId(element));
+            }
+
+            PlaceSplat(point, normal, element);
             RecycleProjectile(projectileIndex);
+        }
+
+        public void SwitchElement()
+        {
+            CurrentElement = CurrentElement == ElementId.Ice ? ElementId.Fire : ElementId.Ice;
+        }
+
+        public void ResetTestPaint()
+        {
+            TerritorySurfaceRegistry.ResetAll();
+
+            if (splats == null)
+            {
+                return;
+            }
+
+            for (int index = 0; index < splats.Length; index++)
+            {
+                splats[index].SetActive(false);
+            }
+
+            SplatCount = 0;
+            nextSplatIndex = 0;
         }
 
         private void Awake()
@@ -111,6 +173,16 @@ namespace EntropyTag.UnityAdapters
         private void LateUpdate()
         {
             RecycleExpiredProjectiles();
+
+            if (input != null && input.WasSwitchElementPressedThisFrame)
+            {
+                SwitchElement();
+            }
+
+            if (input != null && input.WasResetTerritoryPressedThisFrame)
+            {
+                ResetTestPaint();
+            }
 
             if (input != null && input.IsFiring && Time.unscaledTime >= nextShotTime && FireOnce())
             {
@@ -152,6 +224,8 @@ namespace EntropyTag.UnityAdapters
             int count = Mathf.Max(1, poolSize);
             projectiles = new GameObject[count];
             bodies = new Rigidbody[count];
+            projectileRenderers = new Renderer[count];
+            projectileElements = new ElementId[count];
             expiryTimes = new float[count];
             CharacterController ownerController = GetComponent<CharacterController>();
 
@@ -175,6 +249,7 @@ namespace EntropyTag.UnityAdapters
                 projectile.SetActive(false);
                 projectiles[index] = projectile;
                 bodies[index] = body;
+                projectileRenderers[index] = projectile.GetComponent<Renderer>();
             }
         }
 
@@ -182,6 +257,7 @@ namespace EntropyTag.UnityAdapters
         {
             int count = Mathf.Max(1, splatPoolSize);
             splats = new GameObject[count];
+            splatRenderers = new Renderer[count];
 
             for (int index = 0; index < count; index++)
             {
@@ -196,6 +272,7 @@ namespace EntropyTag.UnityAdapters
 
                 splat.SetActive(false);
                 splats[index] = splat;
+                splatRenderers[index] = renderer;
             }
         }
 
@@ -229,12 +306,13 @@ namespace EntropyTag.UnityAdapters
             }
         }
 
-        private void PlaceSplat(Vector3 point, Vector3 normal)
+        private void PlaceSplat(Vector3 point, Vector3 normal, ElementId element)
         {
             GameObject splat = splats[nextSplatIndex];
             splat.transform.SetPositionAndRotation(
                 point + normal * 0.0125f,
                 Quaternion.FromToRotation(Vector3.up, normal));
+            splatRenderers[nextSplatIndex].material.color = GetElementColor(element);
             splat.SetActive(true);
             nextSplatIndex = (nextSplatIndex + 1) % splats.Length;
             SplatCount = Mathf.Min(SplatCount + 1, splats.Length);
@@ -246,6 +324,26 @@ namespace EntropyTag.UnityAdapters
             bodies[index].angularVelocity = Vector3.zero;
             projectiles[index].SetActive(false);
             ActiveProjectileCount--;
+        }
+
+        private static TeamId GetTeamId(ElementId element)
+        {
+            switch (element)
+            {
+                case ElementId.Ice:
+                    return new TeamId(1);
+                case ElementId.Fire:
+                    return new TeamId(2);
+                default:
+                    throw new System.ArgumentOutOfRangeException(nameof(element), element, null);
+            }
+        }
+
+        private static Color GetElementColor(ElementId element)
+        {
+            return element == ElementId.Ice
+                ? new Color(0.05f, 0.85f, 1f)
+                : new Color(1f, 0.2f, 0.05f);
         }
     }
 }

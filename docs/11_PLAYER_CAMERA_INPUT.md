@@ -14,7 +14,7 @@ Then enter Play Mode.
 ## Camera comparison scenes
 
 Variant 05, Free Aim Continuous Follow, is the selected foundation. The original eight scenes remain under
-`CameraVariants/` until the selected model completes its final interactive acceptance check.
+`CameraVariants/` as comparison evidence.
 
 1. `Sandbox_Camera_01_CenteredImmediate` - fixed center reticle and immediate camera response.
 2. `Sandbox_Camera_02_CenteredSmooth` - fixed center reticle with short camera damping.
@@ -41,11 +41,13 @@ and a low-clearance slide tunnel.
 | Slide | `Left Ctrl` | B / Circle |
 | Aim | Right mouse button | Left trigger |
 | Fire paint projectiles | Left mouse button | Right trigger |
+| Switch Ice / Fire | `Tab` | Y / Triangle |
+| Reset territory | `R` | View / Select |
 | Pause intent | `Escape` | Start |
 
 Hold movement toward the climb wall to climb it. Jumping while climbing pushes the player away from the wall.
-Fire launches pooled test projectiles through the shared aim solution. On impact they become simple cyan
-splats that remain on the contacted floor, wall, or platform until the finite splat pool wraps.
+Fire launches pooled test projectiles through the shared aim solution. Floor impacts stamp authoritative
+Ice/Fire/Mist territory and leave simple colored splats; non-paintable geometry receives only the shape splat.
 
 ## Runtime flow
 
@@ -81,8 +83,8 @@ flowchart LR
 
 ## Components
 
-- `PlayerInputSource` binds the shared Input Action Asset once and reads movement, look, aim, fire, jump, and
-  slide without per-frame action lookup.
+- `PlayerInputSource` binds the shared Input Action Asset once and reads movement, look, aim, fire, jump,
+  slide, element switching, and territory reset without per-frame action lookup.
 - `ThirdPersonMotor` uses `CharacterController` for camera-relative acceleration, deceleration, gravity,
   grounded movement, jumping, wall climbing and wall jumping, sliding with reduced collision height,
   rotation, external impulses, and speed modifiers.
@@ -102,8 +104,8 @@ flowchart LR
 
 Automated validation covers:
 
-- EditMode: 4 passed, 0 failed.
-- PlayMode: 10 passed, 0 failed.
+- EditMode: 24 passed, 0 failed.
+- PlayMode: 18 passed, 0 failed.
 - Keyboard/mouse and gamepad schemes are present.
 - Camera collision prevents the camera remaining behind the sandbox wall.
 - Motor impulse and speed-modifier hooks operate.
@@ -111,6 +113,9 @@ Automated validation covers:
 - Test projectiles activate from the pool and travel along the shared aim solution.
 - Jump, wall climb, wall jump, and reduced-height slide behavior operate in the generated movement gym.
 - Projectile impacts create persistent pooled splats.
+- Paintable floor, wall, ramp, and platform impacts update a CPU logical face field and its matching planar
+  visual texture.
+- The HUD shows selected element, Ice/Fire coverage and bank, Mist/Neutral cells, and sampled player territory.
 - Firing does not cause the camera collision rig to collapse toward the player.
 - A 300-iteration warm player loop allocates zero managed bytes and averages below 1 ms per isolated update.
 - Windows development build succeeds and explicitly excludes all eight comparison scenes.
@@ -124,7 +129,9 @@ platform-specific glyphs or naming belong to the later UI/accessibility TODO.
 ## Current limitations
 
 - Placeholder thin cuboid torso, sphere head, floor, wall, target, reticle, and lighting only.
-- No animation, jumping, sprinting, real combat, spray, pause flow, rebinding UI, or settings UI.
-- Test splats have no ownership, territory conversion, elemental behavior, damage, or gameplay scoring.
+- No animation, sprinting, production combat, continuous spray stream, pause flow, rebinding UI, or settings UI.
+- Floor territory has ownership, reactions, bank, and coverage, but no match timer, pressure boundary, bots,
+  production scoring HUD, or movement modifiers yet.
+- Falling below the sandbox returns the player to the marked spawn pad with movement state cleared.
 - Input tuning values are persisted by the service but not yet exposed through a menu.
 - The sandbox is a technical proof, not a production arena.

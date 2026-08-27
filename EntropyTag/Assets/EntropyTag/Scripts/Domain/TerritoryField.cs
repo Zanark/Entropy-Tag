@@ -17,7 +17,7 @@ namespace EntropyTag.Domain
     public interface ITerritoryField : IReadOnlyTerritoryField
     {
         StampResult ApplyStamp(
-            IEnumerable<TerritoryCoordinate> coordinates,
+            IReadOnlyList<TerritoryCoordinate> coordinates,
             ElementId element,
             TeamId applyingTeam);
 
@@ -44,6 +44,8 @@ namespace EntropyTag.Domain
     {
         private readonly TerritoryCell[] cells;
         private readonly TerritoryReactionResolver resolver;
+        private readonly int[] visitGenerations;
+        private int currentVisitGeneration;
 
         public TerritoryField(int width, int height, TerritoryReactionResolver reactionResolver)
         {
@@ -61,6 +63,7 @@ namespace EntropyTag.Domain
             Height = height;
             resolver = reactionResolver ?? throw new ArgumentNullException(nameof(reactionResolver));
             cells = new TerritoryCell[checked(width * height)];
+            visitGenerations = new int[cells.Length];
             Reset();
         }
 
@@ -76,7 +79,7 @@ namespace EntropyTag.Domain
         }
 
         public StampResult ApplyStamp(
-            IEnumerable<TerritoryCoordinate> coordinates,
+            IReadOnlyList<TerritoryCoordinate> coordinates,
             ElementId element,
             TeamId applyingTeam)
         {
@@ -85,21 +88,22 @@ namespace EntropyTag.Domain
                 throw new ArgumentNullException(nameof(coordinates));
             }
 
-            var uniqueCoordinates = new HashSet<TerritoryCoordinate>();
-            int attempted = 0;
+            AdvanceVisitGeneration();
+            int attempted = coordinates.Count;
             int changed = 0;
             int bankAward = 0;
 
-            foreach (TerritoryCoordinate coordinate in coordinates)
+            for (int coordinateIndex = 0; coordinateIndex < coordinates.Count; coordinateIndex++)
             {
-                attempted++;
+                TerritoryCoordinate coordinate = coordinates[coordinateIndex];
+                int index = GetIndex(coordinate);
 
-                if (!uniqueCoordinates.Add(coordinate))
+                if (visitGenerations[index] == currentVisitGeneration)
                 {
                     continue;
                 }
 
-                int index = GetIndex(coordinate);
+                visitGenerations[index] = currentVisitGeneration;
                 TerritoryCell existing = cells[index];
                 TerritoryResolution resolution = resolver.Resolve(existing, element, applyingTeam);
 
@@ -118,6 +122,18 @@ namespace EntropyTag.Domain
             }
 
             return new StampResult(attempted, changed, bankAward);
+        }
+
+        private void AdvanceVisitGeneration()
+        {
+            if (currentVisitGeneration == int.MaxValue)
+            {
+                Array.Clear(visitGenerations, 0, visitGenerations.Length);
+                currentVisitGeneration = 1;
+                return;
+            }
+
+            currentVisitGeneration++;
         }
 
         public void Reset()
