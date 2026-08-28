@@ -113,6 +113,128 @@ namespace EntropyTag.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ElementPresentationUsesDistinctPatternsAndTerritoryMovementAffinity()
+        {
+            yield return LoadSandbox();
+
+            TerritorySurface surface = GetFloorSurface();
+            ElementReactionPresentationConfig config = surface.PresentationConfig;
+            TerritoryMovementController territoryMovement =
+                Object.FindObjectOfType<TerritoryMovementController>();
+            ElementReactionFeedback feedback = Object.FindObjectOfType<ElementReactionFeedback>();
+            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TerritoryDebugPresenter presenter = Object.FindObjectOfType<TerritoryDebugPresenter>();
+            Text movementLabel =
+                GameObject.Find("Territory Movement Status Label").GetComponent<Text>();
+            Image movementBackground =
+                GameObject.Find("Territory Movement Status Background").GetComponent<Image>();
+
+            Assert.That(config, Is.Not.Null);
+            Assert.That(config.Ice.Pattern, Is.EqualTo(TerritoryPattern.DiagonalStripes));
+            Assert.That(config.Fire.Pattern, Is.EqualTo(TerritoryPattern.Dots));
+            Assert.That(config.Mist.Pattern, Is.EqualTo(TerritoryPattern.Crosshatch));
+            Assert.That(config.FriendlyMovementMultiplier, Is.EqualTo(1.4f).Within(0.001f));
+            Assert.That(config.HostileMovementMultiplier, Is.EqualTo(0.7f).Within(0.001f));
+            Assert.That(territoryMovement, Is.Not.Null);
+            Assert.That(feedback, Is.Not.Null);
+
+            territoryMovement.Simulate(TerritoryState.Ice);
+            Assert.That(
+                territoryMovement.CurrentEffect,
+                Is.EqualTo(TerritoryMovementEffect.FriendlyBoost));
+            Assert.That(motor.SpeedMultiplier, Is.EqualTo(1.4f).Within(0.001f));
+            presenter.RefreshNow();
+            Assert.That(movementLabel.text, Does.Contain("FRIENDLY BOOST x1.40"));
+            Assert.That((Color32)movementLabel.color, Is.EqualTo(new Color32(30, 210, 255, 255)));
+            Assert.That(movementBackground.enabled, Is.False);
+
+            territoryMovement.Simulate(TerritoryState.Fire);
+            Assert.That(
+                territoryMovement.CurrentEffect,
+                Is.EqualTo(TerritoryMovementEffect.HostileSlow));
+            Assert.That(motor.SpeedMultiplier, Is.EqualTo(0.7f).Within(0.001f));
+            presenter.RefreshNow();
+            Assert.That(movementLabel.text, Does.Contain("HOSTILE SLOW x0.70"));
+            Assert.That((Color32)movementLabel.color, Is.EqualTo(new Color32(30, 210, 255, 255)));
+            Assert.That(movementBackground.enabled, Is.True);
+            Assert.That(
+                (Color32)movementBackground.color,
+                Is.EqualTo(new Color32(255, 85, 20, 230)));
+            Assert.That(movementBackground.rectTransform.sizeDelta.x, Is.LessThanOrEqualTo(340f));
+            Assert.That(
+                movementBackground.rectTransform.sizeDelta.x,
+                Is.EqualTo(movementLabel.preferredWidth + 20f).Within(1f));
+
+            territoryMovement.Simulate(TerritoryState.Mist);
+            Assert.That(
+                territoryMovement.CurrentEffect,
+                Is.EqualTo(TerritoryMovementEffect.Normal));
+            Assert.That(motor.SpeedMultiplier, Is.EqualTo(1f).Within(0.001f));
+            presenter.RefreshNow();
+            Assert.That(movementLabel.text, Does.Contain("Normal x1.00"));
+            Assert.That(movementBackground.enabled, Is.False);
+
+            shooter.SwitchElement();
+            territoryMovement.Simulate(TerritoryState.Fire);
+            Assert.That(
+                territoryMovement.CurrentEffect,
+                Is.EqualTo(TerritoryMovementEffect.FriendlyBoost));
+            Assert.That(motor.SpeedMultiplier, Is.EqualTo(1.4f).Within(0.001f));
+            presenter.RefreshNow();
+            Assert.That((Color32)movementLabel.color, Is.EqualTo(new Color32(255, 85, 20, 255)));
+            Assert.That(movementBackground.enabled, Is.False);
+
+            territoryMovement.Simulate(TerritoryState.Ice);
+            Assert.That(
+                territoryMovement.CurrentEffect,
+                Is.EqualTo(TerritoryMovementEffect.HostileSlow));
+            Assert.That(motor.SpeedMultiplier, Is.EqualTo(0.7f).Within(0.001f));
+            presenter.RefreshNow();
+            Assert.That((Color32)movementLabel.color, Is.EqualTo(new Color32(255, 85, 20, 255)));
+            Assert.That(movementBackground.enabled, Is.True);
+            Assert.That(
+                (Color32)movementBackground.color,
+                Is.EqualTo(new Color32(30, 210, 255, 230)));
+        }
+
+        [UnityTest]
+        public IEnumerator ContestedWorldStampPublishesAuthoritativeReactionFeedback()
+        {
+            yield return LoadSandbox();
+
+            TerritorySurface surface = GetFloorSurface();
+            ElementReactionFeedback feedback = Object.FindObjectOfType<ElementReactionFeedback>();
+            Vector3 point = surface.transform.position;
+            TerritoryReactionEvent? observed = null;
+            System.Action<TerritoryReactionEvent> handler = reaction => observed = reaction;
+            TerritorySurfaceRegistry.ReactionOccurred += handler;
+
+            try
+            {
+                surface.ApplyWorldStamp(point, 0.25f, ElementId.Ice, new TeamId(1));
+                observed = null;
+                surface.ApplyWorldStamp(point, 0.25f, ElementId.Fire, new TeamId(2));
+                yield return null;
+
+                Assert.That(observed.HasValue, Is.True);
+                Assert.That(observed.Value.Kind, Is.EqualTo(TerritoryReactionKind.MistCreated));
+                Assert.That(observed.Value.Surface, Is.SameAs(surface));
+                Assert.That(observed.Value.WorldPoint, Is.EqualTo(point));
+                Assert.That(observed.Value.CurrentState, Is.EqualTo(TerritoryState.Mist));
+                Assert.That(observed.Value.AppliedElement, Is.EqualTo(ElementId.Fire));
+                Assert.That(observed.Value.BankAward, Is.GreaterThan(0));
+                Assert.That(feedback.CreatedSlotCount, Is.EqualTo(6));
+                Assert.That(feedback.ActiveFeedbackCount, Is.GreaterThan(0));
+                Assert.That(feedback.HasAudioPlaceholder, Is.True);
+            }
+            finally
+            {
+                TerritorySurfaceRegistry.ReactionOccurred -= handler;
+            }
+        }
+
+        [UnityTest]
         public IEnumerator SandboxStructuresUseSharedMangaShadingAndHudShowsFps()
         {
             yield return LoadSandbox();
@@ -137,6 +259,7 @@ namespace EntropyTag.Tests.PlayMode
 
             Text territoryLabel = GameObject.Find("Territory Debug Label").GetComponent<Text>();
             Assert.That(territoryLabel.text, Does.StartWith("FPS: "));
+            Assert.That(territoryLabel.text, Does.Contain("<color=#1ED2FF>Selected: Ice"));
             Assert.That(territoryLabel.text, Does.Contain("<color=#1ED2FF>Ice:"));
             Assert.That(territoryLabel.text, Does.Contain("<color=#FF5514>Fire:"));
             Assert.That(territoryLabel.text, Does.Contain("<color=#00B446>Standing on: Neutral</color>"));
@@ -149,6 +272,11 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(spawnLabel, Is.Not.Null);
             Assert.That(spawnLabel.characterSize, Is.EqualTo(0.04f).Within(0.0001f));
             Assert.That(Vector3.Dot(spawnLabel.transform.forward, Vector3.down), Is.GreaterThan(0.99f));
+
+            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            shooter.SwitchElement();
+            yield return new WaitForSecondsRealtime(0.25f);
+            Assert.That(territoryLabel.text, Does.Contain("<color=#FF5514>Selected: Fire"));
         }
 
         [UnityTest]
@@ -246,7 +374,7 @@ namespace EntropyTag.Tests.PlayMode
 
                 Assert.That(
                     surface.GetRenderedColorAtWorldPoint(worldPoint),
-                    Is.EqualTo(new Color32(255, 85, 20, 255)),
+                    Is.EqualTo(new Color32(255, 85, 20, 128)),
                     $"Rendered floor must show the logical cell at local point {localPoint}.");
             }
         }
@@ -283,7 +411,7 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(wall.GetCell(coordinate).State, Is.EqualTo(TerritoryState.Ice));
             Assert.That(
                 wall.GetRenderedColorAtWorldPoint(point),
-                Is.EqualTo(new Color32(30, 210, 255, 255)));
+                Is.EqualTo(new Color32(30, 210, 255, 64)));
         }
 
         [UnityTest]

@@ -19,6 +19,9 @@ namespace EntropyTag.UnityAdapters
         private TerritorySurface territorySurface;
 
         [SerializeField]
+        private ElementReactionPresentationConfig presentationConfig;
+
+        [SerializeField]
         private int poolSize = 24;
 
         [SerializeField]
@@ -62,12 +65,14 @@ namespace EntropyTag.UnityAdapters
             PlayerInputSource inputSource,
             ThirdPersonAimSolver solver,
             Transform muzzleTransform,
-            TerritorySurface paintSurface = null)
+            TerritorySurface paintSurface = null,
+            ElementReactionPresentationConfig reactions = null)
         {
             input = inputSource;
             aimSolver = solver;
             muzzle = muzzleTransform;
             territorySurface = paintSurface;
+            presentationConfig = reactions;
         }
 
         public bool FireOnce()
@@ -129,12 +134,22 @@ namespace EntropyTag.UnityAdapters
                     normal,
                     out TerritorySurface impactSurface))
             {
-                impactSurface.ApplyWorldStamp(point, splatSize, element, GetTeamId(element));
+                impactSurface.ApplyWorldStamp(
+                    point,
+                    splatSize,
+                    element,
+                    GetTeamId(element),
+                    normal);
             }
             else if (territorySurface != null &&
                      territorySurface.TryWorldToCoordinate(point, out _))
             {
-                territorySurface.ApplyWorldStamp(point, splatSize, element, GetTeamId(element));
+                territorySurface.ApplyWorldStamp(
+                    point,
+                    splatSize,
+                    element,
+                    GetTeamId(element),
+                    normal);
             }
 
             PlaceSplat(point, normal, element);
@@ -339,8 +354,13 @@ namespace EntropyTag.UnityAdapters
             }
         }
 
-        private static Color GetElementColor(ElementId element)
+        private Color GetElementColor(ElementId element)
         {
+            if (presentationConfig != null)
+            {
+                return presentationConfig.GetElement(element).ProjectileColor;
+            }
+
             return element == ElementId.Ice
                 ? new Color(0.05f, 0.85f, 1f)
                 : new Color(1f, 0.2f, 0.05f);

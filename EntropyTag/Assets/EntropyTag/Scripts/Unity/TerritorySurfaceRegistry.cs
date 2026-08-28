@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using EntropyTag.Domain;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace EntropyTag.UnityAdapters
         private static readonly TeamId FireTeam = new TeamId(2);
 
         public static int Count => Surfaces.Count;
+
+        public static event Action<TerritoryReactionEvent> ReactionOccurred;
 
         public static int IceBank
         {
@@ -135,6 +138,11 @@ namespace EntropyTag.UnityAdapters
             {
                 Surfaces[index].ResetTerritory();
             }
+        }
+
+        public static void PublishReaction(TerritoryReactionEvent reaction)
+        {
+            ReactionOccurred?.Invoke(reaction);
         }
     }
 }

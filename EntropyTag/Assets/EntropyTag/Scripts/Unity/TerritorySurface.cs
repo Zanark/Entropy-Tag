@@ -11,9 +11,6 @@ namespace EntropyTag.UnityAdapters
     public sealed class TerritorySurface : MonoBehaviour
     {
         private static readonly Color32 NeutralColor = new Color32(75, 75, 80, 0);
-        private static readonly Color32 IceColor = new Color32(30, 210, 255, 255);
-        private static readonly Color32 FireColor = new Color32(255, 85, 20, 255);
-        private static readonly Color32 MistColor = new Color32(190, 170, 210, 255);
         private const int EstimatedLogicalCellAndVisitBytes = 36;
         private const int BytesPerVisualPixel = 4;
 
@@ -22,6 +19,9 @@ namespace EntropyTag.UnityAdapters
 
         [SerializeField]
         private Renderer targetRenderer;
+
+        [SerializeField]
+        private ElementReactionPresentationConfig presentationConfig;
 
         [SerializeField]
         private int logicalWidth = 64;
@@ -46,6 +46,8 @@ namespace EntropyTag.UnityAdapters
 
         public Collider SourceCollider => sourceCollider;
 
+        public ElementReactionPresentationConfig PresentationConfig => presentationConfig;
+
         public int LogicalWidth => logicalWidth;
 
         public int LogicalHeight => logicalHeight;
@@ -69,6 +71,7 @@ namespace EntropyTag.UnityAdapters
         public void Configure(
             Collider colliderToUse,
             Renderer rendererToUse,
+            ElementReactionPresentationConfig reactions,
             int width,
             int height,
             int resolution)
@@ -86,6 +89,9 @@ namespace EntropyTag.UnityAdapters
             targetRenderer = rendererToUse != null
                 ? rendererToUse
                 : throw new ArgumentNullException(nameof(rendererToUse));
+            presentationConfig = reactions != null
+                ? reactions
+                : throw new ArgumentNullException(nameof(reactions));
             logicalWidth = width;
             logicalHeight = height;
             visualResolution = resolution;
@@ -107,7 +113,8 @@ namespace EntropyTag.UnityAdapters
             Vector3 worldPoint,
             float radius,
             ElementId element,
-            TeamId applyingTeam)
+            TeamId applyingTeam,
+            Vector3 worldNormal = default)
         {
             EnsureInitialized();
 
@@ -121,6 +128,7 @@ namespace EntropyTag.UnityAdapters
                 return default;
             }
 
+            TerritoryState previousState = field.GetCell(center).State;
             float worldWidth = Mathf.Max(0.001f, Mathf.Abs(transform.lossyScale.x));
             float worldHeight = Mathf.Max(0.001f, Mathf.Abs(transform.lossyScale.y));
             int radiusX = Mathf.Max(1, Mathf.CeilToInt(radius / worldWidth * logicalWidth));
@@ -151,7 +159,26 @@ namespace EntropyTag.UnityAdapters
                 }
             }
 
-            return ApplyLogicalStamp(stampCoordinates, element, applyingTeam);
+            StampResult result = ApplyLogicalStamp(stampCoordinates, element, applyingTeam);
+            TerritoryState currentState = field.GetCell(center).State;
+
+            if (previousState != currentState)
+            {
+                TerritorySurfaceRegistry.PublishReaction(
+                    new TerritoryReactionEvent(
+                        GetReactionKind(previousState, currentState),
+                        this,
+                        worldPoint,
+                        worldNormal.sqrMagnitude > 0.0001f
+                            ? worldNormal.normalized
+                            : transform.forward,
+                        previousState,
+                        currentState,
+                        element,
+                        result.BankAward));
+            }
+
+            return result;
         }
 
         public StampResult ApplyLogicalStamp(
@@ -356,6 +383,11 @@ namespace EntropyTag.UnityAdapters
                 throw new InvalidOperationException($"{name} requires a source collider.");
             }
 
+            if (presentationConfig == null)
+            {
+                throw new InvalidOperationException($"{name} requires element reaction presentation configuration.");
+            }
+
             config = DomainRulesConfig.CreateFirstSlice();
             field = new TerritoryField(logicalWidth, logicalHeight, config.Resolver);
             visualPixels = new Color32[visualResolution * visualResolution];
@@ -477,21 +509,52 @@ namespace EntropyTag.UnityAdapters
             }
         }
 
-        private static Color32 GetStateColor(TerritoryState state)
+        private Color32 GetStateColor(TerritoryState state)
         {
             switch (state)
             {
                 case TerritoryState.Neutral:
                     return NeutralColor;
                 case TerritoryState.Ice:
-                    return IceColor;
+                    return WithPatternTag(
+                        presentationConfig.GetTerritoryColor(state),
+                        GetPatternTag(presentationConfig.Ice.Pattern));
                 case TerritoryState.Fire:
-                    return FireColor;
+                    return WithPatternTag(
+                        presentationConfig.GetTerritoryColor(state),
+                        GetPatternTag(presentationConfig.Fire.Pattern));
                 case TerritoryState.Mist:
-                    return MistColor;
+                    return WithPatternTag(
+                        presentationConfig.GetTerritoryColor(state),
+                        GetPatternTag(presentationConfig.Mist.Pattern));
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
+        }
+
+        private static Color32 WithPatternTag(Color32 color, byte patternTag)
+        {
+            color.a = patternTag;
+            return color;
+        }
+
+        private static byte GetPatternTag(TerritoryPattern pattern)
+        {
+            return (byte)((int)pattern * 64);
+        }
+
+        private static TerritoryReactionKind GetReactionKind(
+            TerritoryState previousState,
+            TerritoryState currentState)
+        {
+            if (currentState == TerritoryState.Mist)
+            {
+                return TerritoryReactionKind.MistCreated;
+            }
+
+            return previousState == TerritoryState.Mist
+                ? TerritoryReactionKind.MistClaimed
+                : TerritoryReactionKind.TerritoryClaimed;
         }
     }
 }

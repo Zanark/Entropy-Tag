@@ -86,6 +86,12 @@
           "children": []
         },
         {
+          "title": "element-reactions",
+          "name": "Element Reactions Proof",
+          "prompt": "Explain deterministic Ice Fire Mist transitions, data-driven patterns, reaction events, pooled VFX and audio placeholders, Mist status duration, telegraphs, and testing using docs/14_ELEMENT_REACTIONS.md:1.",
+          "children": []
+        },
+        {
           "title": "roadmap-risks",
           "name": "Roadmap, Decisions, and Risks",
           "prompt": "Explain milestones, scope ladder, accepted decisions, proposed decisions, risks, and change protocol using docs/06_PRODUCTION_ROADMAP.md:1 and docs/08_DECISIONS_AND_RISKS.md:1.",

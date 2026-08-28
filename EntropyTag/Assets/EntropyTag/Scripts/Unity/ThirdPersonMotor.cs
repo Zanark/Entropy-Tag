@@ -71,6 +71,8 @@ namespace EntropyTag.UnityAdapters
 
         public bool IsSliding => slideTimeRemaining > 0f;
 
+        public float SpeedMultiplier => speedMultiplier;
+
         public void Configure(PlayerInputSource inputSource, Transform movementCamera, Transform playerVisual = null)
         {
             input = inputSource;

@@ -22,7 +22,16 @@ namespace EntropyTag.Presentation
         private Transform player;
 
         [SerializeField]
+        private TerritoryMovementController territoryMovement;
+
+        [SerializeField]
         private Text label;
+
+        [SerializeField]
+        private Text movementLabel;
+
+        [SerializeField]
+        private Image movementBackground;
 
         [SerializeField]
         private float refreshInterval = 0.2f;
@@ -34,12 +43,23 @@ namespace EntropyTag.Presentation
             TerritorySurface territorySurface,
             TestProjectileShooter projectileShooter,
             Transform playerTransform,
-            Text debugLabel)
+            TerritoryMovementController movementController,
+            Text debugLabel,
+            Text terrainMovementLabel,
+            Image terrainMovementBackground)
         {
             surface = territorySurface;
             shooter = projectileShooter;
             player = playerTransform;
+            territoryMovement = movementController;
             label = debugLabel;
+            movementLabel = terrainMovementLabel;
+            movementBackground = terrainMovementBackground;
+            Refresh();
+        }
+
+        public void RefreshNow()
+        {
             Refresh();
         }
 
@@ -87,12 +107,13 @@ namespace EntropyTag.Presentation
 
             label.text =
                 $"FPS: {(smoothedDeltaTime > 0f ? 1f / smoothedDeltaTime : 0f):0}\n" +
-                $"Selected: {shooter.CurrentElement}  [Tab / Y]\n" +
+                $"<color={GetElementColor(shooter.CurrentElement)}>Selected: {shooter.CurrentElement}  [Tab / Y]</color>\n" +
                 $"<color={IceHex}>Ice: {ice.Percentage:0.0}%</color>  Bank {TerritorySurfaceRegistry.IceBank}\n" +
                 $"<color={FireHex}>Fire: {fire.Percentage:0.0}%</color>  Bank {TerritorySurfaceRegistry.FireBank}\n" +
                 $"Mist: {coverage.MistCells}  Neutral: {coverage.NeutralCells}\n" +
                 $"<color={GetStandingColor(standingState)}>Standing on: {standing}</color>\n" +
                 "Reset: R / View";
+            RefreshMovementEffect();
         }
 
         private static string GetStandingColor(TerritoryState? state)
@@ -113,6 +134,70 @@ namespace EntropyTag.Presentation
                 default:
                     return NeutralHex;
             }
+        }
+
+        private static string GetElementColor(ElementId element)
+        {
+            return element == ElementId.Ice ? IceHex : FireHex;
+        }
+
+        private void RefreshMovementEffect()
+        {
+            if (territoryMovement == null ||
+                movementLabel == null ||
+                movementBackground == null)
+            {
+                return;
+            }
+
+            movementBackground.enabled = false;
+
+            switch (territoryMovement.CurrentEffect)
+            {
+                case TerritoryMovementEffect.FriendlyBoost:
+                    movementLabel.text =
+                        $"Terrain: FRIENDLY BOOST x{territoryMovement.CurrentMultiplier:0.00}";
+                    movementLabel.color = GetElementUiColor(shooter.CurrentElement);
+                    break;
+                case TerritoryMovementEffect.HostileSlow:
+                    movementLabel.text =
+                        $"Terrain: HOSTILE SLOW x{territoryMovement.CurrentMultiplier:0.00}";
+                    movementLabel.color = GetElementUiColor(shooter.CurrentElement);
+                    movementBackground.color = GetHostileBackgroundColor();
+                    movementBackground.enabled = true;
+                    break;
+                default:
+                    movementLabel.text = "Terrain: Normal x1.00";
+                    movementLabel.color = new Color32(0, 180, 70, 255);
+                    break;
+            }
+
+            float width = Mathf.Clamp(movementLabel.preferredWidth + 20f, 120f, 340f);
+            movementBackground.rectTransform.SetSizeWithCurrentAnchors(
+                RectTransform.Axis.Horizontal,
+                width);
+        }
+
+        private Color GetHostileBackgroundColor()
+        {
+            if (territoryMovement.StandingState == TerritoryState.Ice)
+            {
+                return new Color32(30, 210, 255, 230);
+            }
+
+            if (territoryMovement.StandingState == TerritoryState.Fire)
+            {
+                return new Color32(255, 85, 20, 230);
+            }
+
+            return Color.clear;
+        }
+
+        private static Color32 GetElementUiColor(ElementId element)
+        {
+            return element == ElementId.Ice
+                ? new Color32(30, 210, 255, 255)
+                : new Color32(255, 85, 20, 255);
         }
     }
 }

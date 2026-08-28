@@ -17,6 +17,9 @@ namespace EntropyTag.Editor
         public const string SelectedSandboxScenePath =
             "Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMovement.unity";
         public const string LegacySandboxScenePath = "Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMotor.unity";
+        public const string ElementReactionConfigPath =
+            "Assets/EntropyTag/Settings/Elements/FirstSliceElementReactions.asset";
+        private static ElementReactionPresentationConfig activeReactionConfig;
 
         public static readonly string[] CameraVariantScenePaths =
         {
@@ -34,6 +37,7 @@ namespace EntropyTag.Editor
         public static void Create()
         {
             EnsureFolder(CameraVariantFolder);
+            activeReactionConfig = EnsureElementReactionConfig();
 
             Array modes = Enum.GetValues(typeof(CameraAimExperimentMode));
             if (modes.Length != CameraVariantScenePaths.Length)
@@ -57,6 +61,7 @@ namespace EntropyTag.Editor
             RegisterSandboxesForTests();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            activeReactionConfig = null;
             Debug.Log($"Created {CameraVariantScenePaths.Length} EntropyTag camera comparison sandboxes.");
         }
 
@@ -189,15 +194,26 @@ namespace EntropyTag.Editor
             muzzleObject.transform.SetParent(player.transform, false);
             muzzleObject.transform.localPosition = new Vector3(0f, 1.2f, 0.6f);
             TestProjectileShooter shooter = player.AddComponent<TestProjectileShooter>();
-            shooter.Configure(input, aimSolver, muzzleObject.transform, territorySurface);
+            shooter.Configure(
+                input,
+                aimSolver,
+                muzzleObject.transform,
+                territorySurface,
+                activeReactionConfig);
+
+            ThirdPersonMotor motor = player.AddComponent<ThirdPersonMotor>();
+            motor.Configure(input, playerCamera.transform, visual.transform);
+            TerritoryMovementController territoryMovement =
+                player.AddComponent<TerritoryMovementController>();
+            territoryMovement.Configure(motor, shooter, activeReactionConfig);
+            ElementReactionFeedback reactionFeedback = player.AddComponent<ElementReactionFeedback>();
+            reactionFeedback.Configure(activeReactionConfig);
             CreateTerritoryDebugPresentation(
                 aimCanvas.transform,
                 territorySurface,
                 shooter,
-                player.transform);
-
-            ThirdPersonMotor motor = player.AddComponent<ThirdPersonMotor>();
-            motor.Configure(input, playerCamera.transform, visual.transform);
+                player.transform,
+                territoryMovement);
             PlayerRespawnController respawn = player.AddComponent<PlayerRespawnController>();
             respawn.Configure(spawnPoint);
             player.AddComponent<PlayerSandboxDiagnostics>();
@@ -249,7 +265,8 @@ namespace EntropyTag.Editor
             Transform parent,
             TerritorySurface territorySurface,
             TestProjectileShooter shooter,
-            Transform player)
+            Transform player,
+            TerritoryMovementController territoryMovement)
         {
             GameObject labelObject = new GameObject(
                 "Territory Debug Label",
@@ -275,8 +292,53 @@ namespace EntropyTag.Editor
             outline.effectColor = Color.black;
             outline.effectDistance = new Vector2(1.5f, -1.5f);
 
+            GameObject movementBackgroundObject = new GameObject(
+                "Territory Movement Status Background",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Image));
+            movementBackgroundObject.transform.SetParent(parent, false);
+            RectTransform movementRect = (RectTransform)movementBackgroundObject.transform;
+            movementRect.anchorMin = new Vector2(1f, 1f);
+            movementRect.anchorMax = new Vector2(1f, 1f);
+            movementRect.pivot = new Vector2(1f, 1f);
+            movementRect.anchoredPosition = new Vector2(-20f, -188f);
+            movementRect.sizeDelta = new Vector2(120f, 30f);
+
+            Image movementBackground = movementBackgroundObject.GetComponent<Image>();
+            movementBackground.raycastTarget = false;
+            movementBackground.enabled = false;
+
+            GameObject movementLabelObject = new GameObject(
+                "Territory Movement Status Label",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Text));
+            movementLabelObject.transform.SetParent(movementBackgroundObject.transform, false);
+            RectTransform movementLabelRect = (RectTransform)movementLabelObject.transform;
+            movementLabelRect.anchorMin = Vector2.zero;
+            movementLabelRect.anchorMax = Vector2.one;
+            movementLabelRect.offsetMin = new Vector2(8f, 0f);
+            movementLabelRect.offsetMax = new Vector2(-8f, 0f);
+
+            Text movementLabel = movementLabelObject.GetComponent<Text>();
+            movementLabel.font = label.font;
+            movementLabel.fontSize = 20;
+            movementLabel.alignment = TextAnchor.MiddleRight;
+            movementLabel.raycastTarget = false;
+            Outline movementOutline = movementLabelObject.AddComponent<Outline>();
+            movementOutline.effectColor = Color.black;
+            movementOutline.effectDistance = new Vector2(1.5f, -1.5f);
+
             TerritoryDebugPresenter presenter = labelObject.AddComponent<TerritoryDebugPresenter>();
-            presenter.Configure(territorySurface, shooter, player, label);
+            presenter.Configure(
+                territorySurface,
+                shooter,
+                player,
+                territoryMovement,
+                label,
+                movementLabel,
+                movementBackground);
         }
 
         private static void CreateVariantLabel(Transform parent, CameraAimExperimentMode mode)
@@ -465,10 +527,29 @@ namespace EntropyTag.Editor
             surface.Configure(
                 sourceCollider,
                 face.GetComponent<Renderer>(),
+                activeReactionConfig,
                 logicalWidth,
                 logicalHeight,
                 visualResolution);
             return surface;
+        }
+
+        private static ElementReactionPresentationConfig EnsureElementReactionConfig()
+        {
+            ElementReactionPresentationConfig config =
+                AssetDatabase.LoadAssetAtPath<ElementReactionPresentationConfig>(ElementReactionConfigPath);
+
+            if (config != null)
+            {
+                return config;
+            }
+
+            config = ScriptableObject.CreateInstance<ElementReactionPresentationConfig>();
+            config.name = "First Slice Element Reactions";
+            config.ConfigureFirstSlice();
+            AssetDatabase.CreateAsset(config, ElementReactionConfigPath);
+            AssetDatabase.SaveAssets();
+            return config;
         }
 
         private static void EnsureFolder(string path)
