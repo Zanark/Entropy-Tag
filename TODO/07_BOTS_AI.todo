@@ -10,6 +10,9 @@ Provide a fair, seedable opponent that demonstrates the game loop without hidden
 
 ## Tasks
 
+- [ ] After the complete player-movement vertical-slice sandbox is ready, add a stationary opponent test bot:
+  reuse the player placeholder model, always mirror the opposite team, recolor its head by team, and fire real
+  pooled projectiles around the platform for solo territory/reaction testing.
 - [ ] Define bot intent interface shared with human input.
 - [ ] Implement valid movement target selection.
 - [ ] Implement route painting behavior.
@@ -38,4 +41,3 @@ Not completed.
 ## Completion log
 
 Not completed.
-
