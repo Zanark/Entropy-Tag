@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using EntropyTag.Application;
 using EntropyTag.Domain;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace EntropyTag.UnityAdapters
         private static readonly TeamId FireTeam = new TeamId(2);
 
         public static int Count => Surfaces.Count;
+
+        public static TerritorySurface GetSurface(int index) => Surfaces[index];
 
         public static event Action<TerritoryReactionEvent> ReactionOccurred;
 
@@ -138,6 +141,42 @@ namespace EntropyTag.UnityAdapters
             {
                 Surfaces[index].ResetTerritory();
             }
+        }
+
+        public static MatchScoreSnapshot GetMatchScore(CircularArenaBoundary boundary)
+        {
+            int total = 0;
+            int neutral = 0;
+            int mist = 0;
+            int ice = 0;
+            int fire = 0;
+            int iceBank = 0;
+            int fireBank = 0;
+            int iceMistCreated = 0;
+            int fireMistCreated = 0;
+            int iceMistClaimed = 0;
+            int fireMistClaimed = 0;
+
+            for (int index = 0; index < Surfaces.Count; index++)
+            {
+                TerritorySurface surface = Surfaces[index];
+                surface.CountActiveCells(boundary, ref total, ref neutral, ref mist, ref ice, ref fire);
+                iceBank += surface.IceBank;
+                fireBank += surface.FireBank;
+                iceMistCreated += surface.IceMistCreatedCells;
+                fireMistCreated += surface.FireMistCreatedCells;
+                iceMistClaimed += surface.IceMistClaimedCells;
+                fireMistClaimed += surface.FireMistClaimedCells;
+            }
+
+            var coverage = new CoverageSnapshot(total, neutral, mist, new[]
+            {
+                new TeamCoverage(IceTeam, ice, total),
+                new TeamCoverage(FireTeam, fire, total)
+            });
+            return new MatchScoreSnapshot(
+                coverage, iceBank, fireBank,
+                iceMistCreated, fireMistCreated, iceMistClaimed, fireMistClaimed);
         }
 
         public static void PublishReaction(TerritoryReactionEvent reaction)

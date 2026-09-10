@@ -1,3 +1,4 @@
+using System;
 using EntropyTag.Domain;
 using UnityEngine;
 
@@ -11,6 +12,15 @@ namespace EntropyTag.UnityAdapters
 
         [SerializeField]
         private ThirdPersonAimSolver aimSolver;
+
+        [SerializeField] private MonoBehaviour alternateInput;
+        [SerializeField] private MonoBehaviour alternateAim;
+        [SerializeField] private ElementId startingElement = ElementId.Ice;
+        [SerializeField] private bool fixedElement;
+        private IActorIntentSource actorInput;
+        private IAimSource actorAim;
+        private ElementId? selectedElement;
+        private bool canSwitchElement = true;
 
         [SerializeField]
         private Transform muzzle;
@@ -41,6 +51,9 @@ namespace EntropyTag.UnityAdapters
 
         private GameObject[] projectiles;
         private Rigidbody[] bodies;
+        private Collider[] projectileColliders;
+        private Vector3[] projectileDirections;
+        private CharacterController ownerController;
         private Renderer[] projectileRenderers;
         private ElementId[] projectileElements;
         private float[] expiryTimes;
@@ -49,6 +62,7 @@ namespace EntropyTag.UnityAdapters
         private float nextShotTime;
         private int nextProjectileIndex;
         private int nextSplatIndex;
+        private MatchFlowController match;
 
         public int ActiveProjectileCount { get; private set; }
 
@@ -56,7 +70,28 @@ namespace EntropyTag.UnityAdapters
 
         public int SplatCount { get; private set; }
 
-        public ElementId CurrentElement { get; private set; } = ElementId.Ice;
+        public bool CanFire { get; private set; } = true;
+
+        public bool CanSwitchElement => canSwitchElement && !fixedElement;
+
+        public bool CanResetPaint { get; private set; } = true;
+
+        public ElementId CurrentElement => selectedElement ?? startingElement;
+
+        public float ShotsPerSecond => shotsPerSecond;
+
+        public float ProjectileSpeed => projectileSpeed;
+
+        public Vector3 MuzzlePosition => muzzle.position;
+
+        public int ShotsFired { get; private set; }
+
+        public int EnemyHits { get; private set; }
+
+        public MatchParticipant LastHitTarget { get; private set; }
+
+        public bool ReadyToFire => CanFire && projectiles != null &&
+                                   Time.time >= nextShotTime && ActiveProjectileCount < projectiles.Length;
 
         public TeamId CurrentTeamId =>
             CurrentElement == ElementId.Ice ? new TeamId(1) : new TeamId(2);
@@ -73,11 +108,50 @@ namespace EntropyTag.UnityAdapters
             muzzle = muzzleTransform;
             territorySurface = paintSurface;
             presentationConfig = reactions;
+            alternateInput = null;
+            alternateAim = null;
+            actorInput = input;
+            actorAim = aimSolver;
+        }
+
+        public void ConfigureIntent(
+            MonoBehaviour source, MonoBehaviour aim, Transform muzzleTransform, ElementId element,
+            TerritorySurface paintSurface, ElementReactionPresentationConfig reactions)
+        {
+            if (!(source is IActorIntentSource intent) || !(aim is IAimSource aiming))
+            {
+                throw new ArgumentException("A shooter requires IActorIntentSource and IAimSource adapters.");
+            }
+
+            GetTeamId(element);
+            input = null;
+            aimSolver = null;
+            alternateInput = source;
+            alternateAim = aim;
+            actorInput = intent;
+            actorAim = aiming;
+            muzzle = muzzleTransform != null ? muzzleTransform : throw new ArgumentNullException(nameof(muzzleTransform));
+            territorySurface = paintSurface;
+            presentationConfig = reactions;
+            startingElement = element;
+            selectedElement = null;
+            fixedElement = true;
+        }
+
+        public bool TryFire()
+        {
+            if (!ReadyToFire || !FireOnce())
+            {
+                return false;
+            }
+
+            nextShotTime = Time.time + 1f / Mathf.Max(1f, shotsPerSecond);
+            return true;
         }
 
         public bool FireOnce()
         {
-            if (aimSolver == null || muzzle == null || projectiles == null)
+            if (!CanFire || actorAim == null || muzzle == null || projectiles == null)
             {
                 return false;
             }
@@ -89,7 +163,7 @@ namespace EntropyTag.UnityAdapters
                 return false;
             }
 
-            AimSolution aim = aimSolver.Current;
+            AimSolution aim = actorAim.Current;
             Vector3 direction = aim.Point - muzzle.position;
 
             if (direction.sqrMagnitude <= 0.0001f)
@@ -102,12 +176,19 @@ namespace EntropyTag.UnityAdapters
             Rigidbody body = bodies[projectileIndex];
             projectile.transform.SetPositionAndRotation(muzzle.position, Quaternion.LookRotation(direction));
             projectileElements[projectileIndex] = CurrentElement;
+            projectileDirections[projectileIndex] = direction;
             projectileRenderers[projectileIndex].material.color = GetElementColor(CurrentElement);
             projectile.SetActive(true);
+            if (ownerController != null)
+            {
+                Physics.IgnoreCollision(projectileColliders[projectileIndex], ownerController);
+            }
+
             body.velocity = direction * projectileSpeed;
-            expiryTimes[projectileIndex] = Time.unscaledTime + projectileLifetime;
+            expiryTimes[projectileIndex] = Time.time + projectileLifetime;
             LastFiredVelocity = body.velocity;
             ActiveProjectileCount++;
+            ShotsFired++;
             nextProjectileIndex = (projectileIndex + 1) % projectiles.Length;
             return true;
         }
@@ -128,6 +209,28 @@ namespace EntropyTag.UnityAdapters
 
             ElementId element = projectileElements[projectileIndex];
 
+            if (!CanFire || (match != null && !match.CanPaintAt(point)))
+            {
+                RecycleProjectile(projectileIndex);
+                return;
+            }
+
+            CircularArenaBoundary? boundary = match != null ? match.PaintBoundary : null;
+            MatchParticipant actor = impactCollider != null
+                ? impactCollider.GetComponentInParent<MatchParticipant>()
+                : null;
+            if (actor != null)
+            {
+                if (actor.TryReceiveHit(GetTeamId(element), projectileDirections[projectileIndex]))
+                {
+                    EnemyHits++;
+                    LastHitTarget = actor;
+                }
+
+                RecycleProjectile(projectileIndex);
+                return;
+            }
+
             if (TerritorySurfaceRegistry.TryGet(
                     impactCollider,
                     point,
@@ -139,7 +242,8 @@ namespace EntropyTag.UnityAdapters
                     splatSize,
                     element,
                     GetTeamId(element),
-                    normal);
+                    normal,
+                    boundary);
             }
             else if (territorySurface != null &&
                      territorySurface.TryWorldToCoordinate(point, out _))
@@ -149,7 +253,8 @@ namespace EntropyTag.UnityAdapters
                     splatSize,
                     element,
                     GetTeamId(element),
-                    normal);
+                    normal,
+                    boundary);
             }
 
             PlaceSplat(point, normal, element);
@@ -158,12 +263,60 @@ namespace EntropyTag.UnityAdapters
 
         public void SwitchElement()
         {
-            CurrentElement = CurrentElement == ElementId.Ice ? ElementId.Fire : ElementId.Ice;
+            if (!CanSwitchElement)
+            {
+                return;
+            }
+
+            selectedElement = CurrentElement == ElementId.Ice ? ElementId.Fire : ElementId.Ice;
+        }
+
+        public void AttachMatch(MatchFlowController controller)
+        {
+            match = controller;
+        }
+
+        public void SetControlPolicy(bool canFire, bool canSwitchElement, bool canResetPaint)
+        {
+            CanFire = canFire;
+            this.canSwitchElement = canSwitchElement;
+            CanResetPaint = canResetPaint;
         }
 
         public void ResetTestPaint()
         {
+            if (!CanResetPaint)
+            {
+                return;
+            }
+
             TerritorySurfaceRegistry.ResetAll();
+            ClearTransientPaint();
+        }
+
+        public void ClearProjectiles()
+        {
+            if (projectiles == null)
+            {
+                return;
+            }
+
+            for (int index = 0; index < projectiles.Length; index++)
+            {
+                if (projectiles[index].activeSelf)
+                {
+                    RecycleProjectile(index);
+                }
+            }
+
+            nextProjectileIndex = 0;
+            nextShotTime = 0f;
+            LastFiredVelocity = Vector3.zero;
+        }
+
+        public void ClearTransientPaint()
+        {
+            ClearProjectiles();
 
             if (splats == null)
             {
@@ -179,8 +332,24 @@ namespace EntropyTag.UnityAdapters
             nextSplatIndex = 0;
         }
 
+        public void ResetStatistics()
+        {
+            ShotsFired = 0;
+            EnemyHits = 0;
+            LastHitTarget = null;
+        }
+
         private void Awake()
         {
+            GetTeamId(startingElement);
+            if ((alternateInput != null && !(alternateInput is IActorIntentSource)) ||
+                (alternateAim != null && !(alternateAim is IAimSource)))
+            {
+                throw new InvalidOperationException($"{name}: invalid shooter intent or aim adapter.");
+            }
+
+            actorInput = alternateInput != null ? (IActorIntentSource)alternateInput : input;
+            actorAim = alternateAim != null ? (IAimSource)alternateAim : aimSolver;
             CreatePool();
             CreateSplatPool();
         }
@@ -194,14 +363,14 @@ namespace EntropyTag.UnityAdapters
                 SwitchElement();
             }
 
-            if (input != null && input.WasResetTerritoryPressedThisFrame)
+            if (CanResetPaint && input != null && input.WasResetTerritoryPressedThisFrame)
             {
                 ResetTestPaint();
             }
 
-            if (input != null && input.IsFiring && Time.unscaledTime >= nextShotTime && FireOnce())
+            if (actorInput != null && actorInput.IsFiring)
             {
-                nextShotTime = Time.unscaledTime + 1f / Mathf.Max(1f, shotsPerSecond);
+                TryFire();
             }
         }
 
@@ -239,10 +408,12 @@ namespace EntropyTag.UnityAdapters
             int count = Mathf.Max(1, poolSize);
             projectiles = new GameObject[count];
             bodies = new Rigidbody[count];
+            projectileColliders = new Collider[count];
+            projectileDirections = new Vector3[count];
             projectileRenderers = new Renderer[count];
             projectileElements = new ElementId[count];
             expiryTimes = new float[count];
-            CharacterController ownerController = GetComponent<CharacterController>();
+            ownerController = GetComponent<CharacterController>();
 
             for (int index = 0; index < count; index++)
             {
@@ -264,6 +435,7 @@ namespace EntropyTag.UnityAdapters
                 projectile.SetActive(false);
                 projectiles[index] = projectile;
                 bodies[index] = body;
+                projectileColliders[index] = projectile.GetComponent<Collider>();
                 projectileRenderers[index] = projectile.GetComponent<Renderer>();
             }
         }
@@ -308,7 +480,7 @@ namespace EntropyTag.UnityAdapters
 
         private void RecycleExpiredProjectiles()
         {
-            float currentTime = Time.unscaledTime;
+            float currentTime = Time.time;
 
             for (int index = 0; index < projectiles.Length; index++)
             {

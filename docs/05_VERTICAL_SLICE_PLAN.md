@@ -7,6 +7,12 @@ a complete short match are fun, readable, and technically sustainable in Unity.
 
 The slice is a decision instrument, not a miniature full game.
 
+Current implementation note (2026-09-10): the selected sandbox and buildable movement gym now support the
+human plus fixed Ice/Fire mobile bots, non-lethal enemy hits, multi-surface painting, and full match/rematch.
+The developer explicitly expanded the parked stationary test-bot idea into competitive opponents.
+This does not complete the front-end, authored arena, production presentation, or hands-on quality gates.
+See [Competitive Bots](16_COMPETITIVE_BOTS.md).
+
 ## Definition of playable
 
 A player can:

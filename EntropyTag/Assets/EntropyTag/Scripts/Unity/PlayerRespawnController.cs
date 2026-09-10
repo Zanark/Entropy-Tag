@@ -13,6 +13,7 @@ namespace EntropyTag.UnityAdapters
         private float fallThreshold = -5f;
 
         private ThirdPersonMotor motor;
+        private MatchParticipant participant;
 
         public int RespawnCount { get; private set; }
 
@@ -27,6 +28,7 @@ namespace EntropyTag.UnityAdapters
         private void Awake()
         {
             motor = GetComponent<ThirdPersonMotor>();
+            participant = GetComponent<MatchParticipant>();
         }
 
         private void Update()
@@ -36,7 +38,14 @@ namespace EntropyTag.UnityAdapters
                 return;
             }
 
-            motor.Respawn(spawnPoint.position, spawnPoint.rotation);
+            if (participant != null)
+            {
+                participant.RecoverAtSpawn();
+            }
+            else
+            {
+                motor.Respawn(spawnPoint.position, spawnPoint.rotation);
+            }
             RespawnCount++;
         }
     }

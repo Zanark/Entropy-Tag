@@ -180,6 +180,13 @@ flowchart LR
 | `Test_*` | `Test_TerritoryPaint.unity` | Isolated development validation |
 | `Sandbox_*` | `Sandbox_PlayerMotor.unity` | Temporary experiments; delete or promote |
 
+The current buildable match proof is `Scenes/Gameplay/Arena_FirstSlice.unity`. Bootstrap loads it additively;
+`EntropyTagBuildCommand` rejects a missing arena and excludes sandbox scenes. Editor build settings retain
+the selected sandbox and eight comparisons for PlayMode coverage. The selected sandbox and buildable arena
+now include two mobile bots and one shared runtime navigation component; comparison scenes do not.
+The arena is still the movement gym,
+not a completed level-design milestone. See [Match Flow and Scoring](15_MATCH_FLOW_SCORING.md).
+
 ## Prefab rules
 
 - Prefabs represent reusable composition, not arbitrary folders of scene objects.

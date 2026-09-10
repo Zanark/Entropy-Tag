@@ -113,6 +113,21 @@ namespace EntropyTag.UnityAdapters
         [SerializeField]
         private Color hostileEffectColor = new Color32(230, 138, 216, 255);
 
+        [SerializeField] private Shader territoryShader;
+        [SerializeField] private Shader unlitShader;
+        [SerializeField] private Shader litShader;
+
+        public Shader TerritoryShader => territoryShader;
+
+        public Shader LitShader => litShader;
+
+        public void ConfigureRuntimeShaders(Shader territory, Shader unlit, Shader lit)
+        {
+            territoryShader = territory != null ? territory : throw new ArgumentNullException(nameof(territory));
+            unlitShader = unlit != null ? unlit : throw new ArgumentNullException(nameof(unlit));
+            litShader = lit != null ? lit : throw new ArgumentNullException(nameof(lit));
+        }
+
         public ElementPresentation Ice => ice;
 
         public ElementPresentation Fire => fire;

@@ -51,7 +51,7 @@ namespace EntropyTag.Editor
                 CreateVariant((CameraAimExperimentMode)modes.GetValue(index), CameraVariantScenePaths[index]);
             }
 
-            CreateVariant(CameraAimExperimentMode.FreeAimContinuousFollow, SelectedSandboxScenePath);
+            CreateMatchVariants();
 
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(LegacySandboxScenePath) != null)
             {
@@ -62,7 +62,24 @@ namespace EntropyTag.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             activeReactionConfig = null;
-            Debug.Log($"Created {CameraVariantScenePaths.Length} EntropyTag camera comparison sandboxes.");
+            Debug.Log($"Created {CameraVariantScenePaths.Length} camera comparisons and the two match-flow scenes.");
+        }
+
+        public static void CreateMatchScenes()
+        {
+            activeReactionConfig = EnsureElementReactionConfig();
+            CreateMatchVariants();
+            RegisterSandboxesForTests();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            activeReactionConfig = null;
+        }
+
+        private static void CreateMatchVariants()
+        {
+            EnsureFolder("Assets/EntropyTag/Scenes/Gameplay");
+            CreateVariant(CameraAimExperimentMode.FreeAimContinuousFollow, SelectedSandboxScenePath, true);
+            CreateVariant(CameraAimExperimentMode.FreeAimContinuousFollow, ProjectBootstrap.FirstSliceScenePath, true);
         }
 
         public static bool IsCameraVariantScene(string path)
@@ -76,7 +93,7 @@ namespace EntropyTag.Editor
             return path == SelectedSandboxScenePath || IsCameraVariantScene(path);
         }
 
-        private static void CreateVariant(CameraAimExperimentMode mode, string scenePath)
+        private static void CreateVariant(CameraAimExperimentMode mode, string scenePath, bool includeMatch = false)
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             InputActionAsset inputActions =
@@ -89,7 +106,7 @@ namespace EntropyTag.Editor
             }
 
             TerritorySurface territorySurface = CreateEnvironment(mode, out Transform spawnPoint);
-            CreatePlayerRig(inputActions, mode, territorySurface, spawnPoint);
+            CreatePlayerRig(inputActions, mode, territorySurface, spawnPoint, includeMatch);
             EditorSceneManager.SaveScene(scene, scenePath);
         }
 
@@ -148,34 +165,10 @@ namespace EntropyTag.Editor
             InputActionAsset inputActions,
             CameraAimExperimentMode mode,
             TerritorySurface territorySurface,
-            Transform spawnPoint)
+            Transform spawnPoint,
+            bool includeMatch)
         {
-            GameObject player = new GameObject("Player");
-            player.SetActive(false);
-            player.transform.position = Vector3.zero;
-
-            CharacterController controller = player.AddComponent<CharacterController>();
-            controller.center = new Vector3(0f, 1f, 0f);
-            controller.height = 2f;
-            controller.radius = 0.4f;
-
-            GameObject torso = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            torso.name = "Player Torso";
-            GameObject visual = new GameObject("Player Visual");
-            visual.transform.SetParent(player.transform, false);
-
-            torso.transform.SetParent(visual.transform, false);
-            torso.transform.localPosition = new Vector3(0f, 1f, 0f);
-            torso.transform.localScale = new Vector3(0.65f, 1.4f, 0.4f);
-            UnityEngine.Object.DestroyImmediate(torso.GetComponent<Collider>());
-
-            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            head.name = "Player Head";
-            head.transform.SetParent(visual.transform, false);
-            head.transform.localPosition = new Vector3(0f, 1.9f, 0f);
-            head.transform.localScale = Vector3.one * 0.55f;
-            UnityEngine.Object.DestroyImmediate(head.GetComponent<Collider>());
-
+            GameObject player = CreateActorBody("Player", Vector3.zero, out Transform visual, out Renderer head);
             PlayerInputSource input = player.AddComponent<PlayerInputSource>();
             input.Configure(inputActions);
 
@@ -194,32 +187,62 @@ namespace EntropyTag.Editor
             muzzleObject.transform.SetParent(player.transform, false);
             muzzleObject.transform.localPosition = new Vector3(0f, 1.2f, 0.6f);
             TestProjectileShooter shooter = player.AddComponent<TestProjectileShooter>();
-            shooter.Configure(
-                input,
-                aimSolver,
-                muzzleObject.transform,
-                territorySurface,
-                activeReactionConfig);
+            shooter.Configure(input, aimSolver, muzzleObject.transform, territorySurface, activeReactionConfig);
 
             ThirdPersonMotor motor = player.AddComponent<ThirdPersonMotor>();
-            motor.Configure(input, playerCamera.transform, visual.transform);
-            TerritoryMovementController territoryMovement =
-                player.AddComponent<TerritoryMovementController>();
+            motor.Configure(input, playerCamera.transform, visual);
+            TerritoryMovementController territoryMovement = player.AddComponent<TerritoryMovementController>();
             territoryMovement.Configure(motor, shooter, activeReactionConfig);
             ElementReactionFeedback reactionFeedback = player.AddComponent<ElementReactionFeedback>();
             reactionFeedback.Configure(activeReactionConfig);
+            MatchFlowController match = includeMatch
+                ? MatchFlowSetup.AddMatch(
+                    player, input, motor, shooter, territoryMovement, spawnPoint, aimCanvas,
+                    territorySurface, activeReactionConfig, playerCamera, head)
+                : null;
+            reactionFeedback.AttachMatch(match);
             CreateTerritoryDebugPresentation(
-                aimCanvas.transform,
-                territorySurface,
-                shooter,
-                player.transform,
-                territoryMovement);
+                aimCanvas.transform, territorySurface, shooter, player.transform, territoryMovement, match);
             PlayerRespawnController respawn = player.AddComponent<PlayerRespawnController>();
             respawn.Configure(spawnPoint);
             player.AddComponent<PlayerSandboxDiagnostics>();
 
             cameraRig.Simulate(Vector2.zero, false);
             player.SetActive(true);
+        }
+
+        internal static GameObject CreateActorBody(
+            string actorName, Vector3 position, out Transform visualRoot, out Renderer headRenderer)
+        {
+            GameObject player = new GameObject(actorName);
+            player.SetActive(false);
+            player.transform.position = position;
+
+            CharacterController controller = player.AddComponent<CharacterController>();
+            controller.center = new Vector3(0f, 1f, 0f);
+            controller.height = 2f;
+            controller.radius = 0.4f;
+
+            GameObject torso = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            torso.name = $"{actorName} Torso";
+            GameObject visual = new GameObject($"{actorName} Visual");
+            visual.transform.SetParent(player.transform, false);
+
+            torso.transform.SetParent(visual.transform, false);
+            torso.transform.localPosition = new Vector3(0f, 1f, 0f);
+            torso.transform.localScale = new Vector3(0.65f, 1.4f, 0.4f);
+            UnityEngine.Object.DestroyImmediate(torso.GetComponent<Collider>());
+
+            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            head.name = $"{actorName} Head";
+            head.transform.SetParent(visual.transform, false);
+            head.transform.localPosition = new Vector3(0f, 1.9f, 0f);
+            head.transform.localScale = Vector3.one * 0.55f;
+            UnityEngine.Object.DestroyImmediate(head.GetComponent<Collider>());
+
+            visualRoot = visual.transform;
+            headRenderer = head.GetComponent<Renderer>();
+            return player;
         }
 
         private static Canvas CreateAimPresentation(
@@ -266,7 +289,8 @@ namespace EntropyTag.Editor
             TerritorySurface territorySurface,
             TestProjectileShooter shooter,
             Transform player,
-            TerritoryMovementController territoryMovement)
+            TerritoryMovementController territoryMovement,
+            MatchFlowController match)
         {
             GameObject labelObject = new GameObject(
                 "Territory Debug Label",
@@ -338,7 +362,8 @@ namespace EntropyTag.Editor
                 territoryMovement,
                 label,
                 movementLabel,
-                movementBackground);
+                movementBackground,
+                match);
         }
 
         private static void CreateVariantLabel(Transform parent, CameraAimExperimentMode mode)
@@ -539,15 +564,19 @@ namespace EntropyTag.Editor
             ElementReactionPresentationConfig config =
                 AssetDatabase.LoadAssetAtPath<ElementReactionPresentationConfig>(ElementReactionConfigPath);
 
-            if (config != null)
+            if (config == null)
             {
-                return config;
+                config = ScriptableObject.CreateInstance<ElementReactionPresentationConfig>();
+                config.name = "First Slice Element Reactions";
+                config.ConfigureFirstSlice();
+                AssetDatabase.CreateAsset(config, ElementReactionConfigPath);
             }
 
-            config = ScriptableObject.CreateInstance<ElementReactionPresentationConfig>();
-            config.name = "First Slice Element Reactions";
-            config.ConfigureFirstSlice();
-            AssetDatabase.CreateAsset(config, ElementReactionConfigPath);
+            config.ConfigureRuntimeShaders(
+                Shader.Find("EntropyTag/TerritoryOverlay"),
+                Shader.Find("Universal Render Pipeline/Unlit"),
+                Shader.Find("Universal Render Pipeline/Lit"));
+            EditorUtility.SetDirty(config);
             AssetDatabase.SaveAssets();
             return config;
         }

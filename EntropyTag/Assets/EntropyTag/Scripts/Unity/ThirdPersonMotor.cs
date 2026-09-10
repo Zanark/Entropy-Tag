@@ -9,6 +9,9 @@ namespace EntropyTag.UnityAdapters
         [SerializeField]
         private PlayerInputSource input;
 
+        [SerializeField] private MonoBehaviour alternateInput;
+        private IActorIntentSource actorInput;
+
         [SerializeField]
         private Transform cameraTransform;
 
@@ -73,10 +76,30 @@ namespace EntropyTag.UnityAdapters
 
         public float SpeedMultiplier => speedMultiplier;
 
+        public bool MovementInputEnabled { get; set; } = true;
+
+        public float MaximumSpeed => maximumSpeed;
+
         public void Configure(PlayerInputSource inputSource, Transform movementCamera, Transform playerVisual = null)
         {
             input = inputSource;
+            alternateInput = null;
+            actorInput = inputSource;
             cameraTransform = movementCamera;
+            visualRoot = playerVisual;
+        }
+
+        public void ConfigureIntent(MonoBehaviour source, Transform playerVisual)
+        {
+            if (!(source is IActorIntentSource intent))
+            {
+                throw new ArgumentException("Motor input must implement IActorIntentSource.", nameof(source));
+            }
+
+            input = null;
+            alternateInput = source;
+            actorInput = intent;
+            cameraTransform = null;
             visualRoot = playerVisual;
         }
 
@@ -134,6 +157,16 @@ namespace EntropyTag.UnityAdapters
             }
 
             EnsureController();
+
+            if (!MovementInputEnabled)
+            {
+                moveInput = Vector2.zero;
+                jumpRequested = false;
+                slideRequested = false;
+                slideTimeRemaining = 0f;
+                horizontalVelocity = Vector3.zero;
+                externalVelocity = Vector3.zero;
+            }
 
             Vector3 forward = movementCamera != null ? movementCamera.forward : Vector3.forward;
             Vector3 right = movementCamera != null ? movementCamera.right : Vector3.right;
@@ -210,21 +243,27 @@ namespace EntropyTag.UnityAdapters
         private void Awake()
         {
             EnsureController();
+            if (alternateInput != null && !(alternateInput is IActorIntentSource))
+            {
+                throw new InvalidOperationException($"{name}: alternate motor input must implement IActorIntentSource.");
+            }
+
+            actorInput = alternateInput != null ? (IActorIntentSource)alternateInput : input;
         }
 
         private void Update()
         {
-            if (input == null)
+            if (actorInput == null)
             {
                 return;
             }
 
             Simulate(
-                input.Move,
+                actorInput.Move,
                 cameraTransform,
                 Time.deltaTime,
-                input.WasJumpPressedThisFrame,
-                input.WasSlidePressedThisFrame);
+                actorInput.WasJumpPressedThisFrame,
+                actorInput.WasSlidePressedThisFrame);
         }
 
         private void EnsureController()
@@ -256,7 +295,8 @@ namespace EntropyTag.UnityAdapters
                     wallProbeDistance,
                     Physics.DefaultRaycastLayers,
                     QueryTriggerInteraction.Ignore) ||
-                Mathf.Abs(hit.normal.y) > 0.25f)
+                Mathf.Abs(hit.normal.y) > 0.25f ||
+                hit.collider.GetComponentInParent<ThirdPersonMotor>() != null)
             {
                 return;
             }

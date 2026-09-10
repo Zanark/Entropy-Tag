@@ -15,6 +15,11 @@ crosshatched reaction orb rises and expands from the authoritative hit point, an
 Mist again to claim it. For sandbox testing, the selected element acts as the player's temporary team:
 matching territory boosts movement, opposing territory slows movement, and Neutral or Mist remains normal.
 
+That sequence remains available in free play. In the opt-in [match proof](15_MATCH_FLOW_SCORING.md),
+the selected team locks for countdown and active play; it can change again at results. Match resets clear
+reaction counters, pooled feedback, and audio. The result records actual Mist cell transitions, independently
+of the contact-center events that trigger visual feedback.
+
 ## Reaction flow
 
 ```mermaid
@@ -119,8 +124,8 @@ boost/slow states. The movement status uses its own UI row so no other debug tex
 Friendly boost has a transparent background and selected-team-colored text. Hostile slow uses the hostile
 territory color as its background and the selected team color as its foreground. That dedicated row sits
 below the full debug text and sizes itself to the rendered status plus compact padding, keeping the reset
-instruction visible and avoiding a full-width color bar. In the production game, player affinity will come
-from the player's fixed team rather than the sandbox element-switch control.
+instruction visible and avoiding a full-width color bar. During explicit matches, selection is locked for
+the round. Production team/player identity remains a later extension of this local two-element proof.
 
 ## Bounded feedback
 
@@ -131,8 +136,8 @@ slots instead of instantiating feedback per impact.
 
 ## Automated evidence
 
-- EditMode: 24 passed, 0 failed.
-- PlayMode: 20 passed, 0 failed.
+- Full initial baseline (2026-09-10): 180 EditMode and 44 PlayMode tests passed. Subsequent opponent-preference
+  evidence is in [Competitive Bots](16_COMPETITIVE_BOTS.md#verification-and-remaining-review).
 - Ice, Fire, and Mist configuration and pattern tags are verified.
 - Contested world stamps publish reaction data at the authoritative contact.
 - Reaction feedback creates one fixed six-slot pool with a generated audio placeholder.
@@ -159,7 +164,9 @@ to predict that an opposing hit creates Mist and the next elemental hit claims i
 ## Current limitations
 
 - Feedback uses generated primitive geometry and a synthesized tone, not production VFX or authored audio.
-- Selected element temporarily represents player team affinity only inside this developer sandbox.
+- Selected element represents the human's team in the sandbox and buildable three-player arena; only
+  free play and results permit switching. Bot teams are fixed.
+- Direct enemy hits now produce shared non-lethal recoil; element-specific player debuffs remain unimplemented.
 - Status sampling is local and offline; network authority remains deferred.
 - Pattern scale is procedural and not yet exposed as configuration.
 

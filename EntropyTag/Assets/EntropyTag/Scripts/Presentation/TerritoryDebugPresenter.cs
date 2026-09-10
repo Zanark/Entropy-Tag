@@ -1,4 +1,5 @@
 using EntropyTag.Domain;
+using EntropyTag.Application;
 using EntropyTag.UnityAdapters;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,9 @@ namespace EntropyTag.Presentation
         private Image movementBackground;
 
         [SerializeField]
+        private MatchFlowController match;
+
+        [SerializeField]
         private float refreshInterval = 0.2f;
 
         private float nextRefreshTime;
@@ -46,7 +50,8 @@ namespace EntropyTag.Presentation
             TerritoryMovementController movementController,
             Text debugLabel,
             Text terrainMovementLabel,
-            Image terrainMovementBackground)
+            Image terrainMovementBackground,
+            MatchFlowController matchController = null)
         {
             surface = territorySurface;
             shooter = projectileShooter;
@@ -55,6 +60,7 @@ namespace EntropyTag.Presentation
             label = debugLabel;
             movementLabel = terrainMovementLabel;
             movementBackground = terrainMovementBackground;
+            match = matchController;
             Refresh();
         }
 
@@ -88,9 +94,16 @@ namespace EntropyTag.Presentation
                 return;
             }
 
-            CoverageSnapshot coverage = TerritorySurfaceRegistry.GetCoverage();
-            TeamCoverage ice = coverage.GetTeam(new TeamId(1));
-            TeamCoverage fire = coverage.GetTeam(new TeamId(2));
+            bool inMatch = match != null && match.Session != null &&
+                           match.Session.State != MatchSessionState.Waiting;
+            MatchScoreSnapshot score = inMatch ? match.CurrentScore : null;
+            CoverageSnapshot coverage = score == null ? TerritorySurfaceRegistry.GetCoverage() : null;
+            TeamCoverage ice = score != null ? score.IceCoverage : coverage.GetTeam(new TeamId(1));
+            TeamCoverage fire = score != null ? score.FireCoverage : coverage.GetTeam(new TeamId(2));
+            int iceBank = score != null ? score.IceBank : TerritorySurfaceRegistry.IceBank;
+            int fireBank = score != null ? score.FireBank : TerritorySurfaceRegistry.FireBank;
+            int mistCells = score != null ? score.MistCells : coverage.MistCells;
+            int neutralCells = score != null ? score.NeutralCells : coverage.NeutralCells;
             TerritoryState? standingState = null;
             string standing = "Outside";
 
@@ -107,12 +120,13 @@ namespace EntropyTag.Presentation
 
             label.text =
                 $"FPS: {(smoothedDeltaTime > 0f ? 1f / smoothedDeltaTime : 0f):0}\n" +
-                $"<color={GetElementColor(shooter.CurrentElement)}>Selected: {shooter.CurrentElement}  [Tab / Y]</color>\n" +
-                $"<color={IceHex}>Ice: {ice.Percentage:0.0}%</color>  Bank {TerritorySurfaceRegistry.IceBank}\n" +
-                $"<color={FireHex}>Fire: {fire.Percentage:0.0}%</color>  Bank {TerritorySurfaceRegistry.FireBank}\n" +
-                $"Mist: {coverage.MistCells}  Neutral: {coverage.NeutralCells}\n" +
+                $"<color={GetElementColor(shooter.CurrentElement)}>Selected: {shooter.CurrentElement}  " +
+                $"{(shooter.CanSwitchElement ? "[Tab / Y]" : "[Locked]")}</color>\n" +
+                $"<color={IceHex}>Ice: {ice.Percentage:0.0}%</color>  Bank {iceBank}\n" +
+                $"<color={FireHex}>Fire: {fire.Percentage:0.0}%</color>  Bank {fireBank}\n" +
+                $"Mist: {mistCells}  Neutral: {neutralCells}\n" +
                 $"<color={GetStandingColor(standingState)}>Standing on: {standing}</color>\n" +
-                "Reset: R / View";
+                (inMatch ? "Restart match: R / View" : "Reset: R / View");
             RefreshMovementEffect();
         }
 

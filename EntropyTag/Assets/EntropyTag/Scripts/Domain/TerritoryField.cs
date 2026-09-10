@@ -27,10 +27,22 @@ namespace EntropyTag.Domain
     public readonly struct StampResult
     {
         public StampResult(int attemptedCells, int changedCells, int bankAward)
+            : this(attemptedCells, changedCells, bankAward, 0, 0)
+        {
+        }
+
+        public StampResult(
+            int attemptedCells,
+            int changedCells,
+            int bankAward,
+            int mistCreatedCells,
+            int mistClaimedCells)
         {
             AttemptedCells = attemptedCells;
             ChangedCells = changedCells;
             BankAward = bankAward;
+            MistCreatedCells = mistCreatedCells;
+            MistClaimedCells = mistClaimedCells;
         }
 
         public int AttemptedCells { get; }
@@ -38,6 +50,10 @@ namespace EntropyTag.Domain
         public int ChangedCells { get; }
 
         public int BankAward { get; }
+
+        public int MistCreatedCells { get; }
+
+        public int MistClaimedCells { get; }
     }
 
     public sealed class TerritoryField : ITerritoryField
@@ -92,6 +108,8 @@ namespace EntropyTag.Domain
             int attempted = coordinates.Count;
             int changed = 0;
             int bankAward = 0;
+            int mistCreated = 0;
+            int mistClaimed = 0;
 
             for (int coordinateIndex = 0; coordinateIndex < coordinates.Count; coordinateIndex++)
             {
@@ -116,12 +134,21 @@ namespace EntropyTag.Domain
                 {
                     changed++;
                     cells[index] = resolution.Cell;
+
+                    if (existing.State != TerritoryState.Mist && resolution.Cell.State == TerritoryState.Mist)
+                    {
+                        mistCreated++;
+                    }
+                    else if (existing.State == TerritoryState.Mist && resolution.Cell.State != TerritoryState.Mist)
+                    {
+                        mistClaimed++;
+                    }
                 }
 
                 bankAward += resolution.BankAward;
             }
 
-            return new StampResult(attempted, changed, bankAward);
+            return new StampResult(attempted, changed, bankAward, mistCreated, mistClaimed);
         }
 
         private void AdvanceVisitGeneration()

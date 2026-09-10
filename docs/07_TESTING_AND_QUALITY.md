@@ -5,6 +5,28 @@
 EntropyTag must be trustworthy before it is content-rich. Territory ownership, reactions, movement effects,
 score, and visible feedback are competitive rules and require stronger validation than decorative systems.
 
+## Current evidence
+
+On 2026-09-10, the full initial baseline passed 180 EditMode and 44 PlayMode tests; the subsequent opponent-
+preference refinement passed all 69 bot-policy and 9 competitive-bot PlayMode tests. The Windows development
+build succeeded, and the built three-player arena initialized with Direct3D 11.
+The follow-up includes ten accelerated live-physics 120-second matches with both bots moving, painting,
+and landing hits. Fire selected the other bot 218 times versus the idle human 52 times; only the bot with
+two enemies is counted, avoiding a misleading aggregate with the other bot's unavoidable bot-only choices.
+One hard Ice stuck recovery occurred and all rounds completed. Horizontal-only progress tracking prevents
+jumping in place from concealing a stalled route.
+Injected-state scoring cases still cover ties/no-owner results independently of bot behavior.
+Other checks cover navigation, recoil protection, enemy/team selection, immutable results, clean restarts,
+boundary eligibility/recovery, virtual keyboard/gamepad input, and HUD bounds/non-overlap.
+Controlled scene checks cover both human teams with the other bot farther away, while policy tests cover
+human fallback, the exact six-meter bias, invalid targets, seeded ties, and unchanged safety/scoring priorities.
+The initial baseline's active-score benchmark averaged 0.319 ms per refresh.
+
+These are automated checks, not human UI approval, two-sided balance evidence, or minimum-spec GPU profiling.
+The allocation counter reported zero, but score snapshots visibly allocate objects/arrays in source, so that
+reading must not be interpreted as allocation-free operation. The broader test goals below remain a roadmap.
+See [Match validation and review](15_MATCH_FLOW_SCORING.md#validation-and-review).
+
 ## Test pyramid
 
 ```mermaid
@@ -150,4 +172,3 @@ No milestone passes with:
 - Missing licenses.
 - Unbounded save incompatibility.
 - Unmeasured territory performance.
-

@@ -18,6 +18,10 @@ Enter Play Mode and use:
 | Switch Ice / Fire | `Tab` | Y / Triangle |
 | Reset all territory | `R` | View / Select |
 
+These controls describe free play. Enter/Start begins the match proof: team switching locks, R/View restarts
+the match, and only upward-facing cells inside the safe boundary count toward the result. Walls remain
+paintable. See [Match Flow and Scoring](15_MATCH_FLOW_SCORING.md) for eligibility and brush clipping.
+
 The upper-right HUD uses dark green text with a subtle black outline and displays smoothed current FPS,
 selected element, Ice and Fire coverage, team bank, Mist and Neutral cell counts, and the logical state
 sampled beneath the player. Ice percentage is cyan, Fire percentage is orange, and the complete
@@ -89,7 +93,8 @@ Reset clears:
 - Logical cells on every registered face.
 - Every face's visual pixel buffer and uploaded texture.
 - Ice and Fire bank totals.
-- Every pooled shape splat in the test shooter.
+- Per-team Mist creation/claim cell counters.
+- Every pooled projectile and shape splat in the test shooter.
 
 Player territory sampling raycasts downward, resolves the hit face, converts the hit point to a logical
 coordinate, and reads `TerritoryCell` directly. No GPU readback is involved.
@@ -129,8 +134,8 @@ The accepted GTX 1060/RX 580-class validation remains part of later performance 
 
 ## Automated evidence
 
-- EditMode: 24 passed, 0 failed.
-- PlayMode: 18 passed, 0 failed.
+- Full initial baseline (2026-09-10): 180 EditMode and 44 PlayMode tests passed. Subsequent opponent-preference
+  evidence is in [Competitive Bots](16_COMPETITIVE_BOTS.md#verification-and-remaining-review).
 - Deterministic Domain stamp sequence remains covered.
 - Logical state and visual color align through Ice, Mist, and Fire transitions.
 - Reset leaves no logical, visual, bank, or pooled-splat residue.
@@ -153,5 +158,8 @@ The accepted GTX 1060/RX 580-class validation remains part of later performance 
 - Outlines are silhouette-based rather than production ink lines on every internal edge.
 - Curved and arbitrary production meshes do not yet have authored paint projections; the current proof
   covers generated planar faces.
-- No friendly/hostile movement effects, bots, shrinking boundary, match timer, or production HUD yet.
+- Friendly/hostile affinity, the opt-in shrinking-boundary match, and two competitive bots are implemented.
+  Production HUD remains deferred; see [Competitive Bots](16_COMPETITIVE_BOTS.md).
+- Match scoring weights eligible logical cells equally, not by physical area; final level-design eligibility,
+  including hidden/inaccessible surfaces, remains future work.
 - No target-hardware GPU capture has been performed.

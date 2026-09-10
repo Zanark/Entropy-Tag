@@ -58,6 +58,16 @@ namespace EntropyTag.UnityAdapters
 
         public int FireBank => fireBank;
 
+        public int IceMistCreatedCells { get; private set; }
+
+        public int FireMistCreatedCells { get; private set; }
+
+        public int IceMistClaimedCells { get; private set; }
+
+        public int FireMistClaimedCells { get; private set; }
+
+        public bool CountsForMatchScore => Vector3.Dot(transform.forward, Vector3.up) >= 0.5f;
+
         public Texture2D VisualTexture => visualTexture;
 
         public int EstimatedCpuBytes =>
@@ -114,7 +124,8 @@ namespace EntropyTag.UnityAdapters
             float radius,
             ElementId element,
             TeamId applyingTeam,
-            Vector3 worldNormal = default)
+            Vector3 worldNormal = default,
+            CircularArenaBoundary? activeBoundary = null)
         {
             EnsureInitialized();
 
@@ -154,7 +165,17 @@ namespace EntropyTag.UnityAdapters
 
                     if (normalizedX * normalizedX + normalizedY * normalizedY <= 1f)
                     {
-                        stampCoordinates.Add(new TerritoryCoordinate(x, y));
+                        var coordinate = new TerritoryCoordinate(x, y);
+                        if (activeBoundary.HasValue)
+                        {
+                            Vector3 cellPoint = GetWorldPoint(coordinate);
+                            if (!activeBoundary.Value.Contains(cellPoint.x, cellPoint.z))
+                            {
+                                continue;
+                            }
+                        }
+
+                        stampCoordinates.Add(coordinate);
                     }
                 }
             }
@@ -192,10 +213,14 @@ namespace EntropyTag.UnityAdapters
             if (applyingTeam == config.IceTeam.Id)
             {
                 iceBank += result.BankAward;
+                IceMistCreatedCells += result.MistCreatedCells;
+                IceMistClaimedCells += result.MistClaimedCells;
             }
             else if (applyingTeam == config.FireTeam.Id)
             {
                 fireBank += result.BankAward;
+                FireMistCreatedCells += result.MistCreatedCells;
+                FireMistClaimedCells += result.MistClaimedCells;
             }
             else
             {
@@ -259,6 +284,71 @@ namespace EntropyTag.UnityAdapters
             return field.GetCell(coordinate);
         }
 
+        public Vector3 GetWorldPoint(TerritoryCoordinate coordinate)
+        {
+            if (coordinate.X < 0 || coordinate.X >= logicalWidth ||
+                coordinate.Y < 0 || coordinate.Y >= logicalHeight)
+            {
+                throw new ArgumentOutOfRangeException(nameof(coordinate), "Cell is outside this territory face.");
+            }
+
+            return transform.TransformPoint(new Vector3(
+                (coordinate.X + 0.5f) / logicalWidth - 0.5f,
+                (coordinate.Y + 0.5f) / logicalHeight - 0.5f,
+                0f));
+        }
+
+        public void CountActiveCells(
+            CircularArenaBoundary boundary,
+            ref int total,
+            ref int neutral,
+            ref int mist,
+            ref int ice,
+            ref int fire)
+        {
+            if (!CountsForMatchScore)
+            {
+                return;
+            }
+
+            EnsureInitialized();
+            Matrix4x4 localToWorld = transform.localToWorldMatrix;
+            for (int y = 0; y < logicalHeight; y++)
+            {
+                for (int x = 0; x < logicalWidth; x++)
+                {
+                    Vector3 point = localToWorld.MultiplyPoint3x4(new Vector3(
+                        (x + 0.5f) / logicalWidth - 0.5f,
+                        (y + 0.5f) / logicalHeight - 0.5f,
+                        0f));
+                    if (!boundary.Contains(point.x, point.z))
+                    {
+                        continue;
+                    }
+
+                    total++;
+                    TerritoryCell cell = field.GetCell(new TerritoryCoordinate(x, y));
+                    switch (cell.State)
+                    {
+                        case TerritoryState.Neutral:
+                            neutral++;
+                            break;
+                        case TerritoryState.Mist:
+                            mist++;
+                            break;
+                        case TerritoryState.Ice:
+                            ice++;
+                            break;
+                        case TerritoryState.Fire:
+                            fire++;
+                            break;
+                        default:
+                            throw new InvalidOperationException($"Unsupported scoring state {cell.State}.");
+                    }
+                }
+            }
+        }
+
         public CoverageSnapshot GetCoverage()
         {
             EnsureInitialized();
@@ -314,6 +404,10 @@ namespace EntropyTag.UnityAdapters
             field.Reset();
             iceBank = 0;
             fireBank = 0;
+            IceMistCreatedCells = 0;
+            FireMistCreatedCells = 0;
+            IceMistClaimedCells = 0;
+            FireMistClaimedCells = 0;
 
             for (int index = 0; index < visualPixels.Length; index++)
             {
@@ -416,7 +510,9 @@ namespace EntropyTag.UnityAdapters
                 Destroy(runtimeMaterial);
             }
 
-            Shader shader = Shader.Find("EntropyTag/TerritoryOverlay");
+            Shader shader = presentationConfig.TerritoryShader != null
+                ? presentationConfig.TerritoryShader
+                : Shader.Find("EntropyTag/TerritoryOverlay");
 
             if (shader == null)
             {

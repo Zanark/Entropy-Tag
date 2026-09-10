@@ -27,6 +27,18 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(bootstrap, Is.Not.Null);
             Assert.That(bootstrap.State, Is.Not.Null);
             Assert.That(bootstrap.State.ProductName, Is.EqualTo("EntropyTag"));
+
+            float timeout = Time.realtimeSinceStartup + 10f;
+            while (!SceneManager.GetSceneByPath(ProjectBootstrap.FirstSliceScenePath).isLoaded &&
+                   Time.realtimeSinceStartup < timeout)
+            {
+                yield return null;
+            }
+
+            Assert.That(SceneManager.GetSceneByPath(ProjectBootstrap.FirstSliceScenePath).isLoaded, Is.True);
+            yield return null;
+            Assert.That(Object.FindObjectOfType<MatchFlowController>(), Is.Not.Null);
+            Assert.That(SceneManager.GetActiveScene().path, Is.EqualTo(ProjectBootstrap.FirstSliceScenePath));
         }
     }
 }

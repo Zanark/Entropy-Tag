@@ -82,13 +82,25 @@
         {
           "title": "territory-painting",
           "name": "Territory Painting Proof",
-          "prompt": "Explain registered paintable floors, world-to-grid mapping, CPU authority, visual texture projection, projectile stamps, coverage HUD, reset, sampling, memory, performance, and testing using docs/13_TERRITORY_PAINTING.md:1.",
+          "prompt": "Explain registered planar floors, walls, ramps and platforms, world-to-grid mapping, CPU authority, visual texture projection, stamps, match scoring eligibility, reset, sampling and performance using docs/13_TERRITORY_PAINTING.md:1.",
           "children": []
         },
         {
           "title": "element-reactions",
           "name": "Element Reactions Proof",
-          "prompt": "Explain deterministic Ice Fire Mist transitions, data-driven patterns, reaction events, pooled VFX and audio placeholders, Mist status duration, telegraphs, and testing using docs/14_ELEMENT_REACTIONS.md:1.",
+          "prompt": "Explain deterministic Ice Fire Mist transitions, patterns, reaction events, pooled VFX and audio, friendly and hostile movement affinity, neutral Mist behavior, telegraphs and testing using docs/14_ELEMENT_REACTIONS.md:1.",
+          "children": []
+        },
+        {
+          "title": "match-flow",
+          "name": "Match Flow and Scoring",
+          "prompt": "Explain implemented free play, countdown, two-minute phases, circular pressure, active-area scoring, fixed match teams, immutable results, rematches, three-player build startup and proof limits using docs/15_MATCH_FLOW_SCORING.md:1.",
+          "children": []
+        },
+        {
+          "title": "competitive-bots",
+          "name": "Competitive Bots",
+          "prompt": "Explain the mobile Ice/Fire bots, shared intent and movement, runtime NavMesh guidance, bounded bot-opponent preference with human fallback, seeded win-focused tactics, physical hits, lifecycle, diagnostics and verification limits using docs/16_COMPETITIVE_BOTS.md:1.",
           "children": []
         },
         {

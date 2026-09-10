@@ -78,6 +78,15 @@
           "initialStateCheck": false
         },
         {
+          "name": "ConfirmMatch",
+          "type": "Button",
+          "id": "fb7bffbe-c62f-4206-9224-2c67c6ea1c91",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "",
+          "initialStateCheck": false
+        },
+        {
           "name": "Pause",
           "type": "Button",
           "id": "19eefd7a-743b-4eec-b222-8f1da0304e22",
@@ -305,6 +314,28 @@
           "processors": "",
           "groups": "Gamepad",
           "action": "ResetTerritory",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "57029b24-e5d6-4203-a7e4-704734241cd9",
+          "path": "<Keyboard>/enter",
+          "interactions": "",
+          "processors": "",
+          "groups": "KeyboardMouse",
+          "action": "ConfirmMatch",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "0d293029-3f30-48d5-bca0-ff538b4c49dc",
+          "path": "<Gamepad>/start",
+          "interactions": "",
+          "processors": "",
+          "groups": "Gamepad",
+          "action": "ConfirmMatch",
           "isComposite": false,
           "isPartOfComposite": false
         },

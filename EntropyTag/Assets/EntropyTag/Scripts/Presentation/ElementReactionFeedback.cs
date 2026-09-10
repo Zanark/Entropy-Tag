@@ -13,6 +13,9 @@ namespace EntropyTag.Presentation
         [SerializeField]
         private ElementReactionPresentationConfig presentationConfig;
 
+        [SerializeField]
+        private MatchFlowController match;
+
         private readonly FeedbackSlot[] slots = new FeedbackSlot[PoolSize];
         private Material feedbackMaterial;
         private AudioClip reactionTone;
@@ -47,14 +50,42 @@ namespace EntropyTag.Presentation
                 : throw new ArgumentNullException(nameof(reactions));
         }
 
+        public void AttachMatch(MatchFlowController controller)
+        {
+            match = controller;
+        }
+
+        public void ClearFeedback()
+        {
+            for (int index = 0; index < slots.Length; index++)
+            {
+                if (slots[index] != null)
+                {
+                    slots[index].Audio.Stop();
+                    slots[index].Visual.SetActive(false);
+                    slots[index].Remaining = 0f;
+                }
+            }
+
+            nextSlot = 0;
+        }
+
         private void OnEnable()
         {
             TerritorySurfaceRegistry.ReactionOccurred += HandleReaction;
+            if (match != null)
+            {
+                match.MatchReset += ClearFeedback;
+            }
         }
 
         private void OnDisable()
         {
             TerritorySurfaceRegistry.ReactionOccurred -= HandleReaction;
+            if (match != null)
+            {
+                match.MatchReset -= ClearFeedback;
+            }
         }
 
         private void Update()

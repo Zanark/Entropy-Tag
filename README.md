@@ -6,9 +6,9 @@ EntropyTag is a planned Unity game about movement, territory, and elemental coun
 Water, or Fire teams, transform a 3D arena with their element, exploit friendly terrain, trigger multi-step
 reactions, disrupt opposing players, and adapt as the playable space contracts toward a decisive finish.
 
-The Unity foundation is complete, and the first gameplay technical proof is implemented. The generated Unity
-project lives under `EntropyTag/`, while product documentation and executable planning remain at the
-repository root.
+The Unity foundation, player movement, multi-surface painting, and Ice/Fire/Mist reaction proofs are
+implemented. A two-minute match with two mobile, competing bots is now ready for developer review. The generated Unity
+project lives under `EntropyTag/`, while documentation and executable planning remain at the repository root.
 
 ## The game we are building
 
@@ -46,7 +46,7 @@ flowchart LR
 - True 3D gameplay in Unity.
 - Third-person movement with a free reticle and continuously following mouse/right-stick camera.
 - Stylized low-poly environments with crisp, retro-inspired rendering.
-- Floor territory painting first; walls and arbitrary surfaces only after the core loop is proven.
+- Paintable planar floors, walls, ramps, and platforms; arbitrary production meshes remain later work.
 - Offline play with bots for the first vertical slice.
 - Approximately two-to-four-minute matches during early development.
 - PC as the initial development and validation platform.
@@ -77,11 +77,34 @@ forward and the prototype limitations that must not be repeated.
 | Unity project | Created under `EntropyTag/` with Unity `2022.3.47f1` |
 | Render pipeline | URP `14.0.11`, active in Graphics and all Quality levels |
 | Input | Input System `1.7.0`; keyboard/mouse and gamepad drive the player sandbox |
-| Gameplay code | Player sandbox, multi-surface territory, patterned reactions, and affinity-based movement |
+| Gameplay code | Movement, territory, reactions, affinity, match flow, two mobile bots, and non-lethal hits |
 | First-party assets | Approved hierarchy created under `EntropyTag/Assets/EntropyTag/` |
-| Automated validation | 24 EditMode and 20 PlayMode tests pass; Windows development build succeeds |
-| Vertical slice | Planned |
+| Automated validation | Full baseline: 180 EditMode / 44 PlayMode; bot-targeting follow-up: 69 policy / 9 PlayMode tests passed. Windows build and graphics startup succeed (2026-09-10) |
+| Match Flow and Scoring | Implemented; hands-on approval pending |
+| Bots and AI | Two win-focused bot instances implemented; hands-on approval pending |
+| Vertical slice | In progress; authored arena, production presentation, and final quality gates remain unfinished |
 | Online multiplayer | Deferred |
+
+## Try the current proof
+
+Open `EntropyTag/Assets/EntropyTag/Scenes/Tests/Sandbox_PlayerMovement.unity` in Unity and enter Play Mode.
+It starts in unrestricted free play: move, paint, and use `Tab` / gamepad Y to switch Ice and Fire.
+
+Press **Enter / gamepad Start** for a clean three-second countdown followed by a 120-second match.
+The safe boundary shrinks during the final stretch; score counts upward-facing logical cells inside it.
+Results show territory, bank, and reaction counts. Enter/Start rematches; `R` / View restarts an ongoing match.
+Team choice is locked during countdown and active play. One fixed Ice bot and one fixed Fire bot start moving
+and competing when the match begins; they remain idle in free play. They paint, contest, prefer fighting
+each other, and return toward the safe area. A substantially closer or more eligible hostile human can
+still become the target. Enemy hits push players back rather than killing them.
+
+Your selected team has two actors against one, so this is a testing arrangement rather than a balanced team
+setup. Your teammate does not attack you. See [Competitive Bots](docs/16_COMPETITIVE_BOTS.md) for behavior,
+navigation limits, shared rules, and the review checklist.
+
+The official Windows build starts through `Bootstrap` into `Arena_FirstSlice`, a buildable copy of the
+movement gym. Sandbox/comparison scenes remain excluded from that build. See
+[Match Flow and Scoring](docs/15_MATCH_FLOW_SCORING.md) for controls, scoring, diagrams, and review steps.
 
 ## Documentation
 
@@ -105,6 +128,8 @@ forward and the prototype limitations that must not be repeated.
 - [Domain Rules](docs/12_DOMAIN_RULES.md)
 - [Territory Painting](docs/13_TERRITORY_PAINTING.md)
 - [Element Reactions](docs/14_ELEMENT_REACTIONS.md)
+- [Match Flow and Scoring](docs/15_MATCH_FLOW_SCORING.md)
+- [Competitive Bots](docs/16_COMPETITIVE_BOTS.md)
 - [Documentation catalogue](docs/DOCUMENTATION_CATALOGUE.json)
 
 ## Work planning
@@ -151,4 +176,5 @@ The detailed layout and ownership rules are defined in
 ## Branch purpose
 
 `workDesk/agentic` is the active implementation branch. Territory Painting and Element Reactions are
-complete; Match Flow and Scoring is the next vertical-slice gameplay TODO.
+complete; Match Flow and Scoring plus Competitive Bots are implemented and awaiting hands-on approval before
+completion and commit.

@@ -29,6 +29,13 @@ namespace EntropyTag.Tests.EditMode
             Assert.That(asset.FindAction("Gameplay/Slide", true), Is.Not.Null);
             Assert.That(asset.FindAction("Gameplay/SwitchElement", true), Is.Not.Null);
             Assert.That(asset.FindAction("Gameplay/ResetTerritory", true), Is.Not.Null);
+            Assert.That(asset.FindAction("Gameplay/ConfirmMatch", true), Is.Not.Null);
+            Assert.That(
+                asset.FindAction("Gameplay/ConfirmMatch", true).bindings.Any(binding => binding.path == "<Keyboard>/enter"),
+                Is.True);
+            Assert.That(
+                asset.FindAction("Gameplay/ConfirmMatch", true).bindings.Any(binding => binding.path == "<Gamepad>/start"),
+                Is.True);
             Assert.That(
                 asset.FindAction("Gameplay/Jump", true).bindings.Any(binding => binding.path == "<Keyboard>/space"),
                 Is.True);

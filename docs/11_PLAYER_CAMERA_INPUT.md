@@ -11,6 +11,14 @@ Open:
 
 Then enter Play Mode.
 
+The selected scene starts in free play. [Match Flow and Scoring](15_MATCH_FLOW_SCORING.md) adds an explicit
+Enter/Start countdown, a two-minute match, safe-boundary pressure, results, and rematch without replacing
+the approved camera or affinity rules. The eight comparison scenes do not contain match flow.
+
+Two mobile fixed-team bots now join explicit matches in the selected scene. They wait during free play,
+countdown, and results. Human and bot intent use the same motor/shooter rules; enemy hits cause non-lethal
+recoil. See [Competitive Bots](16_COMPETITIVE_BOTS.md).
+
 ## Camera comparison scenes
 
 Variant 05, Free Aim Continuous Follow, is the selected foundation. The original eight scenes remain under
@@ -41,12 +49,13 @@ and a low-clearance slide tunnel.
 | Slide | `Left Ctrl` | B / Circle |
 | Aim | Right mouse button | Left trigger |
 | Fire paint projectiles | Left mouse button | Right trigger |
-| Switch Ice / Fire | `Tab` | Y / Triangle |
-| Reset territory | `R` | View / Select |
-| Pause intent | `Escape` | Start |
+| Choose Ice / Fire in free play or results | `Tab` | Y / Triangle |
+| Clear free-play paint / restart match | `R` | View / Select |
+| Start match / rematch in selected scene | `Enter` | Start |
+| Reserved pause intent (no pause UI yet) | `Escape` | Start binding also exists; currently confirms matches |
 
 Hold movement toward the climb wall to climb it. Jumping while climbing pushes the player away from the wall.
-Fire launches pooled test projectiles through the shared aim solution. Floor impacts stamp authoritative
+Fire launches pooled test projectiles through the shared aim solution. Designated planar-face impacts stamp authoritative
 Ice/Fire/Mist territory and leave simple colored splats; non-paintable geometry receives only the shape splat.
 
 ## Runtime flow
@@ -84,7 +93,7 @@ flowchart LR
 ## Components
 
 - `PlayerInputSource` binds the shared Input Action Asset once and reads movement, look, aim, fire, jump,
-  slide, element switching, and territory reset without per-frame action lookup.
+  slide, element switching, territory reset, and match confirmation without per-frame action lookup.
 - `ThirdPersonMotor` uses `CharacterController` for camera-relative acceleration, deceleration, gravity,
   grounded movement, jumping, wall climbing and wall jumping, sliding with reduced collision height,
   rotation, external impulses, and speed modifiers.
@@ -92,7 +101,8 @@ flowchart LR
   scene. It supports centered, shoulder, free-reticle, edge-zone, tether, recentering, and spring behavior.
 - `ThirdPersonCameraRig` applies orbit look, pitch limits, and sphere-cast collision without shifting into a
   shoulder view.
-- `ThirdPersonAimSolver` raycasts through screen center and exposes one `AimSolution`.
+- `ThirdPersonAimSolver` raycasts through the viewport position selected by the camera experiment and exposes
+  one `AimSolution`.
 - `AimReticlePresenter` displays the reticle and contact marker from that same solution.
 - `TestProjectileShooter` prewarms reusable projectile and splat pools, fires toward the shared aim solution,
   and leaves a simple persistent splat at each collision without allocating a new projectile per shot.
@@ -104,8 +114,8 @@ flowchart LR
 
 Automated validation covers:
 
-- EditMode: 24 passed, 0 failed.
-- PlayMode: 18 passed, 0 failed.
+- Full initial baseline (2026-09-10): 180 EditMode and 44 PlayMode tests passed. Subsequent opponent-preference
+  evidence is in [Competitive Bots](16_COMPETITIVE_BOTS.md#verification-and-remaining-review).
 - Keyboard/mouse and gamepad schemes are present.
 - Camera collision prevents the camera remaining behind the sandbox wall.
 - Motor impulse and speed-modifier hooks operate.
@@ -130,8 +140,9 @@ platform-specific glyphs or naming belong to the later UI/accessibility TODO.
 
 - Placeholder thin cuboid torso, sphere head, floor, wall, target, reticle, and lighting only.
 - No animation, sprinting, production combat, continuous spray stream, pause flow, rebinding UI, or settings UI.
-- Floor territory has ownership, reactions, bank, and coverage, but no match timer, pressure boundary, bots,
-  production scoring HUD, or movement modifiers yet.
+- Planar territory, affinity, timer, safe boundary, and prototype score/result HUD are implemented.
+  Two competitive bots are implemented; match/bot play is awaiting hands-on review, and production
+  presentation remains unfinished.
 - Falling below the sandbox returns the player to the marked spawn pad with movement state cleared.
 - Input tuning values are persisted by the service but not yet exposed through a menu.
 - The sandbox is a technical proof, not a production arena.

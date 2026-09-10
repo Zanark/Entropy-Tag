@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EntropyTag.UnityAdapters
 {
-    public sealed class ThirdPersonAimSolver : MonoBehaviour
+    public sealed class ThirdPersonAimSolver : MonoBehaviour, IAimSource
     {
         [SerializeField]
         private Camera aimCamera;

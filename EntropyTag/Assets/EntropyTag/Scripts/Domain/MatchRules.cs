@@ -29,13 +29,19 @@ namespace EntropyTag.Domain
                     "Match duration must be finite and greater than zero.");
             }
 
-            if (openingEndSeconds <= 0d ||
+            if (double.IsNaN(openingEndSeconds) ||
+                double.IsInfinity(openingEndSeconds) ||
+                double.IsNaN(contestEndSeconds) ||
+                double.IsInfinity(contestEndSeconds) ||
+                double.IsNaN(compressionEndSeconds) ||
+                double.IsInfinity(compressionEndSeconds) ||
+                openingEndSeconds <= 0d ||
                 contestEndSeconds <= openingEndSeconds ||
                 compressionEndSeconds <= contestEndSeconds ||
                 compressionEndSeconds >= durationSeconds)
             {
                 throw new ArgumentException(
-                    "Phase thresholds must satisfy 0 < opening < contest < compression < duration.");
+                    "Phase thresholds must be finite and satisfy 0 < opening < contest < compression < duration.");
             }
 
             DurationSeconds = durationSeconds;

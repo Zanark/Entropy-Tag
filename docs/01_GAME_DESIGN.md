@@ -82,7 +82,7 @@ Movement must remain useful when the spray tool is not active.
 
 ## Camera and aiming
 
-- Over-the-shoulder camera.
+- Selected Variant 05 free reticle with continuously following third-person camera.
 - Aim reticle projected into world space.
 - Camera collision prevents wall clipping.
 - Spray origin and visible stream converge toward the aim solution.
@@ -176,12 +176,24 @@ The first bot needs only a small readable behavior set:
 
 Later bot personalities: Painter, Hunter, Guardian, and Opportunist.
 
+The implemented sandbox now has one fixed Ice bot and one fixed Fire bot alongside the human. They navigate
+walkable routes, paint and contest scoring territory, engage visible enemies in bounded bursts, and favor
+retained territory late in the match. Teammates are not attack targets. Direct hits currently apply a shared
+brief knockback with repeat-hit protection, not Ice-specific freeze, Fire-specific damage, or elimination.
+See [Competitive Bots](16_COMPETITIVE_BOTS.md). The three-actor/two-team arrangement is intentionally 2 vs 1,
+not a balanced-team claim.
+
 ## Scoring
 
 - Score is the percentage of active logical territory owned at match end.
 - Neutral and reaction territory remains visible in the denominator.
-- Close ties may use bank or a brief overtime objective; the decision remains open.
+- Equal nonzero ownership is an explicit tie; zero ownership has its own no-owner result.
+- Bank does not break ties in the first slice. Overtime or a different policy would require a later decision.
 - Results must show how the winning score was produced.
+
+The current proof scores upward-facing logical cells whose centers are inside the active boundary.
+Paintable walls do not contribute winning territory. See [Match Flow and Scoring](15_MATCH_FLOW_SCORING.md)
+for the implemented eligibility, phase timing, and result contract.
 
 ## Match pressure
 

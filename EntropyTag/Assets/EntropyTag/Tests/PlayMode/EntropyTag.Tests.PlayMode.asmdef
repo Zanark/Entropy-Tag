@@ -6,7 +6,8 @@
     "EntropyTag.Domain",
     "EntropyTag.Infrastructure",
     "EntropyTag.Presentation",
-    "EntropyTag.Unity"
+    "EntropyTag.Unity",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

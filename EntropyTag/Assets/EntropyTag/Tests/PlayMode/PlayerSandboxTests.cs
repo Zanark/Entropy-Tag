@@ -34,12 +34,12 @@ namespace EntropyTag.Tests.PlayMode
         {
             yield return LoadSandbox();
 
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
             ThirdPersonAimSolver aimSolver = Object.FindObjectOfType<ThirdPersonAimSolver>();
             AimReticlePresenter aimPresenter = Object.FindObjectOfType<AimReticlePresenter>();
             CameraAimExperimentController experiment = Object.FindObjectOfType<CameraAimExperimentController>();
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             TerritorySurface territorySurface = GetFloorSurface();
             TerritoryDebugPresenter territoryPresenter = Object.FindObjectOfType<TerritoryDebugPresenter>();
             PlayerSandboxDiagnostics diagnostics = Object.FindObjectOfType<PlayerSandboxDiagnostics>();
@@ -120,10 +120,10 @@ namespace EntropyTag.Tests.PlayMode
             TerritorySurface surface = GetFloorSurface();
             ElementReactionPresentationConfig config = surface.PresentationConfig;
             TerritoryMovementController territoryMovement =
-                Object.FindObjectOfType<TerritoryMovementController>();
+                FindHuman<TerritoryMovementController>();
             ElementReactionFeedback feedback = Object.FindObjectOfType<ElementReactionFeedback>();
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             TerritoryDebugPresenter presenter = Object.FindObjectOfType<TerritoryDebugPresenter>();
             Text movementLabel =
                 GameObject.Find("Territory Movement Status Label").GetComponent<Text>();
@@ -273,7 +273,7 @@ namespace EntropyTag.Tests.PlayMode
             Assert.That(spawnLabel.characterSize, Is.EqualTo(0.04f).Within(0.0001f));
             Assert.That(Vector3.Dot(spawnLabel.transform.forward, Vector3.down), Is.GreaterThan(0.99f));
 
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             shooter.SwitchElement();
             yield return new WaitForSecondsRealtime(0.25f);
             Assert.That(territoryLabel.text, Does.Contain("<color=#FF5514>Selected: Fire"));
@@ -284,8 +284,8 @@ namespace EntropyTag.Tests.PlayMode
         {
             yield return LoadSandbox();
 
-            PlayerRespawnController respawn = Object.FindObjectOfType<PlayerRespawnController>();
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            PlayerRespawnController respawn = FindHuman<PlayerRespawnController>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             Assert.That(respawn, Is.Not.Null);
             Assert.That(respawn.SpawnPoint, Is.Not.Null);
 
@@ -305,7 +305,7 @@ namespace EntropyTag.Tests.PlayMode
             yield return LoadSandbox();
 
             TerritorySurface surface = GetFloorSurface();
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             Vector3 worldCenter = surface.transform.position;
             surface.TryWorldToCoordinate(worldCenter, out TerritoryCoordinate coordinate);
             surface.ApplyLogicalStamp(new[] { coordinate }, ElementId.Ice, new TeamId(1));
@@ -337,7 +337,7 @@ namespace EntropyTag.Tests.PlayMode
             yield return null;
 
             TerritorySurface surface = GetFloorSurface();
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             Collider floorCollider = surface.SourceCollider;
             Vector3 point = surface.transform.position;
             surface.TryWorldToCoordinate(point, out TerritoryCoordinate coordinate);
@@ -387,7 +387,7 @@ namespace EntropyTag.Tests.PlayMode
 
             TerritorySurface wall =
                 GameObject.Find("Camera Collision Wall Front Territory").GetComponent<TerritorySurface>();
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             Vector3 point = wall.transform.position;
 
             Assert.That(
@@ -468,7 +468,7 @@ namespace EntropyTag.Tests.PlayMode
             yield return LoadSandbox();
             yield return null;
 
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
             CharacterController controller = motor.GetComponent<CharacterController>();
 
@@ -479,7 +479,7 @@ namespace EntropyTag.Tests.PlayMode
             yield return LoadSandbox();
             yield return null;
 
-            motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            motor = FindHuman<ThirdPersonMotor>();
             cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
             float startHeight = motor.transform.position.y;
             motor.Simulate(Vector2.zero, cameraRig.ControlledCamera.transform, 0.1f, true, false);
@@ -493,7 +493,7 @@ namespace EntropyTag.Tests.PlayMode
         {
             yield return LoadSandbox();
 
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
             motor.transform.position = new Vector3(7.3f, 0f, 2f);
             Physics.SyncTransforms();
@@ -517,8 +517,8 @@ namespace EntropyTag.Tests.PlayMode
 
                 Assert.That(experiment, Is.Not.Null, CameraVariantScenePaths[index]);
                 Assert.That((int)experiment.Mode, Is.EqualTo(index + 1), CameraVariantScenePaths[index]);
-                Assert.That(Object.FindObjectOfType<TestProjectileShooter>(), Is.Not.Null);
-                Assert.That(Object.FindObjectOfType<ThirdPersonMotor>(), Is.Not.Null);
+                Assert.That(FindHuman<TestProjectileShooter>(), Is.Not.Null);
+                Assert.That(FindHuman<ThirdPersonMotor>(), Is.Not.Null);
             }
         }
 
@@ -527,7 +527,7 @@ namespace EntropyTag.Tests.PlayMode
         {
             yield return LoadSandbox();
 
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             ThirdPersonAimSolver aimSolver = Object.FindObjectOfType<ThirdPersonAimSolver>();
             yield return null;
 
@@ -542,10 +542,10 @@ namespace EntropyTag.Tests.PlayMode
         {
             yield return LoadSandbox();
 
-            TestProjectileShooter shooter = Object.FindObjectOfType<TestProjectileShooter>();
+            TestProjectileShooter shooter = FindHuman<TestProjectileShooter>();
             ThirdPersonAimSolver aimSolver = Object.FindObjectOfType<ThirdPersonAimSolver>();
             ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             aimSolver.SetViewportPoint(new Vector2(0.5f, 0.5f));
             yield return null;
 
@@ -619,7 +619,7 @@ namespace EntropyTag.Tests.PlayMode
         {
             yield return LoadSandbox();
 
-            ThirdPersonMotor motor = Object.FindObjectOfType<ThirdPersonMotor>();
+            ThirdPersonMotor motor = FindHuman<ThirdPersonMotor>();
             ThirdPersonCameraRig cameraRig = Object.FindObjectOfType<ThirdPersonCameraRig>();
             ThirdPersonAimSolver aimSolver = Object.FindObjectOfType<ThirdPersonAimSolver>();
             Transform cameraTransform = cameraRig.ControlledCamera.transform;
@@ -676,6 +676,11 @@ namespace EntropyTag.Tests.PlayMode
             GameObject floor = GameObject.Find("Sandbox Floor Top Territory");
             Assert.That(floor, Is.Not.Null);
             return floor.GetComponent<TerritorySurface>();
+        }
+
+        private static T FindHuman<T>() where T : Component
+        {
+            return GameObject.Find("Player").GetComponent<T>();
         }
     }
 }

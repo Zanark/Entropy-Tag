@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace EntropyTag.UnityAdapters
 {
-    public sealed class PlayerInputSource : MonoBehaviour
+    public sealed class PlayerInputSource : MonoBehaviour, IActorIntentSource
     {
         private const string GameplayMapName = "Gameplay";
 
@@ -20,6 +20,7 @@ namespace EntropyTag.UnityAdapters
         private InputAction slideAction;
         private InputAction switchElementAction;
         private InputAction resetTerritoryAction;
+        private InputAction confirmMatchAction;
         private PlayerInputSettings settings = PlayerInputSettings.CreateDefault();
 
         public Vector2 Move => moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
@@ -37,6 +38,9 @@ namespace EntropyTag.UnityAdapters
 
         public bool WasResetTerritoryPressedThisFrame =>
             resetTerritoryAction?.WasPressedThisFrame() ?? false;
+
+        public bool WasConfirmMatchPressedThisFrame =>
+            confirmMatchAction?.WasPressedThisFrame() ?? false;
 
         public bool LookUsesMouse => lookAction?.activeControl?.device is Mouse;
 
@@ -142,6 +146,7 @@ namespace EntropyTag.UnityAdapters
             slideAction = gameplayMap.FindAction("Slide", true);
             switchElementAction = gameplayMap.FindAction("SwitchElement", true);
             resetTerritoryAction = gameplayMap.FindAction("ResetTerritory", true);
+            confirmMatchAction = gameplayMap.FindAction("ConfirmMatch", true);
         }
     }
 }

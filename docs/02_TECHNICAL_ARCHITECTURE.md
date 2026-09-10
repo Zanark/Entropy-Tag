@@ -40,9 +40,13 @@ Responsibilities:
 
 ### Application and simulation
 
-Coordinates domain operations and exposes commands/events.
+Coordinates domain operations and exposes commands/events. The current engine-free implementation is
+`MatchSession`: start/restart, countdown, phase advancement, boundary queries, completion events, and
+immutable score/result snapshots. `BotTactics` is an engine-free utility policy over territory/opponent
+observations. Unity actors now share `IActorIntentSource` and `IAimSource`; pause and generalized network
+command submission remain planned.
 
-Responsibilities:
+Target responsibilities:
 
 - Start, tick, pause, and complete a match.
 - Accept player/bot intent.
@@ -104,10 +108,21 @@ Responsibilities:
 | `EntropyTag.Tests.EditMode` | Test only | Domain and application tests |
 | `EntropyTag.Tests.PlayMode` | Test only | Scene, input, physics, rendering smoke tests |
 
-These assemblies now exist under `EntropyTag/Assets/EntropyTag/`. The third-person sandbox exercises Unity,
-Presentation, Infrastructure, Editor, and both test assemblies. Three EditMode tests, five PlayMode tests,
-and the Windows development build pass. Domain gameplay rules remain intentionally skeletal until their
-corresponding decisions are accepted.
+These assemblies exist under `EntropyTag/Assets/EntropyTag/`. Domain territory, reactions, bank, match timing,
+and circular pressure rules are implemented. Application owns the match lifecycle without an engine
+reference; Unity and Presentation connect it to the arena. The full initial baseline passed 180 EditMode
+and 44 PlayMode tests; the bot-targeting follow-up passed 69 policy and 9 competitive-bot PlayMode tests.
+Windows development build and graphics-enabled standalone startup also succeeded. Hands-on match review remains
+pending; see [Match Flow and Scoring](15_MATCH_FLOW_SCORING.md).
+
+`TerritoryBotController` supplies the same movement/fire intent consumed by `ThirdPersonMotor` and
+`TestProjectileShooter`. `SandboxNavigation` bakes shared static collider route guidance once; it does not
+move actors through a NavMeshAgent. `BotTerritoryMap` indexes reachable scoring locations, and `BotTactics`
+chooses safety, recovery, territory, or enemy goals. Eligible bot opponents receive a bounded six-meter
+distance bonus during target ranking, favoring bot-on-bot fights without immunity for the human.
+Participant-role metadata comes from `MatchParticipant.IsBot`, not names or hard-coded actor indices.
+Physical projectile collisions use a shared non-lethal
+participant hit path. See [Competitive Bots](16_COMPETITIVE_BOTS.md) for the complete flow.
 
 Dependencies flow inward. Domain must never reference presentation.
 
@@ -115,83 +130,63 @@ Dependencies flow inward. Domain must never reference presentation.
 
 ```mermaid
 sequenceDiagram
-    accTitle: EntropyTag runtime frame flow
-    accDescr: Unity input and bot decisions become intent, the simulation updates authoritative state, territory and player events are emitted, and presentation systems render the result.
+    accTitle: Implemented match frame flow
+    accDescr: Unity input starts or restarts the application session. The session advances deterministic timing and pressure, the Unity controller refreshes logical scoring, and presentation reads state and results.
 
     autonumber
-    participant Input as Input and bots
-    participant Adapter as Unity adapters
-    participant Match as Match simulation
-    participant Domain as Domain rules
-    participant Events as Event stream
-    participant View as Presentation
+    participant Input as PlayerInputSource
+    participant Adapter as MatchFlowController
+    participant Match as MatchSession
+    participant Domain as MatchClock / MatchFlowRules
+    participant Arena as TerritorySurfaceRegistry
+    participant View as Match presenters
 
-    Input->>Adapter: Movement, aim, spray intent
-    Adapter->>Match: Submit intent
-    Match->>Domain: Resolve movement-independent rules
-    Match->>Domain: Resolve territory and reactions
-    Domain-->>Match: Mutations and score changes
-    Match-->>Events: Publish typed events
-    Events-->>View: Paint, reaction, hit, phase events
-    View->>View: Update material, VFX, audio, UI
+    Input->>Adapter: Confirm or restart
+    Adapter->>Match: StartMatch / RestartMatch / Advance
+    Match->>Domain: Advance clock and query boundary
+    Match-->>Adapter: State, phase and completion events
+    Adapter->>Arena: Capture eligible score at 5 Hz
+    Arena-->>Adapter: MatchScoreSnapshot
+    View->>Adapter: Read session, score and participant status
+    View->>View: Refresh HUD and boundary
 ```
 
 ## Core domain model
 
 ```mermaid
 classDiagram
-    accTitle: EntropyTag core domain model
-    accDescr: A match owns teams, players, a territory field, score state, and match pressure while reaction rules convert element applications into territory results.
+    accTitle: Implemented match and territory model
+    accDescr: An application match session owns timing and frozen results and requests score or reset through an arena interface implemented by Unity. Registered surfaces own fields resolved by deterministic territory rules.
 
-    class MatchState {
-        +MatchPhase phase
-        +double remainingTime
+    class MatchSession {
+        +MatchSessionState State
+        +MatchPhase Phase
+        +StartMatch()
+        +RestartMatch()
         +Advance()
+        +CaptureScore()
     }
-
-    class TeamState {
-        +ElementId element
-        +int bank
-        +float territoryPercent
-    }
-
-    class PlayerState {
-        +PlayerId id
-        +TeamId team
-        +StatusEffects effects
-    }
-
-    class TerritoryField {
-        +TerritoryCell[] cells
-        +ApplyStamp()
+    class IMatchArena {
+        <<interface>>
         +Reset()
-        +CalculateCoverage()
+        +CaptureScore()
     }
-
-    class TerritoryCell {
-        +TerritoryOwner owner
-        +TerritoryOwner previousOwner
-        +TerritoryState state
-    }
-
-    class ReactionResolver {
-        +Resolve(cell, element, team)
-    }
-
-    class MatchPressure {
-        +GetActiveBounds()
-        +Advance()
-    }
-
-    MatchState "1" *-- "2..3" TeamState
-    MatchState "1" *-- "2..6" PlayerState
-    MatchState "1" *-- "1" TerritoryField
-    TerritoryField "1" *-- "*" TerritoryCell
-    MatchState --> MatchPressure
-    TerritoryField --> ReactionResolver
+    MatchSession --> MatchClock
+    MatchSession --> MatchFlowRules
+    MatchSession --> IMatchArena
+    MatchSession --> MatchResultSnapshot
+    MatchResultSnapshot --> MatchScoreSnapshot
+    IMatchArena <|.. MatchFlowController
+    MatchFlowController --> TerritorySurfaceRegistry
+    TerritorySurfaceRegistry --> TerritorySurface
+    TerritorySurface *-- TerritoryField
+    TerritoryField *-- TerritoryCell
+    TerritoryField --> TerritoryReactionResolver
 ```
 
-The core territory and reaction types shown above now exist in the Domain assembly.
+The diagram uses implemented types rather than proposed `MatchState`, `TeamState`, or `PlayerState` classes.
+`MatchSession` and snapshots are Application types; the controller and surface registry are Unity adapters.
+`MatchClock`, `MatchFlowRules`, territory fields/cells, and the reaction resolver live in Domain.
 
 ## Territory representation
 
@@ -248,10 +243,10 @@ The accepted motor proof is implemented in `Sandbox_PlayerMovement.unity`:
 - Marked spawn point with below-arena position recovery and motor-state reset.
 - Acceleration and deceleration.
 - External impulses for reactions.
-- Status-effect modifiers.
-- Fixed centered reticle with direct mouse-delta/right-stick camera control.
+- Friendly/hostile normal-locomotion multipliers; Neutral/Mist stays at normal speed.
+- Variant 05 free reticle with continuously following mouse/right-stick camera control.
 - Configurable camera smoothing and follow speed with sphere-cast collision.
-- Shared center-view physics aim solution.
+- Shared physics aim solution through the selected reticle viewport position.
 - Pooled test projectiles fired through the shared aim result.
 - Reticle and contact marker consuming the shared solution.
 - Persisted mouse/gamepad sensitivity and vertical inversion.
@@ -267,17 +262,17 @@ sequenceDiagram
     participant Input as PlayerInputSource
     participant Motor as ThirdPersonMotor
     participant Camera as ThirdPersonCameraRig
-    participant CenteredAim as CenteredAimController
+    participant Experiment as CameraAimExperimentController
     participant Aim as ThirdPersonAimSolver
     participant View as AimReticlePresenter
     participant Shot as TestProjectileShooter
 
     Device->>Input: Move and camera-look input
     Input->>Motor: Camera-relative move
-    Input->>CenteredAim: Mouse delta or right stick
-    CenteredAim->>Camera: Smoothed orbit delta
+    Input->>Experiment: Mouse position/delta or right stick
+    Experiment->>Camera: Smoothed orbit delta
     Camera->>Camera: Sphere-cast collision
-    CenteredAim->>Aim: Center viewport
+    Experiment->>Aim: Selected reticle viewport
     Camera->>Aim: View ray
     Aim-->>View: Shared AimSolution
     Aim-->>Shot: Shared AimSolution
@@ -287,10 +282,10 @@ See [Player, Camera, and Input Sandbox](11_PLAYER_CAMERA_INPUT.md).
 
 ## Spray system
 
-Proposed pipeline:
+The current pooled-projectile proof follows this pipeline:
 
 1. Input requests spray.
-2. Resource/cooldown policy approves or rejects.
+2. Match control gates, firing interval, and pool availability approve or reject.
 3. Aim solution produces origin and direction.
 4. Physics query produces valid surface contacts.
 5. Stamp command converts contacts into logical territory coordinates.
@@ -299,6 +294,7 @@ Proposed pipeline:
 8. Events drive VFX, audio, UI, and bank feedback.
 
 The visible stream and authoritative contact must derive from the same aim solution.
+The production continuous spray stream and resource economy are not implemented.
 
 ## Configuration
 
@@ -320,14 +316,15 @@ global ScriptableObjects as live match state.
 
 ## Scene strategy
 
-Initial scenes:
+Current runtime scenes:
 
-- `Bootstrap` - persistent services and transition entry.
-- `FrontEnd` - title, settings, play flow.
-- `VerticalSlice_Arena01` - first playable arena.
-- `Test_*` scenes - isolated feature and performance validation.
+- `Bootstrap` - initializes startup state and loads `Arena_FirstSlice` additively.
+- `Arena_FirstSlice` - buildable three-actor match proof using the movement gym; made the active scene.
+- `Sandbox_PlayerMovement` - selected developer scene, now with explicit opt-in match flow.
+- `Sandbox_Camera_*` - eight retained free-play camera comparisons.
 
-Use additive loading only when a concrete need appears. The first slice can use simple scene transitions.
+The official build command includes Bootstrap and the arena, filtering all sandbox scenes out of the
+editor build list. Front-end menus and a final authored arena remain future work.
 
 ## Observability
 
