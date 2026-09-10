@@ -1,0 +1,121 @@
+{
+  "items": [
+    {
+      "title": "onboarding",
+      "name": "EntropyTag Onboarding",
+      "prompt": "Introduce the original Unity game direction using README.md:1 and docs/00_VISION.md:1.",
+      "children": [
+        {
+          "title": "principal-guide",
+          "name": "Principal-Level EntropyTag Guide",
+          "prompt": "Explain the core architectural insight, layer boundaries, territory authority, tradeoffs, and strategic reading order using docs/02_TECHNICAL_ARCHITECTURE.md:1, docs/08_DECISIONS_AND_RISKS.md:1, and docs/10_PROTOTYPE_INHERITANCE.md:1.",
+          "children": []
+        },
+        {
+          "title": "zero-to-hero",
+          "name": "Zero-to-Hero Unity Learning Path",
+          "prompt": "Teach a newcomer the game, Unity structure, C sharp domain separation, asset pipeline, tests, and contribution workflow using docs/01_GAME_DESIGN.md:1, docs/03_UNITY_PROJECT_STRUCTURE.md:1, docs/04_ASSET_PIPELINE.md:1, and docs/07_TESTING_AND_QUALITY.md:1.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "getting-started",
+      "name": "Getting Started with EntropyTag",
+      "prompt": "Describe repository status, planning workflow, documentation order, and TODO completion rules using README.md:1 and TODO/00_INDEX.todo:1.",
+      "children": [
+        {
+          "title": "game-overview",
+          "name": "Game Overview",
+          "prompt": "Explain player promise, core loop, elements, territory, match phases, and accessibility using docs/00_VISION.md:1 and docs/01_GAME_DESIGN.md:1.",
+          "children": []
+        },
+        {
+          "title": "vertical-slice",
+          "name": "Vertical-Slice Entry Point",
+          "prompt": "Explain scope, work gates, acceptance criteria, and pivot conditions using docs/05_VERTICAL_SLICE_PLAN.md:1.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "deep-dive",
+      "name": "EntropyTag Deep Dive",
+      "prompt": "Navigate the complete planned game architecture and production system using docs/02_TECHNICAL_ARCHITECTURE.md:1 and docs/06_PRODUCTION_ROADMAP.md:1.",
+      "children": [
+        {
+          "title": "architecture",
+          "name": "Runtime Architecture",
+          "prompt": "Analyze domain, application, Unity adapters, presentation, infrastructure, territory representation, character, spray, scenes, performance, and networking boundaries using docs/02_TECHNICAL_ARCHITECTURE.md:1.",
+          "children": []
+        },
+        {
+          "title": "project-layout",
+          "name": "Unity Project Layout",
+          "prompt": "Document planned folders, assemblies, scene naming, prefab rules, generated content, and naming conventions using docs/03_UNITY_PROJECT_STRUCTURE.md:1.",
+          "children": []
+        },
+        {
+          "title": "assets",
+          "name": "Asset Production",
+          "prompt": "Document original art direction, asset lifecycle, character/environment needs, territory shaders, VFX, audio, imports, budgets, licensing, and placeholders using docs/04_ASSET_PIPELINE.md:1.",
+          "children": []
+        },
+        {
+          "title": "quality",
+          "name": "Testing and Quality",
+          "prompt": "Document unit, application, PlayMode, performance, visual, build, defect, and playtest standards using docs/07_TESTING_AND_QUALITY.md:1.",
+          "children": []
+        },
+        {
+          "title": "player-sandbox",
+          "name": "Player, Camera, and Input Sandbox",
+          "prompt": "Explain the implemented third-person motor, camera collision, shared aim solution, controls, settings persistence, sandbox workflow, and validation using docs/11_PLAYER_CAMERA_INPUT.md:1.",
+          "children": []
+        },
+        {
+          "title": "domain-rules",
+          "name": "Deterministic Domain Rules",
+          "prompt": "Explain the implemented pure C sharp identifiers, territory states, reaction table, logical field, scoring, bank, match phases, randomness, validation, and tests using docs/12_DOMAIN_RULES.md:1.",
+          "children": []
+        },
+        {
+          "title": "territory-painting",
+          "name": "Territory Painting Proof",
+          "prompt": "Explain registered planar floors, walls, ramps and platforms, world-to-grid mapping, CPU authority, visual texture projection, stamps, match scoring eligibility, reset, sampling and performance using docs/13_TERRITORY_PAINTING.md:1.",
+          "children": []
+        },
+        {
+          "title": "element-reactions",
+          "name": "Element Reactions Proof",
+          "prompt": "Explain deterministic Ice Fire Mist transitions, patterns, reaction events, pooled VFX and audio, friendly and hostile movement affinity, neutral Mist behavior, telegraphs and testing using docs/14_ELEMENT_REACTIONS.md:1.",
+          "children": []
+        },
+        {
+          "title": "match-flow",
+          "name": "Match Flow and Scoring",
+          "prompt": "Explain implemented free play, countdown, two-minute phases, circular pressure, active-area scoring, fixed match teams, immutable results, rematches, three-player build startup and proof limits using docs/15_MATCH_FLOW_SCORING.md:1.",
+          "children": []
+        },
+        {
+          "title": "competitive-bots",
+          "name": "Competitive Bots",
+          "prompt": "Explain the mobile Ice/Fire bots, shared intent and movement, runtime NavMesh guidance, bounded bot-opponent preference with human fallback, seeded win-focused tactics, physical hits, lifecycle, diagnostics and verification limits using docs/16_COMPETITIVE_BOTS.md:1.",
+          "children": []
+        },
+        {
+          "title": "roadmap-risks",
+          "name": "Roadmap, Decisions, and Risks",
+          "prompt": "Explain milestones, scope ladder, accepted decisions, proposed decisions, risks, and change protocol using docs/06_PRODUCTION_ROADMAP.md:1 and docs/08_DECISIONS_AND_RISKS.md:1.",
+          "children": []
+        },
+        {
+          "title": "glossary",
+          "name": "EntropyTag Terminology",
+          "prompt": "Provide the canonical vocabulary from docs/09_GLOSSARY.md:1.",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

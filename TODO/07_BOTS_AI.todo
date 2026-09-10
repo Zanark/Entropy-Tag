@@ -1,0 +1,75 @@
+# Bots and AI
+
+Status: IN_PROGRESS
+Milestone: M2 Vertical slice
+Dependencies: `03_PLAYER_CAMERA_INPUT.todo`, `04_TERRITORY_PAINTING.todo`, `06_MATCH_FLOW_SCORING.todo`
+
+## Purpose
+
+Provide a fair, seedable opponent that demonstrates the game loop without hidden stat advantages.
+
+On 2026-09-10 the developer replaced the parked stationary test-bot proposal with two mobile, competitive
+bots: one fixed Ice and one fixed Fire, plus the human. They must fight enemies and pursue territory victory.
+This explicitly authorizes bot integration before the outstanding hands-on approval of Match Flow.
+The 16:37 IST follow-up asks bots to primarily target each other while retaining the human as a valid enemy.
+
+## Tasks
+
+- [x] Replace the stationary proposal with two mobile fixed-team opponents using the shared player silhouette,
+  team-colored heads, real pooled projectiles, and territory-seeking behavior.
+- [x] Define bot intent interface shared with human input.
+- [x] Implement valid movement target selection.
+- [x] Implement route painting behavior.
+- [x] Implement contested-territory selection.
+- [x] Implement basic opponent awareness.
+- [x] Prefer eligible bot opponents with a bounded distance bias; preserve human targeting and win priorities.
+- [x] Implement spray resource awareness for the existing firing interval and finite projectile pool.
+- [x] Implement active-arena awareness.
+- [x] Implement stuck detection and recovery.
+- [x] Inject deterministic random source.
+- [x] Add debug state overlay.
+- [x] Add full-match bot test.
+- [x] Record first bot profile tuning.
+
+## Acceptance criteria
+
+- [x] Bot uses the same movement, spray, and status rules as a human.
+- [x] Fixed seed reproduces decisions for identical observations; Unity physics is not claimed bitwise deterministic.
+- [x] Bots complete ten matches, ending inside the safe boundary, without permanent stuck states.
+- [x] Bot does not spray continuously when recovery is required.
+- [x] Difficulty does not use hidden movement or paint multipliers.
+- [x] The bot with two enemies primarily chooses the other bot across ten live rounds; both-team scene
+  checks and policy tests cover preference, human fallback, and preserved eligibility.
+- [ ] Developer approves mobile behavior, combat readability, and complete match play.
+
+## Completion evidence
+
+2026-09-10 initial full baseline: 180 EditMode and 44 PlayMode tests passed.
+The targeting follow-up passed all 69 policy cases and 9 competitive-bot PlayMode tests, including ten
+live-physics, accelerated 120-second rounds. Fire chose the other bot for 218 engagements versus 52 for
+the idle human (about 81%); the latest ten rounds used one Ice hard stuck recovery and all completed.
+Horizontal-only progress tracking prevents vertical bouncing from hiding a stalled route.
+Both factions won rounds. Other tests cover hostile-human targeting for either player team, friendly-fire
+rejection, recoil protection, navigation around walls, unreachable surfaces, cleanup, UI bounds, and rematch.
+
+Windows development build succeeded. The built three-player arena initialized with Direct3D 11 and no
+runtime/shader error; the owned smoke process was stopped. This is startup evidence, not a human playtest
+or minimum-spec FPS measurement.
+
+Configuration: `EntropyTag/Assets/EntropyTag/Settings/Tuning/FirstSliceBots.asset`.
+Documentation: `docs/16_COMPETITIVE_BOTS.md`.
+Logs/results: ignored `EntropyTag/TestResults/` and `EntropyTag/Builds/Windows-development.log`.
+Changes remain uncommitted with TODO 06 pending review. Canonical `.agent-context` remains read-only because
+the current Context Mesh registry does not designate this base; session artifacts preserve the handoff.
+
+## Completion log
+
+- 2026-08-28 - Stationary opposite-team testing aid specified and parked; no bot code implemented.
+- 2026-09-10 15:38 IST - Developer explicitly requested mobile opponents that attack enemies and strive to win,
+  superseding the stationary/mirroring proposal.
+- 2026-09-10 - Implemented two fixed-team bots, shared actor intent, runtime route guidance, territory utility,
+  bounded combat windows, non-lethal hit feedback, and three-player scene wiring. Automated validation passed;
+  status remains IN_PROGRESS until hands-on approval.
+- 2026-09-10 16:37 IST - Developer requested primarily bot-on-bot targeting. Added participant-role
+  observations and a six-meter opponent distance bonus without changing eligibility, combat stats, safety,
+  or final territory priorities. Controlled team-reversal and ten-round preference checks passed.

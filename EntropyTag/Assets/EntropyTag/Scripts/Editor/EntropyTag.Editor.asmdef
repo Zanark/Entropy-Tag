@@ -1,0 +1,23 @@
+{
+  "name": "EntropyTag.Editor",
+  "rootNamespace": "EntropyTag.Editor",
+  "references": [
+    "EntropyTag.Application",
+    "EntropyTag.Domain",
+    "EntropyTag.Infrastructure",
+    "EntropyTag.Presentation",
+    "EntropyTag.Unity",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

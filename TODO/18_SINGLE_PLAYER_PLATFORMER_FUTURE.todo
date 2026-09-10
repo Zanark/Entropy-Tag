@@ -1,0 +1,48 @@
+# Future Single-Player Platformer
+
+Status: NOT_STARTED
+Milestone: Post-vertical-slice expansion
+Dependencies: Approved EntropyTag vertical slice and explicit mode preproduction
+
+## Purpose
+
+Develop an original single-player mode that broadens EntropyTag beyond competitive territory matches through
+comedic, rage-inducing precision platforming.
+
+## Direction
+
+- Use bounce, momentum, timing, and recovery as the traversal foundation.
+- Create humor through surprising but readable environmental hostility and slapstick failure.
+- Preserve EntropyTag's original world, characters, terminology, levels, art, audio, and mechanics.
+- Treat other games only as high-level genre references; do not copy protected expression or proprietary
+  content.
+
+## Tasks
+
+- [ ] Define how the mode connects to EntropyTag's elemental identity.
+- [ ] Define the core bounce and momentum model.
+- [ ] Define failure, recovery, checkpoint, and restart cadence.
+- [ ] Prototype one short vertical platforming course.
+- [ ] Prototype readable environmental hazards and comedic reactions.
+- [ ] Establish difficulty and frustration guardrails.
+- [ ] Test keyboard/mouse and gamepad controls.
+- [ ] Validate whether the mode should share the competitive player controller.
+- [ ] Create an original visual, audio, narrative, and level-design brief.
+- [ ] Conduct isolated player testing before production approval.
+
+## Acceptance criteria
+
+- [ ] The mode is mechanically and visually original.
+- [ ] Failure feels attributable, fast to recover from, and intentionally funny rather than arbitrary.
+- [ ] A short prototype demonstrates satisfying bounce/momentum traversal.
+- [ ] The mode has a documented relationship to the main EntropyTag product.
+- [ ] Production begins only after the vertical slice is approved.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+- 2026-08-21 - Future direction recorded from developer feedback. Implementation is explicitly deferred until
+  after the main vertical slice.
