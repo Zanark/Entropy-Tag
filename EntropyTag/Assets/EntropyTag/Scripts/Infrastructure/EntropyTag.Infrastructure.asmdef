@@ -1,0 +1,17 @@
+{
+  "name": "EntropyTag.Infrastructure",
+  "rootNamespace": "EntropyTag.Infrastructure",
+  "references": [
+    "EntropyTag.Application",
+    "EntropyTag.Unity"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

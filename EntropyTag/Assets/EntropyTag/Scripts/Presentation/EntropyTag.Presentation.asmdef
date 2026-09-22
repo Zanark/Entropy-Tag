@@ -1,0 +1,19 @@
+{
+  "name": "EntropyTag.Presentation",
+  "rootNamespace": "EntropyTag.Presentation",
+  "references": [
+    "EntropyTag.Application",
+    "EntropyTag.Domain",
+    "EntropyTag.Unity",
+    "Unity.ugui"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

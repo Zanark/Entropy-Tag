@@ -1,0 +1,27 @@
+{
+  "name": "EntropyTag.Tests.EditMode",
+  "rootNamespace": "EntropyTag.Tests.EditMode",
+  "references": [
+    "EntropyTag.Application",
+    "EntropyTag.Domain",
+    "EntropyTag.Presentation",
+    "EntropyTag.Unity",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

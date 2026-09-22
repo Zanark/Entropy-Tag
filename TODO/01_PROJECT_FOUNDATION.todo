@@ -1,0 +1,97 @@
+# Unity Project Foundation
+
+Status: DONE
+Milestone: M1 Technical proofs
+Dependencies: `15_PRODUCT_DECISIONS.todo`
+
+## Purpose
+
+Create a reproducible Unity repository that opens, tests, and builds cleanly before gameplay systems expand.
+
+## Tasks
+
+- [x] Confirm Unity editor version and record it: `2022.3.47f1`.
+- [x] Confirm URP as the rendering pipeline. URP `14.0.11` is installed and active.
+- [x] Create the Unity project at `EntropyTag/`.
+- [x] Apply Unity `.gitignore` and verify Library, Temp, Logs, UserSettings, and generated solution are ignored.
+- [x] Install Input System `1.7.0` and activate **Input System Package (New)**.
+- [x] Set Company Name to `ZanarksDevDesk` and verify that Unity serializes it.
+- [x] Create `Assets/EntropyTag/` folder structure from `docs/03_UNITY_PROJECT_STRUCTURE.md`.
+- [x] Create Domain, Application, Unity, Presentation, Infrastructure, Editor, EditMode, and PlayMode assemblies.
+- [x] Create Bootstrap and initial test scenes.
+- [x] Install only approved packages and remove unused Unity Version Control and Visual Scripting packages.
+- [x] Create Input System action asset.
+- [x] Add project-wide `.editorconfig`; defer external analyzers until a measured need justifies another package.
+- [x] Add sample EditMode and PlayMode tests.
+- [x] Add command-line test and development-build scripts.
+- [x] Validate clean-clone setup.
+
+## Acceptance criteria
+
+- [x] Project opens without missing-package or serialization errors.
+- [x] Assembly dependency direction matches the architecture document.
+- [x] EditMode and PlayMode sample tests pass.
+- [x] Development build launches.
+- [x] Clean Git status contains no Unity-generated cache.
+- [x] Setup steps are documented.
+
+## Completion evidence
+
+- Unity project root: `EntropyTag/`
+- Editor: `2022.3.47f1`
+- Active render pipeline: URP `14.0.11`
+- Pipeline asset: `EntropyTag/Assets/Settings/Rendering/URP_EntropyTag.asset`
+- Renderer asset: `EntropyTag/Assets/Settings/Rendering/URP_EntropyTag_Renderer.asset`
+- Graphics and all Quality levels reference the same pipeline asset.
+- User validation: no pink materials observed.
+- Generated scene: `EntropyTag/Assets/Scenes/SampleScene.unity`
+- Package manifest: `EntropyTag/Packages/manifest.json`
+- Input System package: `com.unity.inputsystem` version `1.7.0`.
+- Active input backend: `activeInputHandler: 1` in `EntropyTag/ProjectSettings/ProjectSettings.asset`.
+- Company Name: `ZanarksDevDesk`; Standalone identifier: `com.ZanarksDevDesk.EntropyTag`.
+- Package review complete: retained URP, Input System, TextMeshPro, Timeline, uGUI, and Development feature;
+  removed Unity Version Control and Visual Scripting.
+- First-party hierarchy: 40 Unity folders with complete folder metadata.
+- Clone persistence: 24 `.gitkeep` files retain empty content leaves.
+- Assemblies: Domain, Application, Unity, Presentation, Infrastructure, Editor, EditMode tests, PlayMode tests.
+- Input asset: `EntropyTag/Assets/EntropyTag/Settings/Input/EntropyTagInputActions.inputactions`.
+- Scenes: `Bootstrap.unity` and `Tests/Test_Foundation.unity`; Bootstrap is enabled in build settings.
+- EditMode: 2 passed, 0 failed.
+- PlayMode: 1 passed, 0 failed.
+- Windows development build: created and remained alive during an 8-second launch smoke test.
+- Build was regenerated successfully after removing unnecessary script-debugging connectivity; the
+  replacement executable was not launched.
+- Automation: `scripts/Invoke-UnityTests.ps1` and `scripts/Invoke-UnityBuild.ps1`, with matching `.txt` copies.
+- Git ignore verification completed for Unity cache and generated solution paths.
+- Clean-clone validation: fresh import succeeded in `C:\devdesk\gamedesk\EntropyTag_CleanTest\EntropyTag`;
+  EditMode passed 2/2, PlayMode passed 1/1, and the Windows development build completed successfully.
+
+## Completion log
+
+- 2026-08-19 - Moved to IN_PROGRESS after Unity created the nested project. Recorded generated state; no
+  architecture folders, assemblies, input actions, tests, or build scripts exist yet.
+- 2026-08-19 - URP `14.0.11` activated and visually checked. Render-pipeline task completed.
+- 2026-08-19 - Installed Input System `1.7.0`. The developer manually selected **Input System Package
+  (New)** after the first restart, causing the expected second restart. Manifest, package lock, and Player
+  setting were verified; no input action asset exists yet.
+- 2026-08-19 - Developer entered Company Name `ZanarksDevDesk`, meaning "Zanark's Dev Desk," and supplied
+  a screenshot. The image was preserved in the ledger. The initial check occurred before Unity flushed the
+  focused field; a later check verified the serialized value and generated Standalone identifier.
+- 2026-08-19 - Removed Unity Version Control and Visual Scripting through Package Manager. Verified both
+  disappeared from the manifest and package lock while rendering, input, UI, Timeline, and test tooling
+  remained intact.
+- 2026-08-19 - With Unity closed, added the complete first-party hierarchy, eight assembly definitions,
+  foundation types, Input System actions, editor setup/build automation, and sample tests. Unity batch mode
+  generated scenes and metadata. Two namespace collisions were fixed during real compilation. Final results:
+  2/2 EditMode tests, 1/1 PlayMode test, successful Windows development build, and successful launch smoke
+  test. Interactive Console verification and clean-clone validation remain pending.
+- 2026-08-19 - Removed `BuildOptions.AllowDebugging` after the original smoke test triggered a Windows
+  Firewall prompt. Rebuilt successfully with `BuildOptions.Development` only and did not relaunch the player.
+- 2026-08-19 - Final audit at 21:08-21:11 IST re-imported and compiled the final tree, reran all three tests,
+  and verified packages, assembly direction, metadata, Bootstrap GUID/build settings, input schemes,
+  documentation, TODOs, ignores, and build presence. Interactive Console and clean-clone gates remain open.
+- 2026-08-19 - At 22:24:02 IST, the developer reopened Unity and reported no Console issues. Interactive
+  project-open validation passed; only clean-clone validation remains.
+- 2026-08-19 - At 23:30:15 IST, validation completed in the developer-created clean clone. Unity performed a
+  fresh import, EditMode passed 2/2, PlayMode passed 1/1, and the Windows development build succeeded.
+  Project Foundation moved to DONE. Development remains in the original repository.

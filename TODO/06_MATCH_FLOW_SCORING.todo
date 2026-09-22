@@ -1,0 +1,66 @@
+# Match Flow and Scoring
+
+Status: IN_PROGRESS
+Milestone: M2 Vertical slice
+Dependencies: `02_DOMAIN_RULES.todo`, `04_TERRITORY_PAINTING.todo`, pressure decision in `15_PRODUCT_DECISIONS.todo`
+
+## Purpose
+
+Deliver a complete match from start through result and rematch with explainable scoring.
+
+## Tasks
+
+- [x] Implement match bootstrap.
+- [x] Implement countdown and active phase.
+- [x] Implement timer.
+- [x] Implement selected pressure mechanism.
+- [x] Implement active-arena coverage calculation.
+- [x] Implement bank display data.
+- [x] Implement explicit tie behavior.
+- [x] Implement result snapshot.
+- [x] Implement reset and rematch.
+- [x] Emit phase and result events.
+- [x] Add ten-match automated smoke scenario.
+- [x] Test zero ownership, ties, reset, and completion.
+
+## Acceptance criteria
+
+- [x] Ten consecutive matches complete without manual repair.
+- [x] Result matches authoritative territory state.
+- [x] Tie and zero-owner behavior is explicit.
+- [ ] Pressure is telegraphed and symmetric.
+- [x] Rematch returns to a clean state.
+- [ ] Result data explains decisive territory and reactions.
+
+## Completion evidence
+
+Implementation is complete; developer hands-on approval of pressure readability, result comprehension,
+and the complete interactive loop remains required. Automated symmetry, pressure text, and result data
+checks pass, but do not replace that review.
+
+- 2026-09-10: full initial bot/match baseline passed 180 EditMode and 44 PlayMode tests.
+  Subsequent bot-opponent preference checks passed 69 policy cases and 9 competitive-bot PlayMode tests,
+  including ten live rounds; see TODO 07 and docs/16_COMPETITIVE_BOTS.md.
+- Ten consecutive simulated 120-second matches cover winners, bank-independent ties, and zero ownership.
+- Windows development build succeeded; the built arena initialized with Direct3D 11 and stayed running
+  without runtime/shader errors. The owned smoke-test player was stopped.
+- Active coverage averaged 0.319 ms per refresh across 100 warm samples in the full baseline run.
+- HUD text bounds, major-panel non-overlap, and virtual keyboard/gamepad controls passed.
+- Documentation and review checklist: `docs/15_MATCH_FLOW_SCORING.md`.
+- Match config: `EntropyTag/Assets/EntropyTag/Settings/Tuning/FirstSliceMatch.asset`.
+- Latest evidence: ignored `EntropyTag/TestResults/` XML/logs and `EntropyTag/Builds/Windows-development.log`.
+- No minimum-spec GPU/FPS or human readability claim is made.
+- Canonical context synchronization is pending because this base is absent from the current Context Mesh
+  registry. Its `.agent-context` remains read-only; the implementation handoff is saved in session artifacts.
+- Changes are uncommitted on `workDesk/agentic`. The developer subsequently authorized two mobile bots;
+  TODO 07 now provides a real three-player contested match for the remaining review.
+
+## Completion log
+
+- 2026-09-10 - Started after the developer authorized the next implementation with Unity closed. Preserve
+  free play until an explicit match start, lock team choice during the match, score upward-facing logical
+  cells inside a circular shrinking boundary, use non-lethal out-of-bounds recovery, and keep the bot parked.
+- 2026-09-10 - Implemented and validated the solo match proof, regenerated the selected sandbox and buildable
+  arena, updated documentation/ledger, and stopped at the hands-on approval gate. Status remains IN_PROGRESS.
+- 2026-09-10 - Integrated the developer-authorized Ice/Fire competitive bots without changing match victory
+  rules. Ten live-physics bot matches now complement the original injected-state scoring scenarios.

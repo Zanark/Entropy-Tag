@@ -1,0 +1,42 @@
+# Art, Animation, and VFX
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: `03_PLAYER_CAMERA_INPUT.todo`, `05_ELEMENT_REACTIONS.todo`, `11_ARENA_LEVEL_DESIGN.todo`
+
+## Purpose
+
+Establish an original readable low-poly visual identity for the vertical slice.
+
+## Tasks
+
+- [ ] Create original visual reference board.
+- [ ] Define color, pattern, silhouette, and material language.
+- [ ] Create one shared player rig or approved placeholder.
+- [ ] Create Ice and Fire variants.
+- [ ] Create locomotion and spray animation set.
+- [ ] Create modular arena kit.
+- [ ] Create territory material and shader.
+- [ ] Create spray VFX.
+- [ ] Create Mist reaction VFX.
+- [ ] Create status and pressure VFX.
+- [ ] Validate readability at gameplay camera distance.
+- [ ] Validate asset budgets and import settings.
+- [ ] Record all third-party licenses.
+
+## Acceptance criteria
+
+- [ ] Visual identity is original and not a copy of another franchise.
+- [ ] Teams and reaction states are readable without color alone.
+- [ ] VFX does not obscure aim or territory.
+- [ ] Character silhouette remains readable on every territory state.
+- [ ] Assets satisfy documented import and performance budgets.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

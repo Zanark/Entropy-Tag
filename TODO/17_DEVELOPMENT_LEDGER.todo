@@ -1,0 +1,41 @@
+# Development Ledger
+
+Status: IN_PROGRESS
+Milestone: Entire project lifecycle
+Dependencies: None
+
+## Purpose
+
+Maintain a book-ready chronological record of every instruction, developer action, verified result,
+correction, decision, and screenshot.
+
+## Tasks
+
+- [x] Create ignored `docs/ledger/` location.
+- [x] Define chapter format.
+- [x] Define screenshot storage and citation policy.
+- [x] Document Unity project creation and URP activation.
+- [ ] Append every future meaningful instruction and completed action.
+- [ ] Copy every accessible chat screenshot into `docs/ledger/media/`.
+- [ ] Reference screenshots from the correct chapter.
+- [ ] Keep facts grounded in repository evidence or explicit user reports.
+- [ ] Periodically reconcile chapter order and book structure.
+
+## Acceptance criteria
+
+- [x] `docs/ledger/` is ignored by Git.
+- [x] Ledger has a book index and first chronological chapter.
+- [x] First chapter distinguishes guidance, developer action, repository evidence, and visual confirmation.
+- [x] Screenshot policy prohibits invented descriptions.
+- [ ] Ledger remains current throughout development.
+
+## Completion evidence
+
+- `docs/ledger/README.md`
+- `docs/ledger/01-unity-project-and-urp.md`
+- `.gitignore`
+
+## Completion log
+
+- 2026-08-19 - Ledger created and URP activation recorded. Remains IN_PROGRESS for the project lifetime.
+

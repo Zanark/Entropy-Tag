@@ -1,0 +1,45 @@
+# UI, UX, and Accessibility
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: `06_MATCH_FLOW_SCORING.todo`
+
+## Purpose
+
+Make the game understandable from launch through rematch and ensure important state is not communicated by
+color alone.
+
+## Tasks
+
+- [ ] Create front-end flow.
+- [ ] Create input-device and team setup.
+- [ ] Create match HUD.
+- [ ] Create territory and bank display.
+- [ ] Create pressure warning.
+- [ ] Create status-effect display.
+- [ ] Create pause/settings flow.
+- [ ] Create results explanation.
+- [ ] Create instant rematch flow.
+- [ ] Add element patterns and icons.
+- [ ] Add reticle, shake, vibration, and motion-effect settings.
+- [ ] Add keyboard/mouse and gamepad glyph support.
+- [ ] Validate UI scaling.
+- [ ] Run first-match comprehension test.
+
+## Acceptance criteria
+
+- [ ] New player can start a match without developer guidance.
+- [ ] Objective is understood within one match.
+- [ ] Territory remains distinguishable under color-vision simulation.
+- [ ] Results explain the winner.
+- [ ] Rematch requires one clear action.
+- [ ] Essential camera and effect settings are available.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

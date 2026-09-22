@@ -1,0 +1,43 @@
+# Arena and Level Design
+
+Status: NOT_STARTED
+Milestone: M2 Vertical slice
+Dependencies: pressure decision in `15_PRODUCT_DECISIONS.todo`, `04_TERRITORY_PAINTING.todo`
+
+## Purpose
+
+Build one original gray-box arena that supports routes, contests, reactions, bot navigation, and a readable
+match climax.
+
+## Tasks
+
+- [ ] Define arena metrics.
+- [ ] Define spawn safety.
+- [ ] Define paintable and non-paintable surfaces.
+- [ ] Create primary, alternate, and comeback routes.
+- [ ] Create central contest space.
+- [ ] Integrate selected pressure mechanism.
+- [ ] Add bot navigation.
+- [ ] Add camera-collision validation.
+- [ ] Add out-of-bounds handling.
+- [ ] Add ownership/debug visualization.
+- [ ] Run route and sightline review.
+- [ ] Run full-match gray-box playtest.
+
+## Acceptance criteria
+
+- [ ] No spawn has an obvious structural advantage.
+- [ ] Players can identify at least two meaningful routes.
+- [ ] Pressure produces conflict without unavoidable trapping.
+- [ ] Bot can reach all intended contest zones.
+- [ ] Camera remains usable throughout the arena.
+- [ ] Territory coverage does not reward inaccessible surfaces.
+
+## Completion evidence
+
+Not completed.
+
+## Completion log
+
+Not completed.
+

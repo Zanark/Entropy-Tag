@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 795f90d196910d147a58bd19d3a3b8fb, type: 3}
+  m_Name: FirstSliceMatch
+  m_EditorClassIdentifier:
+  durationSeconds: 120
+  openingEndSeconds: 24
+  contestEndSeconds: 78
+  compressionEndSeconds: 115
+  countdownSeconds: 3
+  boundaryCenter: {x: 0, y: 0}
+  initialRadius: 20
+  finalRadius: 8
+  outsideGraceSeconds: 2
+  boundaryWarningSeconds: 8
+  boundaryShader: {fileID: 4800000, guid: ea90607309d283c4ba2d47927cdf6064, type: 3}

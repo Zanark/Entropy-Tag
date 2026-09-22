@@ -1,0 +1,58 @@
+# Element Reactions
+
+Status: DONE
+Milestone: M2 Vertical slice
+Dependencies: `02_DOMAIN_RULES.todo`, `04_TERRITORY_PAINTING.todo`
+
+## Purpose
+
+Make Ice, Fire, and Mist mechanically deterministic and immediately readable.
+
+## Tasks
+
+- [x] Create Ice and Fire element configuration.
+- [x] Create Mist reaction configuration.
+- [x] Implement reaction ownership/state rules.
+- [x] Implement contested-reaction bank award.
+- [x] Implement reaction event.
+- [x] Implement visual material state.
+- [x] Implement reaction VFX placeholder.
+- [x] Implement reaction audio placeholder.
+- [x] Define first player status interaction.
+- [x] Implement status telegraph and contact-bound lifetime.
+- [x] Add conversion and status tests.
+- [x] Run comprehension playtest.
+
+## Acceptance criteria
+
+- [x] Players can distinguish Ice, Fire, and Mist without relying on color alone.
+- [x] Reaction result is deterministic.
+- [x] Visible reaction occurs at the authoritative contact.
+- [x] Status effects are telegraphed and configurable.
+- [x] Playtesters predict the reaction after seeing it twice.
+
+## Completion evidence
+
+- Started after Territory Painting completed in commit `9fe5b2a`.
+- Added persistent Ice, Fire, and Mist presentation/status configuration.
+- Added diagonal Ice stripes, Fire dots, and Mist crosshatch without texture assets.
+- Added authoritative reaction events with contact, state, element, and bank data.
+- Added a fixed six-slot reaction visual/audio feedback pool.
+- Added configurable friendly boost and hostile slow with foot markers and a dedicated HUD status row.
+- Validation: 24 EditMode tests and 20 PlayMode tests passed.
+- First review requested selected-element HUD coloring and clearer animated/audio reaction feedback. A
+  universal Mist slow was then rejected because it contradicted intended team-territory synergy.
+- Replaced the Mist slow with sandbox team affinity: selected-element territory boosts to 1.40x, opposing
+  primary territory slows to 0.70x, and Neutral/Mist remains 1.00x. HUD and foot markers identify the effect.
+- Isolated terrain status into its own HUD row. Friendly boost uses selected-team text on transparency;
+  hostile slow alone uses hostile-terrain background with selected-team foreground.
+- Screenshot review found status overlap, a hidden reset instruction, and an oversized fixed background.
+  Moved the row below the debug block and made its width content-driven with compact padding.
+- Developer approved the corrected affinity behavior and final isolated HUD layout.
+- Final validation: 24/24 EditMode tests, 20/20 PlayMode tests, and Windows development build passed.
+
+## Completion log
+
+- 2026-08-28 - Began implementation after the developer approved and committed Territory Painting.
+- 2026-08-28 - Completed after iterative hands-on review approved reaction readability, territory synergy,
+  movement telegraphs, and final HUD layout.

@@ -1,0 +1,46 @@
+# Multiplayer Future
+
+Status: BLOCKED
+Milestone: Post-vertical-slice research
+Dependencies: Approved vertical slice and explicit product decision
+Blocker: Local core gameplay, authority, performance, and scope are not yet proven.
+
+## Purpose
+
+Preserve future networking awareness without allowing networking to dominate the first slice.
+
+## Deferred research
+
+- [ ] Confirm required player count.
+- [ ] Decide peer-hosted versus dedicated authority.
+- [ ] Evaluate Unity networking options at that future date.
+- [ ] Define state and command serialization.
+- [ ] Define territory replication strategy.
+- [ ] Define latency model for movement and spraying.
+- [ ] Define prediction/rollback requirements.
+- [ ] Define reconnect and host-loss behavior.
+- [ ] Define anti-cheat expectations.
+- [ ] Define matchmaking/account scope.
+- [ ] Build a separate networking proof.
+
+## Unblock criteria
+
+- [ ] Vertical slice approved.
+- [ ] Local movement and aim stable.
+- [ ] Territory authority model accepted.
+- [ ] Deterministic rule tests pass.
+- [ ] Performance budgets met.
+- [ ] Online multiplayer is explicitly prioritized over additional local content.
+
+## Acceptance criteria
+
+Not applicable until unblocked.
+
+## Completion evidence
+
+Blocked by design.
+
+## Completion log
+
+- 2026-08-18 - Created as intentionally BLOCKED to prevent premature networking implementation.
+
